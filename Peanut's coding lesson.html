@@ -1,0 +1,2046 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>编程启蒙课·三年三班</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg:#0f172a;--bg2:#1e293b;--bg3:#1a2332;--border:#334155;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;--accent:#fbbf24;
+  --canvas-bg:#0f172a;--grid:#1e293b;
+  --btn-bg:#475569;--btn-hover:#64748b;
+  --ghost-color:rgba(251,191,36,0.45);
+}
+.theme-light{
+  --bg:#f8fafc;--bg2:#e2e8f0;--bg3:#f1f5f9;--border:#cbd5e1;
+  --text:#1e293b;--text2:#475569;--text3:#64748b;--accent:#d97706;
+  --canvas-bg:#fff;--grid:#e2e8f0;
+  --btn-bg:#94a3b8;--btn-hover:#64748b;
+  --ghost-color:rgba(217,119,6,0.5);
+}
+.theme-ocean{
+  --bg:#0c1a2b;--bg2:#0f2744;--bg3:#0e2240;--border:#1a4060;
+  --text:#c8e6f5;--text2:#7eb8da;--text3:#4a8ab5;--accent:#38bdf8;
+  --canvas-bg:#0c1a2b;--grid:#0f2744;
+  --btn-bg:#1a5070;--btn-hover:#256080;
+  --ghost-color:rgba(56,189,248,0.45);
+}
+.theme-forest{
+  --bg:#0d1f0d;--bg2:#1a2f1a;--bg3:#142514;--border:#2d4a2d;
+  --text:#d8f0d8;--text2:#8cba8c;--text3:#5a8a5a;--accent:#4ade80;
+  --canvas-bg:#0d1f0d;--grid:#1a2f1a;
+  --btn-bg:#2d5a2d;--btn-hover:#3d7a3d;
+  --ghost-color:rgba(74,222,128,0.45);
+}
+.theme-sunset{
+  --bg:#1a0f14;--bg2:#2d1a24;--bg3:#24141c;--border:#4a2a34;
+  --text:#fce4d6;--text2:#e0a090;--text3:#b08070;--accent:#fb923c;
+  --canvas-bg:#1a0f14;--grid:#2d1a24;
+  --btn-bg:#5a3a40;--btn-hover:#7a4a50;
+  --ghost-color:rgba(251,146,60,0.45);
+}
+.theme-candy{
+  --bg:#fff0f6;--bg2:#fce4ec;--bg3:#fff5f9;--border:#f8bbd0;
+  --text:#5c2040;--text2:#9c5070;--text3:#c08090;--accent:#ec4899;
+  --canvas-bg:#fff8fa;--grid:#fce4ec;
+  --btn-bg:#f8bbd0;--btn-hover:#f48fb1;
+  --ghost-color:rgba(236,72,153,0.4);
+}
+
+body{
+  font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+  background:var(--bg);color:var(--text);
+  height:100vh;display:flex;flex-direction:column;overflow:hidden;
+}
+
+/* Topbar - two rows */
+.topbar{
+  display:flex;flex-direction:column;
+  background:var(--bg2);border-bottom:2px solid var(--border);flex-shrink:0;
+}
+.topbar-row1{
+  display:flex;align-items:center;gap:10px;
+  padding:6px 16px;flex-wrap:wrap;
+}
+.topbar-row2{
+  display:flex;align-items:center;gap:6px;
+  padding:4px 16px 6px;flex-wrap:wrap;
+}
+.logo{font-size:20px;font-weight:bold;color:var(--accent);white-space:nowrap}
+.challenge-btns{display:flex;gap:6px;flex-wrap:wrap}
+.challenge-btn{
+  padding:4px 10px;border:2px solid var(--btn-bg);border-radius:8px;
+  background:var(--bg2);color:var(--text2);font-size:13px;
+  cursor:pointer;transition:all .2s;white-space:nowrap;font-family:inherit;
+}
+.challenge-btn:hover{border-color:var(--accent);color:var(--accent)}
+.challenge-btn.active{color:#fff;border-color:transparent;font-weight:bold}
+.challenge-btn.ch-square.active{background:#3b82f6}
+.challenge-btn.ch-rectangle.active{background:#22c55e}
+.challenge-btn.ch-lshape.active{background:#a855f7}
+.challenge-btn.ch-stairs.active{background:#f59e0b}
+.challenge-btn.ch-tian.active{background:#ef4444}
+.challenge-btn.ch-fun.active{background:linear-gradient(135deg,#f59e0b,#f97316)}
+.challenge-btn.ch-free.active{background:var(--accent)}
+.info-btn{
+  padding:4px 10px;border:2px solid var(--accent);border-radius:8px;
+  background:transparent;color:var(--accent);font-size:12px;
+  cursor:pointer;font-family:inherit;white-space:nowrap;transition:all .2s;
+}
+.info-btn:hover{background:var(--accent);color:var(--bg)}
+.robot-select{
+  background:var(--bg);color:var(--text);border:1px solid var(--border);
+  border-radius:6px;padding:3px 5px;font-size:16px;cursor:pointer;
+}
+.speed-group{
+  display:flex;align-items:center;gap:4px;margin-left:auto;
+  font-size:12px;color:var(--text2);white-space:nowrap;
+}
+.speed-group input[type=range]{width:60px;accent-color:var(--accent)}
+.theme-select{
+  background:var(--bg);color:var(--text2);border:1px solid var(--border);
+  border-radius:6px;padding:2px 5px;font-size:12px;cursor:pointer;font-family:inherit;
+}
+.topbar-spacer{flex:1}
+
+/* Main Area */
+.main{display:flex;flex:1;min-height:0}
+
+/* Left Panel */
+.left-panel{
+  width:28%;min-width:340px;display:flex;flex-direction:column;
+  border-right:2px solid var(--border);background:var(--bg3);
+}
+.mode-tabs{display:flex;border-bottom:2px solid var(--border);flex-shrink:0}
+.mode-tab{
+  flex:1;padding:8px 6px;text-align:center;font-size:14px;
+  cursor:pointer;background:var(--bg3);border:none;color:var(--text3);
+  font-family:inherit;transition:all .2s;border-bottom:3px solid transparent;
+}
+.mode-tab:hover{color:var(--text)}
+.mode-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:bold}
+
+.editor-area{flex:1;display:flex;flex-direction:column;min-height:0}
+
+.code-editor{
+  flex:1;padding:14px;font-size:18px;
+  font-family:"Consolas","Courier New",monospace;
+  background:var(--bg);color:var(--text);
+  border:none;resize:none;outline:none;
+  line-height:1.9;min-height:0;tab-size:2;
+}
+.code-editor::placeholder{color:var(--text3)}
+
+.block-editor{flex:1;display:flex;flex-direction:column;min-height:0}
+.block-palette{
+  display:flex;flex-wrap:wrap;gap:6px;padding:10px;
+  border-bottom:2px solid var(--border);flex-shrink:0;
+}
+.block-btn{
+  padding:8px 14px;border-radius:12px;border:none;
+  font-size:14px;cursor:pointer;font-family:inherit;font-weight:bold;
+  color:#fff;transition:transform .1s,box-shadow .2s;
+  -webkit-user-select:none;user-select:none;
+  box-shadow:0 2px 6px #00000020;
+}
+.block-btn:hover{transform:scale(1.08);box-shadow:0 4px 12px #00000030}
+.block-btn:active{transform:scale(.95)}
+.block-btn.fwd{background:linear-gradient(135deg,#60a5fa,#3b82f6)}
+.block-btn.turn{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
+.block-btn.loop{background:linear-gradient(135deg,#c084fc,#a855f7)}
+.block-btn.ender{background:linear-gradient(135deg,#f9a8d4,#ec4899)}
+.block-program{
+  flex:1;padding:8px;overflow-y:auto;min-height:0;
+  display:flex;flex-direction:column;gap:3px;
+}
+.block-line{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 10px;background:var(--bg2);border-radius:12px;
+  border-left:5px solid #60a5fa;font-size:14px;
+  transition:background .3s,transform .15s;
+  box-shadow:0 1px 4px #00000010;
+}
+.block-line.executing{background:var(--accent)40!important;border-left-color:var(--accent)!important;transform:scale(1.03)}
+.block-line.type-repeat{border-left-color:#a855f7}
+.block-line.type-end{border-left-color:#ec4899}
+.block-line.nested{margin-left:24px}
+.block-line.nested-2{margin-left:48px}
+.block-line.nested-3{margin-left:72px}
+.block-line.type-left{border-left-color:#f59e0b}
+.block-line.type-right{border-left-color:#f59e0b}
+.block-line-content{flex:1}
+.block-value{
+  display:inline-block;background:var(--border);padding:1px 6px;
+  border-radius:4px;margin:0 1px;cursor:text;min-width:18px;text-align:center;
+}
+.block-delete{
+  background:none;border:none;color:#ef4444;cursor:pointer;
+  font-size:16px;padding:1px 5px;border-radius:4px;
+  -webkit-user-select:none;user-select:none;
+}
+.block-delete:hover{background:var(--border)}
+.block-empty{color:var(--text3);text-align:center;padding:40px 16px;font-size:15px;animation:emptyPulse 2s ease-in-out infinite}
+@keyframes emptyPulse{0%,100%{opacity:.6}50%{opacity:1}}
+.block-line.dragging{opacity:.4}
+.block-line.drag-over{border-top:3px solid var(--accent)}
+
+.hint-panel{
+  margin:0 10px;background:var(--bg);border-radius:10px;
+  border:2px solid var(--accent);font-size:14px;color:var(--text2);
+  line-height:1.7;flex-shrink:0;
+  max-height:0;overflow:hidden;padding:0 14px;
+  transition:max-height .35s ease,padding .35s ease,opacity .25s ease;
+  opacity:0;
+}
+.hint-panel.show{
+  max-height:400px;padding:10px 14px;opacity:1;
+}
+.hint-panel.collapsed{
+  max-height:0;padding:0 14px;opacity:0;
+}
+.hint-header{
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;padding:6px 0;user-select:none;
+}
+.hint-header:hover .hint-toggle{color:var(--accent)}
+.hint-title{color:var(--accent);font-weight:bold;font-size:14px}
+.hint-toggle{
+  font-size:16px;color:var(--text3);transition:transform .3s,color .2s;
+  flex-shrink:0;margin-left:8px;
+}
+.hint-panel.collapsed .hint-toggle{transform:rotate(-90deg)}
+.hint-body{overflow:hidden;transition:max-height .3s ease}
+.hint-panel.collapsed .hint-body{max-height:0}
+.hint-step{padding:2px 0}
+.hint-step.done{color:var(--accent);text-decoration:line-through}
+
+.run-bar{
+  display:flex;gap:6px;padding:8px 14px;
+  border-top:2px solid var(--border);background:var(--bg2);
+  flex-shrink:0;align-items:center;flex-wrap:wrap;
+}
+.btn-run{
+  padding:9px 28px;background:#22c55e;border:none;border-radius:10px;
+  color:#0f172a;font-size:17px;font-weight:bold;cursor:pointer;
+  font-family:inherit;transition:all .2s;min-width:100px;
+}
+.btn-run.running{background:#ef4444;color:#fff}
+.btn-run:hover:not(.running){background:#16a34a}
+.btn-run.running:hover{background:#dc2626}
+.btn-reset{
+  padding:9px 14px;background:var(--btn-bg);border:none;border-radius:10px;
+  color:var(--text);font-size:15px;cursor:pointer;font-family:inherit;
+}
+.btn-reset:hover{background:var(--btn-hover)}
+.status-area{margin-left:auto;display:flex;align-items:center;gap:8px}
+.progress-bar{
+  width:100px;height:6px;background:var(--border);border-radius:3px;overflow:hidden;
+  display:none;
+}
+.progress-bar.show{display:block}
+.progress-bar-fill{
+  height:100%;background:var(--accent);border-radius:3px;transition:width .15s;width:0%;
+}
+.status-msg{font-size:13px;color:var(--text2)}
+
+/* Right Panel */
+.right-panel{
+  flex:1;display:flex;flex-direction:column;
+  background:var(--canvas-bg);min-width:0;overflow:hidden;
+}
+.stage-wrapper{flex:1;position:relative;display:flex;align-items:flex-start;justify-content:flex-start;overflow:auto}
+canvas{display:block;flex-shrink:0}
+.challenge-label{
+  position:absolute;top:8px;left:16px;
+  font-size:14px;color:var(--accent);font-weight:bold;
+  background:var(--bg);padding:4px 12px;border-radius:6px;
+}
+
+/* Modal Overlay */
+.modal-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:#000000aa;z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.modal-overlay.show{opacity:1;pointer-events:auto}
+.modal-box{
+  background:var(--bg);border:3px solid var(--accent);border-radius:20px;
+  padding:40px 56px;max-width:900px;width:92%;max-height:92vh;overflow-y:auto;
+  overscroll-behavior:contain;
+  box-shadow:0 20px 60px #00000060;
+}
+.modal-box h2{font-size:38px;color:var(--accent);margin-bottom:20px}
+.modal-box h3{font-size:24px;color:var(--text);margin:24px 0 10px}
+.modal-box p{font-size:20px;line-height:1.9;color:var(--text2);margin-bottom:12px}
+.modal-box .big-emoji{font-size:56px;text-align:center;margin:14px 0}
+.modal-box .highlight-box{
+  background:var(--bg2);border-left:5px solid var(--accent);
+  padding:16px 22px;border-radius:10px;margin:14px 0;font-size:18px;
+}
+.modal-close{
+  display:block;margin:28px auto 0;padding:14px 56px;
+  background:var(--accent);color:var(--bg);border:none;border-radius:10px;
+  font-size:22px;font-weight:bold;cursor:pointer;font-family:inherit;
+}
+.modal-close:hover{opacity:.8}
+
+/* Confirm Modal */
+.confirm-overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:#000000aa;z-index:300;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.confirm-overlay.show{opacity:1;pointer-events:auto}
+.confirm-box{
+  background:var(--bg);border:3px solid var(--accent);border-radius:16px;
+  padding:30px 40px;text-align:center;max-width:400px;width:90%;
+}
+.confirm-box p{font-size:18px;color:var(--text);margin-bottom:20px}
+.confirm-btns{display:flex;gap:12px;justify-content:center}
+.confirm-btn{
+  padding:10px 28px;border:none;border-radius:10px;font-size:16px;
+  cursor:pointer;font-family:inherit;font-weight:bold;transition:all .2s;
+}
+.confirm-btn-yes{background:#ef4444;color:#fff}
+.confirm-btn-yes:hover{background:#dc2626}
+.confirm-btn-no{background:var(--btn-bg);color:var(--text)}
+.confirm-btn-no:hover{background:var(--btn-hover)}
+
+.help-bar{
+  padding:5px 16px;background:var(--bg2);border-top:2px solid var(--border);
+  flex-shrink:0;display:flex;gap:14px;font-size:11px;color:var(--text3);align-items:center;
+  flex-wrap:wrap;
+}
+.help-bar kbd{
+  background:var(--border);padding:1px 5px;border-radius:4px;color:var(--text2);
+  font-family:inherit;font-size:11px;
+}
+
+@media(max-width:900px){
+  .main{flex-direction:column}
+  .left-panel{width:100%;min-width:0;max-height:42%}
+  .right-panel{min-height:58%}
+  .topbar-row1,.topbar-row2{gap:6px}
+  .challenge-btn{font-size:11px;padding:3px 7px}
+}
+@media(max-width:600px){
+  .left-panel{min-width:0}
+  .speed-group input[type=range]{width:40px}
+}
+</style>
+</head>
+<body class="theme-light">
+
+<!-- MAIN APP -->
+<div class="topbar">
+  <div class="topbar-row1">
+    <span class="logo">&#x1F422; 编程启蒙课-三年三班</span>
+    <span class="topbar-spacer"></span>
+    <button class="info-btn" id="btnIntro" aria-label="查看原理入门">&#x1F4D6; 原理入门</button>
+    <button class="info-btn" id="btnLanguage" aria-label="查看计算机语言">&#x1F5E3; 计算机语言</button>
+    <button class="info-btn" id="btnSummary" aria-label="查看核心总结">&#x1F4CB; 核心总结</button>
+    <button class="info-btn" id="btnCommands" aria-label="查看指令说明书">&#x1F4D6; 指令说明书</button>
+    <select id="startPosSelect" style="background:transparent;color:var(--text2);border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-size:12px;cursor:pointer;font-family:inherit" title="机器人起始位置" aria-label="机器人起始位置">
+      <option value="left">&#x1F4CD; 左方</option>
+      <option value="top">&#x1F4CD; 上方</option>
+      <option value="center" selected>&#x1F4CD; 中间</option>
+      <option value="bottom">&#x1F4CD; 下方</option>
+      <option value="right">&#x1F4CD; 右方</option>
+    </select>
+    <select class="robot-select" id="robotSelect" title="选择机器人外观" aria-label="选择机器人外观">
+      <option value="&#x1F984;" selected>&#x1F984;</option>
+      <option value="&#x1F338;">&#x1F338;</option>
+      <option value="&#x1F916;">&#x1F916;</option>
+      <option value="&#x1F422;">&#x1F422;</option>
+      <option value="&#x1F431;">&#x1F431;</option>
+      <option value="&#x1F680;">&#x1F680;</option>
+      <option value="&#x1F98A;">&#x1F98A;</option>
+      <option value="&#x1F438;">&#x1F438;</option>
+      <option value="&#x1F430;">&#x1F430;</option>
+      <option value="&#x1F98B;">&#x1F98B;</option>      
+    </select>
+    <div class="speed-group">
+      <span>&#x1F422;</span>
+      <input type="range" id="speedSlider" min="1" max="5" value="3" step="1" aria-label="运行速度">
+      <span>&#x1F407;</span>
+    </div>
+    <select class="theme-select" id="themeSelect" aria-label="选择主题">
+      <option value="light" selected>&#x2600; 明亮</option>
+      <option value="candy">&#x1F36C; 糖果</option>
+      <option value="dark">&#x1F319; 暗黑</option>
+      <option value="ocean">&#x1F30A; 海洋</option>
+      <option value="forest">&#x1F33F; 森林</option>
+      <option value="sunset">&#x1F305; 日落</option>
+    </select>
+  </div>
+  <div class="topbar-row2">
+    <div class="challenge-btns">
+      <button class="challenge-btn ch-square" data-challenge="square" aria-label="挑战1：正方形">&#x1F537; 挑战1：正方形</button>
+      <button class="challenge-btn ch-rectangle" data-challenge="rectangle" aria-label="挑战2：长方形">&#x1F4D0; 挑战2：长方形</button>
+      <button class="challenge-btn ch-lshape" data-challenge="lshape" aria-label="挑战3：折线形">&#x26A1; 挑战3：折线形</button>
+      <button class="challenge-btn ch-stairs" data-challenge="stairs" aria-label="挑战4：楼梯">&#x1F3E0; 挑战4：楼梯</button>
+      <button class="challenge-btn ch-tian" data-challenge="tian" aria-label="挑战5：田字">&#x1F534; 挑战5：田字</button>
+      <button class="challenge-btn ch-fun" data-challenge="fun" aria-label="趣味案例">&#x2728; 趣味案例</button>
+      <button class="challenge-btn ch-free active" data-challenge="free" aria-label="自由模式">&#x1F3A8; 自由模式</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="left-panel">
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="cn" aria-label="中文指令模式">&#x1F1E8;&#x1F1F3; 中文指令</button>
+      <button class="mode-tab" data-mode="en" aria-label="英文指令模式">&#x1F524; 英文指令</button>
+      <button class="mode-tab" data-mode="block" aria-label="积木模式">&#x1F9E9; 积木模式</button>
+    </div>
+    <div class="editor-area" id="textEditorArea">
+      <textarea class="code-editor" id="codeEditor" aria-label="代码编辑器"
+        placeholder="在这里写指令...&#10;例如：&#10;前进 3 步&#10;右转&#10;前进 2 步"></textarea>
+    </div>
+    <div class="editor-area" id="blockEditorArea" style="display:none">
+      <div class="block-editor">
+        <div class="block-palette">
+          <button class="block-btn fwd" data-block="forward" aria-label="添加前进积木">&#x2B06; 前进</button>
+          <button class="block-btn turn" data-block="left" aria-label="添加左转积木">&#x2B05; 左转</button>
+          <button class="block-btn turn" data-block="right" aria-label="添加右转积木">&#x27A1; 右转</button>
+          <button class="block-btn loop" data-block="repeat" aria-label="添加重复积木">&#x1F501; 重复</button>
+          <button class="block-btn ender" data-block="end" aria-label="添加结束积木">&#x23F9; 结束</button>
+        </div>
+        <div class="block-program" id="blockProgram" role="list" aria-label="积木程序列表">
+          <div class="block-empty">&#x2728; 点一点上面的彩色积木，开始你的创作吧！</div>
+        </div>
+      </div>
+    </div>
+    <div class="hint-panel" id="hintPanel">
+      <div class="hint-header" id="hintHeader" aria-label="折叠/展开提示">
+        <span class="hint-title">&#x1F4A1; 提示</span>
+        <span class="hint-toggle">&#x25BC;</span>
+      </div>
+      <div class="hint-body" id="hintBody">
+        <div id="hintContent"></div>
+      </div>
+    </div>
+    <div class="run-bar">
+      <button class="btn-run" id="btnRun" aria-label="运行程序">&#x25B6; 运行</button>
+      <button class="btn-reset" id="btnReset" aria-label="重置画布">&#x1F504; 重置</button>
+      <div class="status-area">
+        <div class="progress-bar" id="progressBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="progress-bar-fill" id="progressBarFill"></div>
+        </div>
+        <span class="status-msg" id="statusMsg">准备就绪</span>
+      </div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="stage-wrapper" id="stageWrapper">
+      <canvas id="stage" role="img" aria-label="机器人画布"></canvas>
+      <div class="challenge-label" id="challengeLabel">自由模式 — 随意创作！</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modalIntro" role="dialog" aria-modal="true" aria-label="什么是编程">
+  <div class="modal-box">
+    <h2>&#x1F4D6; 什么是编程？</h2>
+    <h3>&#x1F916; 编程 = 给机器下指令</h3>
+    <p>你指挥同桌"站起来，走到门口，再回来坐下"——你就是在下达<b>指令</b>。编程也一样：<b>把你想让电脑做的事，一步一步写下来</b>。</p>
+    <div class="highlight-box">
+      电脑很听话，但也很"笨"：<br>你说的每个字它都照做，<b>一个字都不会猜</b>。
+    </div>
+    <h3>&#x1F9E0; 电脑只会做简单的事</h3>
+    <p>电脑会的事情很少——<b>往前走几步、转个弯、重复做</b>。但神奇的是：把这几件简单的事<b>组合起来</b>，就能画出正方形、楼梯、甚至更复杂的图案！</p>
+    <div class="highlight-box">
+      今天你要指挥一只小机器人在格子上画画。<br>你写什么，它就画什么——<b>你，就是它的程序员！</b>
+    </div>
+    <div class="big-emoji">&#x1F916; &#x27A1; &#x1F4DD; &#x27A1; &#x1F3A8;</div>
+    <p style="text-align:center;color:var(--text3)">你写指令 &#x2192; 电脑执行 &#x2192; 画出图案</p>
+    <button class="modal-close" data-modal-close="modalIntro">我知道了！</button>
+  </div>
+</div>
+<div class="modal-overlay" id="modalLanguage" role="dialog" aria-modal="true" aria-label="认识计算机语言">
+  <div class="modal-box">
+    <h2>&#x1F5E3; 认识计算机语言</h2>
+    <h3>&#x1F4AC; 人和人说话，需要语言</h3>
+    <p>你跟同学说话用<b>中文</b>，英国小朋友用<b>英文</b>。那你想跟电脑说话呢？电脑听不懂中文——你得学它的语言！</p>
+    <h3>&#x1F916; 跟电脑说话的语言，叫"计算机语言"</h3>
+    <p>今天你写的<b>「前进 3 步」「右转」「重复 4 次」</b>——这就是一种计算机语言，名字叫 <b>Logo</b>。1967 年，一位科学家发明了它，专门让小朋友指挥一只"小海龟"在屏幕上画画。</p>
+    <div class="highlight-box">
+      <b>Logo</b> = 最经典、最适合小朋友的编程语言<br>
+      玩法很简单：<b>你写指令 &#x2192; 海龟移动 &#x2192; 留下痕迹 &#x2192; 画出图案</b>
+    </div>
+    <h3>&#x1F30D; 世界上有多少种计算机语言？</h3>
+    <p><b>几百种！</b>就像世界上有很多国家的语言一样。</p>
+    <div class="highlight-box">
+      <b>Logo</b> — 今天你在用的，写指令指挥小海龟<br>
+      <b>Scratch</b> — 拖积木就能编程，和今天的「积木模式」很像
+    </div>
+    <p>其他的语言，等你长大了可以慢慢学！</p>
+    <h3>&#x1F31F; 它们都有一个共同点</h3>
+    <p>无论 Logo 还是 Scratch，<b>底层的道理是相通的</b>。到底是什么呢？——别急，先把悬念留一会儿。</p>
+    <p style="text-align:center;color:var(--accent);font-size:18px">现在，去选一个挑战，动手写代码吧！<br>等你画出图案了，再点 <b>「核心总结」</b>，揭晓答案 &#x1F3AF;</p>
+    <div class="big-emoji">&#x1F30D; &#x27A1; &#x1F4BB; &#x27A1; &#x1F3A8;</div>
+    <button class="modal-close" data-modal-close="modalLanguage">我懂了！</button>
+  </div>
+</div>
+<div class="modal-overlay" id="modalSummary" role="dialog" aria-modal="true" aria-label="编程的三个秘诀">
+  <div class="modal-box">
+    <h2>&#x1F4CB; 编程的三个秘诀</h2>
+    <h3>1. 顺序 —— 一步一步来</h3>
+    <p>程序就像菜谱，<b>一步接一步</b>。先前进，再转弯，再前进——顺序搞反了，画出来的图案就不对。</p>
+    <h3>2. 循环 —— 重复的事让电脑做</h3>
+    <p>正方形有 4 条边，每条边都是"前进 + 右转"。与其写 4 遍，不如用<b>「重复 4 次」</b>包起来。</p>
+    <h3>3. 调试 —— 错了就改，再试试</h3>
+    <p>写错了？太正常了！看看机器人画出了什么，想一想哪里不对，<b>改一下再运行</b>。</p>
+    <div class="highlight-box">
+      <b>记住这三个秘诀：</b><br>
+      <b>顺序</b> —— 一步一步来<br>
+      <b>循环</b> —— 重复的事交给电脑<br>
+      <b>调试</b> —— 错了就改，再来一次
+    </div>
+    <h3>&#x1F4DD; 想一想，考考你！</h3>
+    <div class="quiz-box" style="background:var(--bg2);border-radius:10px;padding:12px;margin:12px 0">
+      <p style="margin:0 0 10px 0"><b>问题 1：</b>画正方形用到了哪些秘诀？</p>
+      <button class="quiz-btn" onclick="showQuizAnswer(1)" style="background:var(--accent);color:var(--bg);border:none;border-radius:6px;padding:6px 14px;cursor:pointer;font-family:inherit">看答案</button>
+      <p id="quiz-answer-1" style="display:none;margin:10px 0 0 0;color:var(--accent)">&#x2705; 答案：<b>顺序</b>（一步一步画）+ <b>循环</b>（重复 4 次）！</p>
+    </div>
+    <div class="quiz-box" style="background:var(--bg2);border-radius:10px;padding:12px;margin:12px 0">
+      <p style="margin:0 0 10px 0"><b>问题 2：</b>如果画错了三角形，你应该怎么做？</p>
+      <button class="quiz-btn" onclick="showQuizAnswer(2)" style="background:var(--accent);color:var(--bg);border:none;border-radius:6px;padding:6px 14px;cursor:pointer;font-family:inherit">看答案</button>
+      <p id="quiz-answer-2" style="display:none;margin:10px 0 0 0;color:var(--accent)">&#x2705; 答案：用 <b>调试</b>！看看哪里不对，改一下再运行！</p>
+    </div>
+    <p style="text-align:center;color:var(--text2);font-size:15px">不管以后你学什么语言，<br>这三件事永远是你最好的伙伴</p>
+    <div class="big-emoji">&#x1F31F;</div>
+    <p style="text-align:center;color:var(--accent);font-size:20px"><b>你今天已经是一个小程序员了！</b></p>
+    <button class="modal-close" data-modal-close="modalSummary">记住了！</button>
+  </div>
+</div>
+
+<!-- Command Reference Modal -->
+<div class="modal-overlay" id="modalCommands" role="dialog" aria-modal="true" aria-label="指令说明书">
+  <div class="modal-box" style="max-width:600px">
+    <h2>&#x1F4D6; 指令说明书</h2>
+    <p style="color:var(--text3);margin-bottom:16px">机器人能听懂的 5 条指令，点击看效果！</p>
+    <div class="cmd-ref-list">
+      <div class="cmd-ref-item" style="background:var(--bg2);border-radius:10px;padding:14px;margin:10px 0">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:28px">&#x2B06;</span>
+          <div style="flex:1">
+            <b style="font-size:16px;color:var(--accent)">前进 N 步</b>
+            <p style="margin:4px 0 0 0;color:var(--text2);font-size:14px">让机器人朝面对的方向走 N 格，留下痕迹</p>
+          </div>
+          <code style="background:var(--bg);padding:4px 10px;border-radius:6px;font-size:13px">前进 3 步</code>
+        </div>
+      </div>
+      <div class="cmd-ref-item" style="background:var(--bg2);border-radius:10px;padding:14px;margin:10px 0">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:28px">&#x2B05;</span>
+          <div style="flex:1">
+            <b style="font-size:16px;color:var(--accent)">左转 N 度</b>
+            <p style="margin:4px 0 0 0;color:var(--text2);font-size:14px">向左转 N 度，默认 90 度（不写字就转 90）</p>
+          </div>
+          <code style="background:var(--bg);padding:4px 10px;border-radius:6px;font-size:13px">左转 90 度</code>
+        </div>
+      </div>
+      <div class="cmd-ref-item" style="background:var(--bg2);border-radius:10px;padding:14px;margin:10px 0">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:28px">&#x27A1;</span>
+          <div style="flex:1">
+            <b style="font-size:16px;color:var(--accent)">右转 N 度</b>
+            <p style="margin:4px 0 0 0;color:var(--text2);font-size:14px">向右转 N 度，默认 90 度（不写字就转 90）</p>
+          </div>
+          <code style="background:var(--bg);padding:4px 10px;border-radius:6px;font-size:13px">右转</code>
+        </div>
+      </div>
+      <div class="cmd-ref-item" style="background:var(--bg2);border-radius:10px;padding:14px;margin:10px 0">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:28px">&#x1F501;</span>
+          <div style="flex:1">
+            <b style="font-size:16px;color:var(--accent)">重复 N 次</b>
+            <p style="margin:4px 0 0 0;color:var(--text2);font-size:14px">把后面的指令重复做 N 次，记得写「结束」！</p>
+          </div>
+          <code style="background:var(--bg);padding:4px 10px;border-radius:6px;font-size:13px">重复 4 次</code>
+        </div>
+      </div>
+      <div class="cmd-ref-item" style="background:var(--bg2);border-radius:10px;padding:14px;margin:10px 0">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:28px">&#x23F9;</span>
+          <div style="flex:1">
+            <b style="font-size:16px;color:var(--accent)">结束</b>
+            <p style="margin:4px 0 0 0;color:var(--text2);font-size:14px">告诉机器人「重复」到这里结束，必须写！</p>
+          </div>
+          <code style="background:var(--bg);padding:4px 10px;border-radius:6px;font-size:13px">结束</code>
+        </div>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top:16px">
+      <b>&#x1F4A1; 小提示：</b><br>
+      指令后面可以写数字，比如「前进 <b>5</b> 步」「左转 <b>45</b> 度」。<br>
+      数字越大，走得越远、转得越多！
+    </div>
+    <button class="modal-close" data-modal-close="modalCommands">我记住了！</button>
+  </div>
+</div>
+
+<!-- Confirm Modal -->
+<div class="confirm-overlay" id="confirmOverlay" role="dialog" aria-modal="true" aria-label="确认操作">
+  <div class="confirm-box">
+    <p id="confirmMsg">确定要重置吗？</p>
+    <div class="confirm-btns">
+      <button class="confirm-btn confirm-btn-yes" id="confirmYes">确定</button>
+      <button class="confirm-btn confirm-btn-no" id="confirmNo">取消</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="help-bar">
+  <span>&#x1F4A1; 提示：</span>
+  <span><kbd>Ctrl+Enter</kbd> 运行</span>
+  <span><kbd>Esc</kbd> 停止</span>
+  <span id="helpCmds">指令: 前进N步 | 左转N度 | 右转N度 | 重复N次 ... 结束</span>
+  <span style="margin-left:auto">&#x1F50D; 再次点击挑战按钮可加载参考解法</span>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// Constants
+// ═══════════════════════════════════════════
+const GRID_COLS_INIT = 30;
+const GRID_ROWS_INIT = 30;
+let GRID_COLS = GRID_COLS_INIT;
+let GRID_ROWS = GRID_ROWS_INIT;
+const MAX_TRAIL_LENGTH = 5000;
+const MAX_UNDO = 80;
+const RESIZE_DEBOUNCE_MS = 200;
+const MAX_BLOCK_NESTING = 5;
+
+let CELL_SIZE = 32;
+const THEME_COLORS = {
+  dark:   ['#60a5fa','#fbbf24','#f472b6','#34d399','#c084fc','#fb923c','#38bdf8','#f87171'],
+  light:  ['#2563eb','#d97706','#db2777','#059669','#7c3aed','#ea580c','#0284c7','#dc2626'],
+  ocean:  ['#38bdf8','#60a5fa','#7dd3fc','#a5f0fc','#38bdf8','#60a5fa','#818cf8','#c084fc'],
+  forest: ['#4ade80','#a3e635','#34d399','#6ee7b7','#4ade80','#84cc16','#22c55e','#10b981'],
+  sunset: ['#fb923c','#f97316','#f59e0b','#fbbf24','#fb923c','#ef4444','#f472b6','#c084fc'],
+  candy:  ['#f472b6','#c084fc','#60a5fa','#34d399','#fbbf24','#fb923c','#a78bfa','#f9a8d4'],
+};
+let COLORS = [...THEME_COLORS.light];
+
+// ═══════════════════════════════════════════
+// State
+// ═══════════════════════════════════════════
+let robot = { col: 2, row: Math.floor(GRID_ROWS/2), angle: 270 };
+let trail = [];
+let trailSegments = [];
+let isRunning = false;
+let maxReachedCol = 0, maxReachedRow = 0, minReachedCol = 0, minReachedRow = 0;
+let currentRunId = 0;
+let animSpeed = 3;
+let currentMode = 'cn';
+let currentChallenge = 'free';
+let totalSteps = 0;
+let executedSteps = 0;
+let currentTheme = 'light';
+let robotEmoji = '\u{1F984}';
+let turnAngleDisplay = null;
+let currentSolution = null;
+
+// DOM refs
+const canvas = document.getElementById('stage');
+const ctx = canvas.getContext('2d');
+const codeEditor = document.getElementById('codeEditor');
+const blockProgram = document.getElementById('blockProgram');
+const textEditorArea = document.getElementById('textEditorArea');
+const blockEditorArea = document.getElementById('blockEditorArea');
+const btnRun = document.getElementById('btnRun');
+const btnReset = document.getElementById('btnReset');
+const statusMsg = document.getElementById('statusMsg');
+const speedSlider = document.getElementById('speedSlider');
+const challengeLabel = document.getElementById('challengeLabel');
+const stageWrapper = document.getElementById('stageWrapper');
+const progressBar = document.getElementById('progressBar');
+const progressBarFill = document.getElementById('progressBarFill');
+const helpCmds = document.getElementById('helpCmds');
+const themeSelect = document.getElementById('themeSelect');
+const robotSelect = document.getElementById('robotSelect');
+
+// Offscreen canvas cache
+let offscreenCanvas = null;
+let offscreenCtx = null;
+let cacheValid = false;
+
+// ═══════════════════════════════════════════
+// localStorage persistence
+// ═══════════════════════════════════════════
+const STORAGE_KEY = 'turtle_code_prefs';
+
+/** Save user preferences to localStorage */
+function savePreferences() {
+  try {
+    const prefs = {
+      theme: currentTheme,
+      robot: robotEmoji,
+      speed: animSpeed,
+      startPos: document.getElementById('startPosSelect').value,
+      mode: currentMode,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+  } catch(e) {}
+}
+
+/** Load user preferences from localStorage */
+function loadPreferences() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const prefs = JSON.parse(raw);
+    if (prefs.theme) { currentTheme = prefs.theme; themeSelect.value = prefs.theme; applyTheme(prefs.theme); }
+    if (prefs.robot) { robotEmoji = prefs.robot; robotSelect.value = prefs.robot; }
+    if (prefs.speed) { animSpeed = prefs.speed; speedSlider.value = prefs.speed; }
+    if (prefs.startPos) { document.getElementById('startPosSelect').value = prefs.startPos; }
+    if (prefs.mode) { currentMode = prefs.mode; }
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════
+// Canvas sizing with debounce and HiDPI
+// ═══════════════════════════════════════════
+let resizeTimer = null;
+
+/** Resize canvas, supporting HiDPI displays */
+function resizeCanvas() {
+  const r = stageWrapper.getBoundingClientRect();
+  const mw = r.width, mh = r.height;
+  CELL_SIZE = Math.floor(Math.min(mw / GRID_COLS, mh / GRID_ROWS));
+  if (CELL_SIZE < 10) CELL_SIZE = 10;
+  const w = CELL_SIZE * GRID_COLS;
+  const h = CELL_SIZE * GRID_ROWS;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  // Center canvas if smaller than container, otherwise allow scroll
+  if (w <= mw && h <= mh) {
+    stageWrapper.style.alignItems = 'center';
+    stageWrapper.style.justifyContent = 'center';
+  } else {
+    stageWrapper.style.alignItems = 'flex-start';
+    stageWrapper.style.justifyContent = 'flex-start';
+  }
+  invalidateCache();
+  draw();
+}
+
+/** Debounced resize handler */
+function debouncedResize() {
+  if (resizeTimer) clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(resizeCanvas, RESIZE_DEBOUNCE_MS);
+}
+window.addEventListener('resize', debouncedResize);
+
+// ═══════════════════════════════════════════
+// Offscreen canvas cache
+// ═══════════════════════════════════════════
+/** Mark cache as invalid */
+function invalidateCache() { cacheValid = false; }
+
+/** Rebuild offscreen cache (grid + ghost shapes) */
+function rebuildCache() {
+  const w = CELL_SIZE * GRID_COLS;
+  const h = CELL_SIZE * GRID_ROWS;
+  if (!offscreenCanvas) { offscreenCanvas = document.createElement('canvas'); offscreenCtx = offscreenCanvas.getContext('2d'); }
+  const dpr = window.devicePixelRatio || 1;
+  offscreenCanvas.width = w * dpr;
+  offscreenCanvas.height = h * dpr;
+  offscreenCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const gridColor = getComputedStyle(document.body).getPropertyValue('--grid').trim() || '#1e293b';
+  offscreenCtx.strokeStyle = gridColor;
+  offscreenCtx.lineWidth = currentChallenge === 'fun' ? 0.5 : 1;
+  if (currentChallenge === 'fun') offscreenCtx.globalAlpha = 0.25;
+  for (let c = 0; c <= GRID_COLS; c++) { offscreenCtx.beginPath(); offscreenCtx.moveTo(c * CELL_SIZE, 0); offscreenCtx.lineTo(c * CELL_SIZE, h); offscreenCtx.stroke(); }
+  for (let r = 0; r <= GRID_ROWS; r++) { offscreenCtx.beginPath(); offscreenCtx.moveTo(0, r * CELL_SIZE); offscreenCtx.lineTo(w, r * CELL_SIZE); offscreenCtx.stroke(); }
+  offscreenCtx.globalAlpha = 1;
+  if (currentChallenge === 'square') drawGhostSquare(offscreenCtx);
+  else if (currentChallenge === 'rectangle') drawGhostRectangle(offscreenCtx);
+  else if (currentChallenge === 'lshape') drawGhostLShape(offscreenCtx);
+  else if (currentChallenge === 'stairs') drawGhostStairs(offscreenCtx);
+  else if (currentChallenge === 'tian') drawGhostTian(offscreenCtx);
+  cacheValid = true;
+}
+
+// ═══════════════════════════════════════════
+// Drawing
+// ═══════════════════════════════════════════
+/** Main draw function */
+function draw() {
+  const W = CELL_SIZE * GRID_COLS;
+  const H = CELL_SIZE * GRID_ROWS;
+  ctx.clearRect(0, 0, W, H);
+  if (!cacheValid) rebuildCache();
+  const dpr = window.devicePixelRatio || 1;
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.drawImage(offscreenCanvas, 0, 0);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.restore();
+
+  // Trail
+  if (currentChallenge === 'fun') {
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    const lw = Math.max(CELL_SIZE * 0.45, 5);
+    trailSegments.forEach(seg => { ctx.strokeStyle = seg.color; ctx.lineWidth = lw; ctx.beginPath(); ctx.moveTo(seg.x1, seg.y1); ctx.lineTo(seg.x2, seg.y2); ctx.stroke(); });
+    ctx.globalAlpha = 0.3; ctx.lineWidth = lw * 1.8;
+    trailSegments.forEach(seg => { ctx.strokeStyle = seg.color; ctx.beginPath(); ctx.moveTo(seg.x1, seg.y1); ctx.lineTo(seg.x2, seg.y2); ctx.stroke(); });
+    ctx.globalAlpha = 1;
+  } else {
+    trail.forEach((t, i) => {
+      const cx = t.col * CELL_SIZE + CELL_SIZE/2, cy = t.row * CELL_SIZE + CELL_SIZE/2;
+      const alpha = 0.3 + 0.5 * (i / Math.max(trail.length, 1));
+      ctx.fillStyle = t.color + Math.floor(alpha * 255).toString(16).padStart(2, '0');
+      ctx.beginPath(); ctx.arc(cx, cy, CELL_SIZE * 0.38, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = t.color;
+      ctx.beginPath(); ctx.arc(cx, cy, CELL_SIZE * 0.22, 0, Math.PI * 2); ctx.fill();
+    });
+  }
+
+  // Angle arc
+  if (turnAngleDisplay && turnAngleDisplay.timer > 0) drawAngleArc(ctx, turnAngleDisplay);
+
+  // Robot
+  const cx = robot.col * CELL_SIZE + CELL_SIZE / 2;
+  const cy = robot.row * CELL_SIZE + CELL_SIZE / 2;
+  const rs = CELL_SIZE * 0.45;
+  const angleRad = robot.angle * Math.PI / 180;
+  if (currentChallenge === 'fun') {
+    ctx.fillStyle = COLORS[executedSteps % COLORS.length] || '#fbbf24';
+    ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = CELL_SIZE * 0.5;
+    ctx.beginPath(); ctx.arc(cx, cy, rs * 0.35, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+  } else {
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(angleRad);
+    const grad = ctx.createRadialGradient(-rs*0.2, -rs*0.2, rs*0.1, 0, 0, rs);
+    grad.addColorStop(0, '#fde68a'); grad.addColorStop(1, '#f59e0b');
+    ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(0, 0, rs, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#b45309'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#1c1917';
+    ctx.beginPath(); ctx.arc(rs * 0.35, -rs * 0.3, rs * 0.17, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(rs * 0.35, rs * 0.3, rs * 0.17, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(rs * 0.4, -rs * 0.37, rs * 0.06, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(rs * 0.4, rs * 0.23, rs * 0.06, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#1c1917'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(rs * 0.15, 0, rs * 0.25, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke();
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath(); ctx.moveTo(rs + 2, 0); ctx.lineTo(rs * 0.3, -rs * 0.4); ctx.lineTo(rs * 0.3, rs * 0.4); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  ctx.font = CELL_SIZE * (currentChallenge === 'fun' ? 0.8 : 0.7) + 'px serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(robotEmoji, cx, cy);
+}
+
+/** Draw angle arc visualization */
+function drawAngleArc(context, info) {
+  const radius = CELL_SIZE * 0.8;
+  const accentColor = getComputedStyle(document.body).getPropertyValue('--accent').trim() || '#fbbf24';
+  context.save();
+  context.strokeStyle = accentColor; context.lineWidth = 2;
+  context.globalAlpha = Math.min(1, info.timer / 10);
+  const deg = info.deg || Math.abs(info.toAngle - info.fromAngle);
+  if (deg === 0) { context.globalAlpha = 1; context.restore(); return; }
+  context.beginPath();
+  const startRad = info.fromAngle * Math.PI / 180;
+  const endRad = info.toAngle * Math.PI / 180;
+  context.arc(info.cx, info.cy, radius, startRad, endRad, info.toAngle < info.fromAngle);
+  context.stroke();
+  const midAngle = (info.fromAngle + info.toAngle) / 2;
+  const textR = radius + 12;
+  context.font = '12px sans-serif'; context.fillStyle = accentColor;
+  context.textAlign = 'center'; context.textBaseline = 'middle';
+  context.fillText(Math.abs(Math.round(deg)) + '\u00B0',
+    info.cx + Math.cos(midAngle * Math.PI / 180) * textR,
+    info.cy + Math.sin(midAngle * Math.PI / 180) * textR);
+  context.globalAlpha = 1; context.restore();
+}
+
+/** Get starting column based on position setting */
+function getStartCol() {
+  const pos = document.getElementById('startPosSelect').value;
+  if (pos === 'left') return 4;
+  if (pos === 'right') return GRID_COLS - 5;
+  if (pos === 'top') return Math.floor(GRID_COLS / 2);
+  if (pos === 'bottom') return Math.floor(GRID_COLS / 2);
+  return Math.floor(GRID_COLS / 2);
+}
+
+function getStartRow() {
+  const pos = document.getElementById('startPosSelect').value;
+  if (pos === 'top') return 4;
+  if (pos === 'bottom') return GRID_ROWS - 5;
+  if (pos === 'left') return Math.floor(GRID_ROWS / 2);
+  if (pos === 'right') return Math.floor(GRID_ROWS / 2);
+  return Math.floor(GRID_ROWS / 2);
+}
+
+/** Get ghost shape color based on current theme */
+function getGhostColor(context) {
+  return getComputedStyle(document.body).getPropertyValue('--ghost-color').trim() || 'rgba(251,191,36,0.45)';
+}
+
+/** Draw ghost square */
+function drawGhostSquare(context) {
+  // Robot starts at (sc, sr) facing UP, draws square: UP 4, RIGHT 4, DOWN 4, LEFT 4 → 5×5
+  const steps = 4, sc = getStartCol(), sr = getStartRow();
+  const c0 = sc, r0 = sr - steps, sz = steps + 1;
+  context.save(); context.strokeStyle = getGhostColor(context); context.lineWidth = 3; context.setLineDash([8, 8]);
+  context.strokeRect(c0 * CELL_SIZE, r0 * CELL_SIZE, sz * CELL_SIZE, sz * CELL_SIZE);
+  context.setLineDash([]); context.restore();
+}
+
+/** Draw ghost rectangle */
+function drawGhostRectangle(context) {
+  // UP 6, RIGHT 3, DOWN 6, LEFT 3 → 4 cols × 7 rows
+  const upSteps = 6, rightSteps = 3, sc = getStartCol(), sr = getStartRow();
+  const c0 = sc, r0 = sr - upSteps;
+  const w = rightSteps + 1, h = upSteps + 1;
+  context.save(); context.strokeStyle = getGhostColor(context); context.lineWidth = 3; context.setLineDash([8, 8]);
+  context.strokeRect(c0 * CELL_SIZE, r0 * CELL_SIZE, w * CELL_SIZE, h * CELL_SIZE);
+  context.setLineDash([]); context.restore();
+}
+
+/** Draw ghost L shape */
+function drawGhostLShape(context) {
+  // UP 6, RIGHT 3, DOWN 2 from (sc, sr)
+  const sc = getStartCol(), sr = getStartRow();
+  context.save(); context.strokeStyle = getGhostColor(context); context.lineWidth = 3; context.setLineDash([8, 8]);
+  context.beginPath();
+  context.moveTo(sc * CELL_SIZE, sr * CELL_SIZE);
+  context.lineTo(sc * CELL_SIZE, (sr - 6) * CELL_SIZE);
+  context.lineTo((sc + 3) * CELL_SIZE, (sr - 6) * CELL_SIZE);
+  context.lineTo((sc + 3) * CELL_SIZE, (sr - 4) * CELL_SIZE);
+  context.stroke(); context.setLineDash([]); context.restore();
+}
+
+/** Draw ghost stairs */
+function drawGhostStairs(context) {
+  // RIGHT 2, UP 2 × 3 from (sc, sr)
+  const sc = getStartCol(), sr = getStartRow();
+  context.save(); context.strokeStyle = getGhostColor(context); context.lineWidth = 3; context.setLineDash([8, 8]);
+  context.beginPath();
+  let x = sc, y = sr; context.moveTo(x * CELL_SIZE, y * CELL_SIZE);
+  for (let i = 0; i < 3; i++) {
+    x += 2; context.lineTo(x * CELL_SIZE, y * CELL_SIZE);
+    y -= 2; context.lineTo(x * CELL_SIZE, y * CELL_SIZE);
+  }
+  context.stroke(); context.setLineDash([]); context.restore();
+}
+
+/** Draw ghost tian (grid) character */
+function drawGhostTian(context) {
+  // Outer square: UP 6, RIGHT 6, DOWN 6, LEFT 6 → 7×7 border from (sc, sr-6) to (sc+6, sr)
+  const steps = 6, sc = getStartCol(), sr = getStartRow();
+  const c0 = sc, r0 = sr - steps, sz = steps + 1;
+  context.save(); context.strokeStyle = getGhostColor(context); context.lineWidth = 3; context.setLineDash([8, 8]);
+  context.strokeRect(c0 * CELL_SIZE, r0 * CELL_SIZE, sz * CELL_SIZE, sz * CELL_SIZE);
+  const mx = c0 + Math.floor(sz/2), my = r0 + Math.floor(sz/2);
+  context.beginPath(); context.moveTo(mx * CELL_SIZE, r0 * CELL_SIZE); context.lineTo(mx * CELL_SIZE, (r0 + sz) * CELL_SIZE); context.stroke();
+  context.beginPath(); context.moveTo(c0 * CELL_SIZE, my * CELL_SIZE); context.lineTo((c0 + sz) * CELL_SIZE, my * CELL_SIZE); context.stroke();
+  context.setLineDash([]); context.restore();
+}
+
+// ═══════════════════════════════════════════
+// Parser — Text
+// ═══════════════════════════════════════════
+/** Suggest correct command name for a typo */
+function suggestCommand(raw, mode) {
+  const isCN = mode === 'cn';
+  const keywords = isCN ? ['\u524D\u8FDB','\u5DE6\u8F6C','\u53F3\u8F6C','\u91CD\u590D','\u7ED3\u675F'] : ['forward','left','right','repeat','end'];
+  const word = raw.replace(/[\d\s]/g, '');
+  if (!word) return '';
+  let best = null, bestScore = 0;
+  keywords.forEach(kw => { const score = strSim(word, kw); if (score > bestScore && score > 0.4) { bestScore = score; best = kw; } });
+  if (best) return isCN ? ' —— 你是不是想写「' + best + '」？' : ' -- Did you mean "' + best + '"?';
+  return isCN ? ' —— 试试「前进」「左转」「右转」「重复」「结束」？' : ' -- Try "forward", "left", "right", "repeat", or "end"?';
+}
+
+/** Simple string similarity */
+function strSim(a, b) {
+  const la = a.toLowerCase(), lb = b.toLowerCase();
+  if (la === lb) return 1;
+  if (lb.includes(la) || la.includes(lb)) return 0.7;
+  let matches = 0; const shorter = la.length < lb.length ? la : lb;
+  for (let i = 0; i < shorter.length; i++) { if (la[i] === lb[i]) matches++; }
+  return matches / Math.max(la.length, lb.length);
+}
+
+/** Parse text commands into instruction tree */
+function parseText(text, mode) {
+  const isCN = mode === 'cn';
+  const patterns = isCN ? [
+    { re: /^\u524D\u8FDB\s*(\d+)\s*(\u6B65)?$/, build: m => ({type:'forward',value:Math.min(parseInt(m[1]),50)}) },
+    { re: /^\u5DE6\u8F6C(\s*(\d+)\s*\u5EA6)?$/, build: m => ({type:'left',deg:m[2]?Math.min(parseInt(m[2]),360):90}) },
+    { re: /^\u53F3\u8F6C(\s*(\d+)\s*\u5EA6)?$/, build: m => ({type:'right',deg:m[2]?Math.min(parseInt(m[2]),360):90}) },
+    { re: /^\u91CD\u590D\s*(\d+)\s*\u6B21$/, build: (m,parseBody) => ({type:'repeat',count:Math.min(parseInt(m[1]),100),body:parseBody(true)}) },
+    { re: /^\u7ED3\u675F$/, build: (_,__,inRepeat) => inRepeat ? null : {type:'end'}, isEnd: true },
+  ] : [
+    { re: /^forward\s+(\d+)$/, build: m => ({type:'forward',value:Math.min(parseInt(m[1]),50)}) },
+    { re: /^left(\s+(\d+))?$/, build: m => ({type:'left',deg:m[2]?Math.min(parseInt(m[2]),360):90}) },
+    { re: /^right(\s+(\d+))?$/, build: m => ({type:'right',deg:m[2]?Math.min(parseInt(m[2]),360):90}) },
+    { re: /^repeat\s+(\d+)$/, build: (m,parseBody) => ({type:'repeat',count:Math.min(parseInt(m[1]),100),body:parseBody(true)}) },
+    { re: /^end$/, build: (_,__,inRepeat) => inRepeat ? null : {type:'end'}, isEnd: true },
+  ];
+  const lines = text.trim().split('\n').filter(l => l.trim());
+  let i = 0;
+  return parseLines(false);
+  function parseLines(inRepeat) {
+    const local = [];
+    while (i < lines.length) {
+      const raw = isCN ? lines[i].trim() : lines[i].trim().toLowerCase();
+      if (/^[;；]/.test(raw)) { i++; continue; }
+      let matched = false;
+      for (const pat of patterns) {
+        const m = raw.match(pat.re);
+        if (!m) continue;
+        matched = true; i++;
+        if (pat.isEnd) { const result = pat.build(m, null, inRepeat); if (result === null) return local; local.push(result); }
+        else { local.push(pat.build(m, parseLines)); }
+        break;
+      }
+      if (!matched) {
+        const rawLine = lines[i].trim();
+        const tip = suggestCommand(rawLine, mode);
+        const esc = rawLine.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        throw new Error('第 ' + (i+1) + ' 行没看懂：「' + esc + '」' + tip);
+      }
+    }
+    return local;
+  }
+}
+
+// ═══════════════════════════════════════════
+// Parser — Block
+// ═══════════════════════════════════════════
+/** Parse block editor content into instruction tree with nesting validation */
+function parseBlock() {
+  const flat = [];
+  blockProgram.querySelectorAll('.block-line').forEach(line => {
+    const t = line.dataset.type;
+    if (t === 'forward') { const v = line.querySelector('.block-value'); flat.push({type:'forward',value:v?Math.min(parseInt(v.textContent)||1,50):1}); }
+    else if (t === 'left') { const v = line.querySelector('.block-value'); flat.push({type:'left',deg:v?Math.min(parseInt(v.textContent)||90,360):90}); }
+    else if (t === 'right') { const v = line.querySelector('.block-value'); flat.push({type:'right',deg:v?Math.min(parseInt(v.textContent)||90,360):90}); }
+    else if (t === 'repeat') { const v = line.querySelector('.block-value'); flat.push({type:'repeat',count:v?Math.min(parseInt(v.textContent)||2,100):2}); }
+    else if (t === 'end') { flat.push({type:'end'}); }
+  });
+  let idx = 0;
+  return parseList(0);
+  function parseList(depth) {
+    if (depth > MAX_BLOCK_NESTING) {
+      throw new Error('重复嵌套太多了（最多 ' + MAX_BLOCK_NESTING + ' 层），试试简化代码吧！');
+    }
+    const local = [];
+    while (idx < flat.length) {
+      const cmd = flat[idx];
+      if (cmd.type === 'end') { idx++; return local; }
+      if (cmd.type === 'repeat') { idx++; local.push({type:'repeat',count:cmd.count,body:parseList(depth + 1)}); }
+      else { local.push(cmd); idx++; }
+    }
+    return local;
+  }
+}
+
+// ═══════════════════════════════════════════
+// Block <-> Text conversion
+// ═══════════════════════════════════════════
+/** Convert instruction tree to text */
+function cmdsToText(cmds, indent, mode) {
+  const isCN = mode !== 'en';
+  indent = indent || 0;
+  const pad = '  '.repeat(indent);
+  let lines = [];
+  cmds.forEach(c => {
+    if (c.type === 'forward') lines.push(pad + (isCN ? '前进 ' + (c.value||1) + ' 步' : 'forward ' + (c.value||1)));
+    else if (c.type === 'left') lines.push(pad + (isCN ? '左转' + ((c.deg||90) !== 90 ? ' ' + (c.deg||90) + ' 度' : '') : 'left' + ((c.deg||90) !== 90 ? ' ' + (c.deg||90) : '')));
+    else if (c.type === 'right') lines.push(pad + (isCN ? '右转' + ((c.deg||90) !== 90 ? ' ' + (c.deg||90) + ' 度' : '') : 'right' + ((c.deg||90) !== 90 ? ' ' + (c.deg||90) : '')));
+    else if (c.type === 'repeat') {
+      lines.push(pad + (isCN ? '重复 ' + (c.count||2) + ' 次' : 'repeat ' + (c.count||2)));
+      if (c.body && c.body.length > 0) lines = lines.concat(cmdsToText(c.body, indent + 1, mode));
+      lines.push(pad + (isCN ? '结束' : 'end'));
+    }
+  });
+  return lines.join('\n');
+}
+
+/** Convert instruction tree to block editor content */
+function cmdsToBlocks(cmds) {
+  clearBlocks();
+  function addCmds(list, depth) {
+    list.forEach(c => {
+      if (c.type === 'repeat') { addBlockWithValue('repeat', c.count || 2, depth); if (c.body) addCmds(c.body, depth + 1); addBlockAtDepth('end', depth); }
+      else if (c.type === 'forward') addBlockWithValue('forward', c.value || 1, depth);
+      else if (c.type === 'left') addBlockWithValue('left', c.deg || 90, depth);
+      else if (c.type === 'right') addBlockWithValue('right', c.deg || 90, depth);
+    });
+  }
+  addCmds(cmds, 0);
+  updateBlockNesting();
+}
+
+/** Convert block editor content to text */
+function blocksToText() {
+  try { const cmds = parseBlock(); return cmdsToText(cmds, 0, currentMode === 'en' ? 'en' : 'cn'); }
+  catch(e) { return ''; }
+}
+
+// ═══════════════════════════════════════════
+// Flatten
+// ═══════════════════════════════════════════
+/** Flatten nested instruction tree to linear sequence */
+function flattenCommands(cmds) {
+  const flat = [];
+  function walk(list) { list.forEach(c => { if (c.type === 'repeat') { for (let i = 0; i < c.count; i++) walk(c.body); } else { flat.push(c); } }); }
+  walk(cmds);
+  return flat;
+}
+
+// ═══════════════════════════════════════════
+// Animation Engine
+// ═══════════════════════════════════════════
+/** Get milliseconds per step based on current speed */
+function getSpeedMs() { return {1:600, 2:350, 3:200, 4:100, 5:40}[animSpeed] || 200; }
+
+/** Ensure the grid is large enough to contain the given column and row */
+function ensureGridSize(col, row) {
+  const margin = 3;
+  let needCols = GRID_COLS;
+  let needRows = GRID_ROWS;
+  let colShift = 0;
+  let rowShift = 0;
+  if (col < 0) { colShift = Math.ceil(Math.abs(col)) + margin; needCols += colShift; }
+  if (row < 0) { rowShift = Math.ceil(Math.abs(row)) + margin; needRows += rowShift; }
+  if (col >= needCols) needCols = col + margin + 1;
+  if (row >= needRows) needRows = row + margin + 1;
+  if (needCols === GRID_COLS && needRows === GRID_ROWS) return;
+  // Shift existing trail data if grid expanded in negative direction
+  if (colShift > 0 || rowShift > 0) {
+    trail.forEach(t => { t.col += colShift; t.row += rowShift; });
+    trailSegments.forEach(s => {
+      s.x1 += colShift * CELL_SIZE; s.y1 += rowShift * CELL_SIZE;
+      s.x2 += colShift * CELL_SIZE; s.y2 += rowShift * CELL_SIZE;
+    });
+    robot.col += colShift;
+    robot.row += rowShift;
+  }
+  GRID_COLS = needCols;
+  GRID_ROWS = needRows;
+  invalidateCache();
+  resizeCanvas();
+  // Note: status message will be set by caller (runCommands)
+}
+
+/** Reset robot position and state */
+function resetRobot() {
+  const pos = document.getElementById('startPosSelect').value;
+  const margin = 4;
+  let col, row;
+  if (pos === 'left')   { col = margin;              row = Math.floor(GRID_ROWS/2); }
+  else if (pos === 'right') { col = GRID_COLS-1-margin; row = Math.floor(GRID_ROWS/2); }
+  else if (pos === 'top')   { col = Math.floor(GRID_COLS/2); row = margin; }
+  else if (pos === 'bottom'){ col = Math.floor(GRID_COLS/2); row = GRID_ROWS-1-margin; }
+  else                       { col = Math.floor(GRID_COLS/2); row = Math.floor(GRID_ROWS/2); }
+  robot = { col, row, angle: 270 };
+  trail = []; trailSegments = [];
+  totalSteps = 0; executedSteps = 0;
+  turnAngleDisplay = null;
+}
+
+/** Fill trail cells with soft boundary clamping (for mid-animation) */
+function fillTrailCells(c0, r0, c1, r1, color) {
+  const cells = [];
+  const dist = Math.sqrt((c1-c0)**2 + (r1-r0)**2);
+  const steps = Math.max(1, Math.ceil(dist * 2));
+  for (let s = 1; s <= steps; s++) {
+    const t = s / steps;
+    const col = Math.round(c0 + (c1 - c0) * t);
+    const row = Math.round(r0 + (r1 - r0) * t);
+    if (cells.length === 0 || cells[cells.length-1].col !== col || cells[cells.length-1].row !== row) cells.push({col, row});
+  }
+  cells.forEach(c => { trail.push({col: c.col, row: c.row, color}); if (trail.length > MAX_TRAIL_LENGTH) trail.shift(); });
+}
+
+/** Execute command sequence with animation */
+async function runCommands(cmds) {
+  if (isRunning) return;
+  isRunning = true; btnRun.classList.add('running'); btnRun.textContent = '\u23F9 停止'; executedSteps = 0;
+  maxReachedCol = 0; maxReachedRow = 0; minReachedCol = 0; minReachedRow = 0;
+  const thisRunId = ++currentRunId;
+  const flat = flattenCommands(cmds);
+  totalSteps = flat.reduce((sum, cmd) => { if (cmd.type === 'forward') return sum + (cmd.value || 1); if (cmd.type === 'end') return sum; return sum + 1; }, 0);
+  statusMsg.textContent = '\u{1F680} 执行中 (共 ' + totalSteps + ' 步)...';
+  progressBar.classList.add('show');
+  collapseHintPanel();
+  clearHighlights();
+  for (let fi = 0; fi < flat.length; fi++) {
+    if (!isRunning || currentRunId !== thisRunId) break;
+    showStepStatus(fi, flat);
+    await executeStep(flat[fi], thisRunId);
+    await sleep(getSpeedMs());
+  }
+  clearHighlights();
+  progressBar.classList.remove('show');
+  progressBarFill.style.width = '0%';
+  // Expand grid after all commands finish based on tracked extremes
+  const prevCols = GRID_COLS, prevRows = GRID_ROWS;
+  ensureGridSize(maxReachedCol, maxReachedRow);
+  ensureGridSize(minReachedCol, minReachedRow);
+  const expanded = (GRID_COLS !== prevCols || GRID_ROWS !== prevRows);
+  if (isRunning && currentRunId === thisRunId) {
+    let msg = '\u2705 执行完成！共 ' + executedSteps + ' 步';
+    if (expanded) msg += ' | 画布已扩展至 ' + GRID_COLS + '\u00D7' + GRID_ROWS;
+    statusMsg.textContent = msg;
+    if (currentChallenge !== 'free' && currentChallenge !== 'fun') { await sleep(300); checkChallengeCompletion(); }
+  }
+  isRunning = false; btnRun.classList.remove('running'); btnRun.textContent = '\u25B6 运行';
+}
+
+/** Execute a single step */
+function executeStep(cmd, runId) {
+  return new Promise(resolve => {
+    if (cmd.type === 'forward') {
+      const steps = cmd.value || 1;
+      const angleRad = robot.angle * Math.PI / 180;
+      const dCol = Math.cos(angleRad), dRow = Math.sin(angleRad);
+      const startCol = robot.col, startRow = robot.row;
+      const subInterval = getSpeedMs() / Math.max(steps, 1);
+      let stepped = 0, lastTime = 0;
+      function animStep(ts) {
+        if (!isRunning || runId !== currentRunId || stepped >= steps) { draw(); resolve(); return; }
+        if (ts - lastTime >= subInterval || stepped === 0) {
+          stepped++;
+          const prevCol = robot.col, prevRow = robot.row;
+          robot.col = startCol + dCol * stepped;
+          robot.row = startRow + dRow * stepped;
+          // Track raw position before clamping (for grid expansion)
+          if (robot.col > maxReachedCol) maxReachedCol = robot.col;
+          if (robot.row > maxReachedRow) maxReachedRow = robot.row;
+          if (robot.col < minReachedCol) minReachedCol = robot.col;
+          if (robot.row < minReachedRow) minReachedRow = robot.row;
+          const colorIdx = executedSteps % COLORS.length;
+          executedSteps++;
+          if (currentChallenge === 'fun') {
+            trailSegments.push({ x1: prevCol * CELL_SIZE + CELL_SIZE/2, y1: prevRow * CELL_SIZE + CELL_SIZE/2, x2: robot.col * CELL_SIZE + CELL_SIZE/2, y2: robot.row * CELL_SIZE + CELL_SIZE/2, color: COLORS[colorIdx] });
+          } else { fillTrailCells(prevCol, prevRow, robot.col, robot.row, COLORS[colorIdx]); }
+          // Clamp robot to current grid during animation
+          robot.col = Math.max(0, Math.min(GRID_COLS - 1, robot.col));
+          robot.row = Math.max(0, Math.min(GRID_ROWS - 1, robot.row));
+          const pct = totalSteps > 0 ? Math.min(100, Math.round((executedSteps / totalSteps) * 100)) : 0;
+          progressBarFill.style.width = pct + '%';
+          progressBar.setAttribute('aria-valuenow', pct);
+          lastTime = ts;
+        }
+        draw();
+        if (stepped < steps) requestAnimationFrame(animStep); else resolve();
+      }
+      requestAnimationFrame(animStep);
+    } else if (cmd.type === 'left') {
+      const fromAngle = robot.angle;
+      const deg = cmd.deg || 90;
+      robot.angle = (robot.angle - deg + 360) % 360;
+      executedSteps++;
+      const cx = robot.col * CELL_SIZE + CELL_SIZE / 2, cy = robot.row * CELL_SIZE + CELL_SIZE / 2;
+      turnAngleDisplay = { cx, cy, fromAngle, toAngle: fromAngle - deg, deg, timer: 20 };
+      fadeAngleArc(); draw();
+      setTimeout(resolve, getSpeedMs() * 0.4);
+    } else if (cmd.type === 'right') {
+      const fromAngle = robot.angle;
+      const deg = cmd.deg || 90;
+      robot.angle = (robot.angle + deg) % 360;
+      executedSteps++;
+      const cx = robot.col * CELL_SIZE + CELL_SIZE / 2, cy = robot.row * CELL_SIZE + CELL_SIZE / 2;
+      turnAngleDisplay = { cx, cy, fromAngle, toAngle: fromAngle + deg, deg, timer: 20 };
+      fadeAngleArc(); draw();
+      setTimeout(resolve, getSpeedMs() * 0.4);
+    } else { resolve(); }
+  });
+}
+
+/** Fade angle arc animation */
+function fadeAngleArc() {
+  if (!turnAngleDisplay) return;
+  turnAngleDisplay.timer--;
+  if (turnAngleDisplay.timer > 0) { draw(); requestAnimationFrame(fadeAngleArc); }
+  else { turnAngleDisplay = null; draw(); }
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+/** Show current step status in status bar */
+function showStepStatus(flatIdx, flat) {
+  const cmd = flat[flatIdx];
+  const namesCN = {forward:'前进', left:'左转', right:'右转'};
+  const namesEN = {forward:'forward', left:'left', right:'right'};
+  const names = currentMode === 'en' ? namesEN : namesCN;
+  const name = names[cmd.type] || cmd.type;
+  let detail = name;
+  if (cmd.type === 'forward') detail = name + ' ' + cmd.value;
+  else if ((cmd.type==='left'||cmd.type==='right') && (cmd.deg||90) !== 90) detail = name + ' ' + (cmd.deg||90) + '\u00B0';
+  statusMsg.textContent = '\u25B6 ' + detail + ' (' + (executedSteps+1) + '/' + totalSteps + ')';
+}
+
+/** Clear block execution highlights */
+function clearHighlights() {
+  blockProgram.querySelectorAll('.block-line.executing').forEach(el => el.classList.remove('executing'));
+}
+
+// ═══════════════════════════════════════════
+// Challenge Completion Check
+// ═══════════════════════════════════════════
+/** Get target shape cell set for a challenge */
+function getTargetCells(challenge) {
+  const cells = new Set();
+  const sc = getStartCol(), sr = getStartRow();
+  // Robot starts at (sc, sr) facing UP (angle 270°): cos(270)=0, sin(270)=-1 → row decreases
+  if (challenge === 'square') {
+    // Square: UP 4, RIGHT 4, DOWN 4, LEFT 4 → 5×5 border from (sc, sr-4) to (sc+4, sr)
+    const steps = 4, c0 = sc, r0 = sr - steps, sz = steps + 1;
+    for (let c = c0; c < c0 + sz; c++) { cells.add(c+','+r0); cells.add(c+','+(r0+sz-1)); }
+    for (let r = r0; r < r0 + sz; r++) { cells.add(c0+','+r); cells.add((c0+sz-1)+','+r); }
+  } else if (challenge === 'rectangle') {
+    // Rectangle: UP 6, RIGHT 3, DOWN 6, LEFT 3 → 4 cols × 7 rows border
+    const upSteps = 6, rightSteps = 3, c0 = sc, r0 = sr - upSteps;
+    const w = rightSteps + 1, h = upSteps + 1;
+    for (let c = c0; c < c0 + w; c++) { cells.add(c+','+r0); cells.add(c+','+(r0+h-1)); }
+    for (let r = r0; r < r0 + h; r++) { cells.add(c0+','+r); cells.add((c0+w-1)+','+r); }
+  } else if (challenge === 'lshape') {
+    // UP 6, RIGHT 3, DOWN 2 → starting from (sc, sr) going up
+    for (let r = sr; r >= sr - 6; r--) cells.add(sc+','+r);
+    for (let c = sc + 1; c <= sc + 3; c++) cells.add(c+','+(sr-6));
+    for (let r = sr - 6 + 1; r <= sr - 6 + 2; r++) cells.add((sc+3)+','+r);
+  } else if (challenge === 'stairs') {
+    // Stairs: RIGHT 2, UP 2, RIGHT 2, UP 2, RIGHT 2, UP 2
+    let x = sc, y = sr;
+    for (let i = 0; i < 3; i++) {
+      for (let s = 0; s < 2; s++) { x++; cells.add(x+','+y); }
+      for (let s = 0; s < 2; s++) { y--; cells.add(x+','+y); }
+    }
+  } else if (challenge === 'tian') {
+    // Tian: outer square UP 6, RIGHT 6, DOWN 6, LEFT 6 → 7×7 border, then cross inside
+    const steps = 6, c0 = sc, r0 = sr - steps, sz = steps + 1;
+    for (let c = c0; c < c0 + sz; c++) { cells.add(c+','+r0); cells.add(c+','+(r0+sz-1)); }
+    for (let r = r0; r < r0 + sz; r++) { cells.add(c0+','+r); cells.add((c0+sz-1)+','+r); }
+    const mx = c0 + Math.floor(sz/2), my = r0 + Math.floor(sz/2);
+    for (let r = r0; r < r0 + sz; r++) cells.add(mx+','+r);
+    for (let c = c0; c < c0 + sz; c++) cells.add(c+','+my);
+  }
+  return cells;
+}
+
+/** Check if challenge is completed */
+function checkChallengeCompletion() {
+  const target = getTargetCells(currentChallenge);
+  if (target.size === 0) return;
+  const trailSet = new Set();
+  trail.forEach(t => trailSet.add(t.col + ',' + t.row));
+  let matched = 0;
+  target.forEach(cell => { if (trailSet.has(cell)) matched++; });
+  const coverage = matched / target.size;
+  let excess = 0;
+  trailSet.forEach(cell => { if (!target.has(cell)) excess++; });
+  const excessRatio = excess / Math.max(trailSet.size, 1);
+  if (coverage > 0.7 && excessRatio < 0.3) { statusMsg.textContent = '\u{1F389} 太棒了！挑战成功！覆盖率 ' + Math.round(coverage * 100) + '%'; }
+  else { statusMsg.textContent = '\u{1F614} 还差一点！覆盖率 ' + Math.round(coverage * 100) + '%，再试试吧！'; }
+}
+
+// ═══════════════════════════════════════════
+// Syntax Checker + Auto-fix
+// ═══════════════════════════════════════════
+/** Validate and auto-fix code */
+function validateAndFix(text, mode) {
+  const changes = [];
+  let fixed = text;
+  if (mode === 'block') {
+    const lines = blockProgram.querySelectorAll('.block-line');
+    let depth = 0;
+    lines.forEach(l => { if (l.dataset.type === 'repeat') depth++; else if (l.dataset.type === 'end') depth--; });
+    while (depth > 0) { addBlock('end'); depth--; changes.push('自动补全：缺少「结束」积木，已添加'); }
+    return { fixed: '', changes };
+  }
+  const isCN = mode === 'cn';
+  const trimmed = fixed.trim();
+  if (trimmed !== fixed) { fixed = trimmed; changes.push('已去除首尾空行'); }
+  const typos = isCN ? [
+    [/前近/g,'前进'],[/千进/g,'前进'],[/钱进/g,'前进'],
+    [/佐转/g,'左转'],[/昨转/g,'左转'],
+    [/佑转/g,'右转'],[/友转/g,'右转'],[/又转/g,'右转'],
+    [/从复/g,'重复'],[/重覆/g,'重复'],[/重服/g,'重复'],
+    [/结速/g,'结束'],[/结朿/g,'结束'],[/杰数/g,'结束'],
+  ] : [
+    [/forword/g,'forward'],[/forwad/g,'forward'],[/foward/g,'forward'],
+    [/leftt/g,'left'],[/\brigh\b/g,'right'],[/rigth/g,'right'],
+    [/repat/g,'repeat'],[/repeet/g,'repeat'],
+  ];
+  typos.forEach(([re, to]) => { const before = fixed; fixed = fixed.replace(re, to); if (fixed !== before) changes.push('自动修正：错别字已更正'); });
+  let lines = fixed.split('\n');
+  lines = lines.filter((l, i) => l.trim() || (i > 0 && i < lines.length - 1));
+  if (isCN) {
+    lines = lines.map(l => {
+      const t = l.trim();
+      const indent = l.slice(0, l.length - l.trimStart().length);
+      let s = t;
+      s = s.replace(/^前进\s*(\d+)\s*步?$/, '前进 $1 步');
+      s = s.replace(/^左转\s*(\d+)\s*度?$/, '左转 $1 度');
+      s = s.replace(/^右转\s*(\d+)\s*度?$/, '右转 $1 度');
+      s = s.replace(/^重复\s*(\d+)\s*次?$/, '重复 $1 次');
+      s = s.replace(/^前进(\d+)/, '前进 $1');
+      s = s.replace(/^左转(\d+)/, '左转 $1');
+      s = s.replace(/^右转(\d+)/, '右转 $1');
+      s = s.replace(/^重复(\d+)/, '重复 $1');
+      if (s !== t) {
+        if (!changes.some(c => c.includes('自动补全'))) changes.push('自动补全：已补全缺失的单位词和空格');
+        return indent + s;
+      }
+      return l;
+    });
+  } else {
+    lines = lines.map(l => {
+      const t = l.trim();
+      const indent = l.slice(0, l.length - l.trimStart().length);
+      let s = t.toLowerCase();
+      s = s.replace(/^forward(\d+)/, 'forward $1');
+      s = s.replace(/^left(\d+)/, 'left $1');
+      s = s.replace(/^right(\d+)/, 'right $1');
+      s = s.replace(/^repeat(\d+)/, 'repeat $1');
+      if (s !== t.toLowerCase()) {
+        if (!changes.some(c => c.includes('自动补全'))) changes.push('自动补全：已补全缺失的空格');
+        return indent + s;
+      }
+      return l;
+    });
+  }
+  let repeatCount = 0, endCount = 0;
+  const repeatRegex = isCN ? /^重复\s+\d+\s*次$/ : /^repeat\s+\d+$/;
+  const endRegex = isCN ? /^结束$/ : /^end$/;
+  lines.forEach(l => { const t = l.trim(); if (repeatRegex.test(t)) repeatCount++; else if (endRegex.test(t)) endCount++; });
+  if (repeatCount > endCount) {
+    const missing = repeatCount - endCount;
+    const endLine = isCN ? '结束' : 'end';
+    for (let i = 0; i < missing; i++) lines.push(endLine);
+    changes.push('自动补全：缺少 ' + missing + ' 个「' + endLine + '」，已添加到末尾');
+  }
+  fixed = lines.join('\n').replace(/\n{3,}/g, '\n\n');
+  return { fixed, changes };
+}
+
+// ═══════════════════════════════════════════
+// Confirm Dialog
+// ═══════════════════════════════════════════
+let confirmResolver = null;
+let _lastFocusedElement = null;
+
+/** Show confirm dialog (replaces native confirm) */
+function showConfirm(message) {
+  return new Promise(resolve => {
+    confirmResolver = resolve;
+    _lastFocusedElement = document.activeElement;
+    document.getElementById('confirmMsg').textContent = message;
+    document.getElementById('confirmOverlay').classList.add('show');
+    document.getElementById('confirmYes').focus();
+  });
+}
+
+document.getElementById('confirmYes').addEventListener('click', () => {
+  document.getElementById('confirmOverlay').classList.remove('show');
+  if (confirmResolver) { confirmResolver(true); confirmResolver = null; }
+  if (_lastFocusedElement) _lastFocusedElement.focus();
+});
+document.getElementById('confirmNo').addEventListener('click', () => {
+  document.getElementById('confirmOverlay').classList.remove('show');
+  if (confirmResolver) { confirmResolver(false); confirmResolver = null; }
+  if (_lastFocusedElement) _lastFocusedElement.focus();
+});
+
+// ═══════════════════════════════════════════
+// Modal Management (unified)
+// ═══════════════════════════════════════════
+let _modalScrollY = 0;
+let _modalTriggerEl = null;
+
+/** Open a modal dialog */
+function openModal(id) {
+  _modalScrollY = window.scrollY;
+  _modalTriggerEl = document.activeElement;
+  const el = document.getElementById(id);
+  el.classList.add('show');
+  document.body.style.position = 'fixed';
+  document.body.style.top = '-' + _modalScrollY + 'px';
+  document.body.style.width = '100%';
+  // Scroll modal content to top with proper timing
+  setTimeout(() => {
+    const modalBox = el.querySelector('.modal-box');
+    if (modalBox) {
+      modalBox.scrollTop = 0;
+      modalBox.scrollTo(0, 0);
+    }
+  }, 50);
+  setTimeout(() => {
+    const focusable = el.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (focusable) focusable.focus();
+  }, 100);
+}
+
+/** Close a modal dialog */
+function closeModal(id) {
+  const el = document.getElementById(id);
+  el.classList.remove('show');
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.width = '';
+  window.scrollTo(0, _modalScrollY);
+  if (_modalTriggerEl && _modalTriggerEl.focus) _modalTriggerEl.focus();
+}
+
+/** Show quiz answer in modalSummary */
+function showQuizAnswer(n) {
+  const el = document.getElementById('quiz-answer-' + n);
+  if (el) el.style.display = 'block';
+}
+
+// ═══════════════════════════════════════════
+// Actions
+// ═══════════════════════════════════════════
+/** Run current code */
+async function run() {
+  if (isRunning) { stopRun(); return; }
+  resetRobot(); invalidateCache(); draw();
+  const { fixed, changes } = validateAndFix(currentMode === 'block' ? '' : codeEditor.value, currentMode);
+  if (changes.length > 0) {
+    if (currentMode !== 'block') setEditorValue(fixed);
+    statusMsg.textContent = '\u{1F527} ' + changes.join('；');
+  }
+  if (currentMode === 'block' && changes.length > 0) statusMsg.textContent = '\u{1F527} ' + changes.join('；');
+  let parsed;
+  try {
+    if (currentMode === 'cn' || currentMode === 'en') parsed = parseText(currentMode === 'block' ? '' : codeEditor.value, currentMode);
+    else parsed = parseBlock();
+  } catch (e) { statusMsg.textContent = '\u274C ' + (e.message || '指令格式有误，请检查'); return; }
+  if (!parsed || parsed.length === 0) { statusMsg.textContent = '\u26A0\uFE0F 请先输入指令再运行'; return; }
+  if (flattenCommands(parsed).length === 0) { statusMsg.textContent = '\u26A0\uFE0F 指令解析为空，请检查'; return; }
+  runCommands(parsed);
+}
+
+/** Reset canvas with confirmation */
+function reset() {
+  if (isRunning) { stopRun(); return; }
+  resetRobot(); invalidateCache(); draw(); clearHighlights();
+  statusMsg.textContent = '准备就绪';
+}
+
+/** Stop running */
+function stopRun() {
+  isRunning = false; btnRun.classList.remove('running'); btnRun.textContent = '\u25B6 运行'; clearHighlights();
+  progressBar.classList.remove('show');
+  progressBarFill.style.width = '0%';
+  statusMsg.textContent = '\u23F9 已停止';
+}
+
+// ═══════════════════════════════════════════
+// Mode Switching (with code sync)
+// ═══════════════════════════════════════════
+/** Switch editor mode, syncing code between modes */
+function setMode(mode) {
+  const prevMode = currentMode;
+  currentMode = mode;
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  textEditorArea.style.display = mode === 'block' ? 'none' : 'flex';
+  blockEditorArea.style.display = mode === 'block' ? 'flex' : 'none';
+  // Sync code between modes
+  if (currentSolution && currentSolution.length > 0) {
+    if (mode === 'block') {
+      clearBlocks();
+      try { cmdsToBlocks(currentSolution); } catch(e) { clearBlocks(); }
+    } else {
+      setEditorValue(cmdsToText(currentSolution, 0, mode));
+      clearBlocks();
+    }
+  } else if (mode === 'block' && prevMode !== 'block') {
+    const text = codeEditor.value.trim();
+    if (text) { try { const cmds = parseText(text, prevMode === 'en' ? 'en' : 'cn'); cmdsToBlocks(cmds); } catch(e) { clearBlocks(); } }
+    else clearBlocks();
+  } else if (mode !== 'block' && prevMode === 'block') {
+    setEditorValue(blocksToText());
+  }
+  // Update placeholder and help text
+  if (mode === 'cn') {
+    codeEditor.placeholder = '在这里写指令...\n例如：\n前进 3 步\n右转\n前进 2 步\n重复 4 次\n  前进 1 步\n  右转\n结束';
+    helpCmds.textContent = '指令: 前进N步 | 左转N度 | 右转N度 | 重复N次 ... 结束';
+  } else if (mode === 'en') {
+    codeEditor.placeholder = 'Write commands...\nExample:\nforward 3\nright\nforward 2\nrepeat 4\n  forward 1\n  right\nend';
+    helpCmds.textContent = 'Commands: forward N | left N | right N | repeat N ... end';
+  }
+  if (mode === 'block') hideHintPanel();
+  else if (currentChallenge === 'fun') { hideHintPanel(); }
+  else if (currentChallenge !== 'free') loadHintForChallenge(currentChallenge);
+  else hideHintPanel();
+  draw(); savePreferences();
+}
+
+// ═══════════════════════════════════════════
+// Block Editor
+// ═══════════════════════════════════════════
+/** Add a block to the block editor */
+function addBlock(type) {
+  addBlockWithValue(type, type === 'forward' ? 3 : type === 'repeat' ? 4 : 90, -1);
+  updateBlockNesting();
+}
+
+/** Add a block with specified value */
+function addBlockWithValue(type, value, depth) {
+  const empty = blockProgram.querySelector('.block-empty');
+  if (empty) empty.remove();
+  const line = document.createElement('div');
+  line.className = 'block-line type-' + type;
+  line.dataset.type = type;
+  line.setAttribute('role', 'listitem');
+  line.draggable = true;
+  line.addEventListener('dragstart', handleDragStart);
+  line.addEventListener('touchstart', handleTouchStart, {passive: false});
+  line.addEventListener('touchmove', handleTouchMove, {passive: false});
+  line.addEventListener('touchend', handleTouchEnd);
+  const content = document.createElement('span');
+  content.className = 'block-line-content';
+  const labels = {
+    forward: '\u2B06 前进 <span class="block-value" contenteditable="true">' + value + '</span> 步',
+    left: '\u2B05 左转 <span class="block-value" contenteditable="true">' + value + '</span> 度',
+    right: '\u27A1 右转 <span class="block-value" contenteditable="true">' + value + '</span> 度',
+    repeat: '\u{1F501} 重复 <span class="block-value" contenteditable="true">' + value + '</span> 次',
+    end: '\u23F9 结束',
+  };
+  content.innerHTML = labels[type] || type;
+  const delBtn = document.createElement('button');
+  delBtn.className = 'block-delete';
+  delBtn.textContent = '\u2715';
+  delBtn.setAttribute('aria-label', '删除该积木');
+  delBtn.addEventListener('click', () => {
+    currentSolution = null;
+    pushBlockUndo();
+    line.remove();
+    if (blockProgram.children.length === 0) blockProgram.innerHTML = '<div class="block-empty">\u2728 点一点上面的彩色积木，开始你的创作吧！</div>';
+    updateBlockNesting();
+  });
+  line.appendChild(content); line.appendChild(delBtn);
+  blockProgram.appendChild(line);
+  line.querySelectorAll('.block-value').forEach(el => {
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+      if (!/^\d$/.test(e.key) && !e.ctrlKey && !e.metaKey && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Tab' && e.key !== '-') e.preventDefault();
+    });
+    el.addEventListener('paste', e => {
+      e.preventDefault();
+      const text = (e.clipboardData || window.clipboardData).getData('text');
+      document.execCommand('insertText', false, text.replace(/[^\d-]/g, ''));
+    });
+    el.addEventListener('blur', () => {
+      const v = parseInt(el.textContent);
+      if (isNaN(v) || v < 1) el.textContent = '1';
+      else if (type==='forward' && v>50) el.textContent='50';
+      else if ((type==='left'||type==='right') && v>360) el.textContent='360';
+      else if (type==='repeat' && v>100) el.textContent='100';
+      currentSolution = null;
+      pushBlockUndo();
+    });
+  });
+}
+
+/** Add block at specific depth */
+function addBlockAtDepth(type, depth) { addBlockWithValue(type, type === 'repeat' ? 4 : 90, depth); }
+
+/** Update block nesting visual indentation */
+function updateBlockNesting() {
+  const lines = blockProgram.querySelectorAll('.block-line');
+  let depth = 0;
+  lines.forEach(line => {
+    const t = line.dataset.type;
+    line.classList.remove('nested', 'nested-2', 'nested-3');
+    if (t === 'repeat') {
+      if (depth > 0) line.classList.add(depth >= 3 ? 'nested-3' : depth >= 2 ? 'nested-2' : 'nested');
+      depth++;
+    } else if (t === 'end') {
+      depth = Math.max(0, depth - 1);
+      if (depth > 0) line.classList.add(depth >= 3 ? 'nested-3' : depth >= 2 ? 'nested-2' : 'nested');
+    } else {
+      if (depth > 0) line.classList.add(depth >= 3 ? 'nested-3' : depth >= 2 ? 'nested-2' : 'nested');
+    }
+  });
+}
+
+// Block undo stack
+let blockUndoStack = [];
+const MAX_BLOCK_UNDO = 40;
+
+/** Push current block state onto undo stack */
+function pushBlockUndo() {
+  const state = getBlockState();
+  if (blockUndoStack.length >= MAX_BLOCK_UNDO) blockUndoStack.shift();
+  blockUndoStack.push(state);
+}
+
+/** Get current block editor state as string */
+function getBlockState() {
+  const lines = blockProgram.querySelectorAll('.block-line');
+  const state = [];
+  lines.forEach(l => { const t = l.dataset.type; const v = l.querySelector('.block-value'); state.push({ type: t, value: v ? v.textContent : null }); });
+  return JSON.stringify(state);
+}
+
+/** Restore block editor from saved state */
+function restoreBlockState(stateStr) {
+  const state = JSON.parse(stateStr);
+  clearBlocks();
+  state.forEach(item => {
+    if (item.type === 'end') addBlock('end');
+    else { const val = item.value ? parseInt(item.value) : (item.type === 'forward' ? 3 : item.type === 'repeat' ? 4 : 90); addBlockWithValue(item.type, val, -1); }
+  });
+  updateBlockNesting();
+}
+
+// Block drag-and-drop
+let dragSrcEl = null;
+
+/** Handle drag start */
+function handleDragStart(e) {
+  if (e.target.isContentEditable) { e.preventDefault(); return; }
+  pushBlockUndo();
+  dragSrcEl = this; this.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', '');
+}
+
+blockProgram.addEventListener('dragover', e => {
+  e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+  const target = e.target.closest('.block-line');
+  if (target && target !== dragSrcEl) { blockProgram.querySelectorAll('.block-line.drag-over').forEach(el => el.classList.remove('drag-over')); target.classList.add('drag-over'); }
+});
+
+blockProgram.addEventListener('drop', e => {
+  e.preventDefault(); e.stopPropagation();
+  blockProgram.querySelectorAll('.block-line.drag-over').forEach(el => el.classList.remove('drag-over'));
+  const target = e.target.closest('.block-line');
+  if (dragSrcEl && target && target !== dragSrcEl) { target.parentNode.insertBefore(dragSrcEl, target); updateBlockNesting(); }
+});
+
+blockProgram.addEventListener('dragend', () => {
+  if (dragSrcEl) dragSrcEl.classList.remove('dragging');
+  blockProgram.querySelectorAll('.block-line.drag-over').forEach(el => el.classList.remove('drag-over'));
+  dragSrcEl = null;
+});
+
+// Touch drag support
+let touchDragEl = null;
+
+/** Handle touch start for block dragging */
+function handleTouchStart(e) {
+  if (e.target.isContentEditable) return;
+  touchDragEl = this; pushBlockUndo();
+}
+
+/** Handle touch move for block dragging */
+function handleTouchMove(e) {
+  if (!touchDragEl) return;
+  e.preventDefault();
+  blockProgram.querySelectorAll('.block-line.drag-over').forEach(el => el.classList.remove('drag-over'));
+  const target = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+  if (target) { const line = target.closest('.block-line'); if (line && line !== touchDragEl) line.classList.add('drag-over'); }
+}
+
+/** Handle touch end for block dropping */
+function handleTouchEnd(e) {
+  if (!touchDragEl) return;
+  blockProgram.querySelectorAll('.block-line.drag-over').forEach(el => el.classList.remove('drag-over'));
+  const target = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+  if (target) { const line = target.closest('.block-line'); if (line && line !== touchDragEl) { line.parentNode.insertBefore(touchDragEl, line); updateBlockNesting(); } }
+  touchDragEl = null;
+}
+
+/** Clear all blocks */
+function clearBlocks() { blockProgram.innerHTML = '<div class="block-empty">\u2728 点一点上面的彩色积木，开始你的创作吧！</div>'; blockUndoStack = []; }
+
+// ═══════════════════════════════════════════
+// Challenge Presets
+// ═══════════════════════════════════════════
+const CHALLENGE_SOLUTIONS = {
+  square: {
+    label: '挑战1：画正方形 — 用"前进+右转+重复"',
+    cn: '重复 4 次\n  前进 4 步\n  右转\n结束',
+    en: 'repeat 4\n  forward 4\n  right\nend',
+    hints: ['正方形有 <b>4 条边</b>，每条边一样长。','画一条边 = <b>前进 4 步</b>，然后 <b>右转 90 度</b>。','4 条边都一样 → 用 <b>重复 4 次</b> 把「前进 + 右转」包起来。','试试写：<br><b>重复 4 次</b><br>　前进 4 步<br>　右转<br><b>结束</b>'],
+  },
+  rectangle: {
+    label: '挑战2：画长方形 — 长和宽不一样的四边形',
+    cn: '重复 2 次\n  前进 6 步\n  右转\n  前进 3 步\n  右转\n结束',
+    en: 'repeat 2\n  forward 6\n  right\n  forward 3\n  right\nend',
+    hints: ['长方形有 4 条边，但相邻的边长度不同。','一组 = <b>前进 6 步 + 右转 + 前进 3 步 + 右转</b>','重复 2 次就能画完！','试试：<br><b>重复 2 次</b><br>　前进 6 步<br>　右转<br>　前进 3 步<br>　右转<br><b>结束</b>'],
+  },
+  lshape: {
+    label: '挑战3：画折线形 — 练习不同方向的组合',
+    cn: '前进 6 步\n右转\n前进 3 步\n右转\n前进 2 步',
+    en: 'forward 6\nright\nforward 3\nright\nforward 2',
+    hints: ['折线形分三段：先往上走，再往右走，再往下走。','第一段：<b>前进 6 步</b>（向上）','第二段：<b>右转 → 前进 3 步</b>（向右）','第三段：<b>右转 → 前进 2 步</b>（向下）'],
+  },
+  stairs: {
+    label: '挑战4：画楼梯 — 试试左转和右转的组合',
+    cn: '重复 3 次\n  右转\n  前进 2 步\n  左转\n  前进 2 步\n结束',
+    en: 'repeat 3\n  right\n  forward 2\n  left\n  forward 2\nend',
+    hints: ['一级楼梯 = <b>往右走 2 格</b>，再 <b>往上走 2 格</b>。','往右走之前，要先 <b>右转 90 度</b>。<br>往上走之前，要先 <b>左转 90 度</b>（回到朝上）。','一级楼梯 = <b>右转 → 前进 2 → 左转 → 前进 2</b>。','楼梯有 3 级 → 用 <b>重复 3 次</b> 包起来！'],
+  },
+  tian: {
+    label: '挑战5：画田字 — 正方形里加个十字',
+    cn: '重复 4 次\n  前进 6 步\n  右转 90 度\n结束\n右转 90 度\n前进 3 步\n左转 90 度\n前进 6 步\n右转 180 度\n前进 3 步\n右转 90 度\n前进 3 步\n右转 180 度\n前进 6 步',
+    en: 'repeat 4\n  forward 6\n  right\nend\nright\nforward 3\nleft\nforward 6\nright 180\nforward 3\nright\nforward 3\nright 180\nforward 6',
+    hints: ['分两步：<b>先画外框正方形</b>，再画里面的十字。','外框：用 <b>重复 4 次：前进 6 步，右转</b>。','画完外框后走到中间：<b>右转 90 → 前进 3 → 左转 90 → 前进 6</b>。','画竖线：<b>右转 180 → 前进 6</b>。画横线：<b>右转 90 → 前进 3 → 右转 180 → 前进 6</b>。'],
+  },
+  free: { label: '自由模式 — 随意创作！' },
+};
+
+const FUN_EXAMPLES = [
+  { icon: '\u2B50', name: '九芒星', desc: '9条射线均匀旋转，画出一颗闪亮的星星！', cn: '重复 9 次\n  前进 12 步\n  右转 160 度\n结束', en: 'repeat 9\n  forward 12\n  right 160\nend' },
+  { icon: '\u{1F338}', name: '万花筒', desc: '12个正方形，每个旋转30度，叠成一朵几何花。', cn: '重复 12 次\n  重复 4 次\n    前进 8 步\n    右转 90 度\n  结束\n  右转 30 度\n结束', en: 'repeat 12\n  repeat 4\n    forward 8\n    right 90\n  end\n  right 30\nend' },
+  { icon: '\u{1F300}', name: '大风车', desc: '8个正方形排成圆圈，每个偏转45度。', cn: '重复 8 次\n  重复 4 次\n    前进 5 步\n    右转 90 度\n  结束\n  前进 5 步\n  右转 45 度\n结束', en: 'repeat 8\n  repeat 4\n    forward 5\n    right 90\n  end\n  forward 5\n  right 45\nend' },
+];
+
+let funExampleIdx = 0;
+
+/** Set current challenge */
+function setChallenge(name) {
+  currentChallenge = name;
+  document.querySelectorAll('.challenge-btn').forEach(b => b.classList.toggle('active', b.dataset.challenge === name));
+  // All modes use the same canvas size
+  GRID_COLS = GRID_COLS_INIT;
+  GRID_ROWS = GRID_ROWS_INIT;
+  reset(); invalidateCache();
+  if (name === 'fun') {
+    const ex = FUN_EXAMPLES[funExampleIdx];
+    challengeLabel.textContent = '趣味案例 · ' + ex.icon + ' ' + ex.name + ' — ' + ex.desc;
+    try { currentSolution = parseText(ex.cn, 'cn'); } catch(e) { currentSolution = null; }
+    if (currentMode === 'block') { clearBlocks(); if (currentSolution) { try { cmdsToBlocks(currentSolution); } catch(e) {} } }
+    else { setEditorValue(currentMode === 'en' ? ex.en : ex.cn); clearBlocks(); }
+    hideHintPanel();
+  } else if (name === 'free') {
+    currentSolution = null;
+    challengeLabel.textContent = '自由模式 — 随意创作！';
+    hideHintPanel();
+  } else {
+    const info = CHALLENGE_SOLUTIONS[name];
+    challengeLabel.textContent = (info && info.label) || '';
+    // Show hints but do NOT clear editor - user may want to keep their code
+    if (currentMode !== 'block' && info && info.hints) {
+      showHintPanel(info.hints);
+    } else {
+      hideHintPanel();
+    }
+  }
+  draw();
+}
+
+/** Cycle through fun examples */
+function cycleFunExample() { funExampleIdx = (funExampleIdx + 1) % FUN_EXAMPLES.length; setChallenge('fun'); }
+
+/** Set editor value and reset undo */
+function setEditorValue(val) { codeEditor.value = val; lastUndoSave = val; undoStack = []; }
+
+/** Load hints for a challenge */
+function loadHintForChallenge(name) {
+  const info = CHALLENGE_SOLUTIONS[name];
+  if (!info) return;
+  if (currentMode === 'block') { hideHintPanel(); return; }
+  if (info.hints) { showHintPanel(info.hints); }
+}
+
+/** Show hint panel with given hints (expanded) */
+function showHintPanel(hints) {
+  const panel = document.getElementById('hintPanel');
+  const content = document.getElementById('hintContent');
+  content.innerHTML = hints.map((h, i) => '<div class="hint-step">' + (i + 1) + '. ' + h + '</div>').join('');
+  panel.classList.remove('collapsed');
+  panel.classList.add('show');
+}
+
+/** Hide hint panel */
+function hideHintPanel() {
+  const panel = document.getElementById('hintPanel');
+  panel.classList.remove('show');
+  panel.classList.add('collapsed');
+}
+
+/** Collapse hint panel (keep visible header, hide content) */
+function collapseHintPanel() {
+  const panel = document.getElementById('hintPanel');
+  if (panel.classList.contains('show')) {
+    panel.classList.remove('show');
+    panel.classList.add('collapsed');
+  }
+}
+
+// Hint panel toggle click
+document.getElementById('hintHeader').addEventListener('click', () => {
+  const panel = document.getElementById('hintPanel');
+  if (panel.classList.contains('show')) {
+    collapseHintPanel();
+  } else {
+    panel.classList.remove('collapsed');
+    panel.classList.add('show');
+  }
+});
+
+// ═══════════════════════════════════════════
+// Theme
+// ═══════════════════════════════════════════
+/** Apply a theme to the document */
+function applyTheme(theme) {
+  const body = document.body;
+  // Remove all theme classes
+  body.classList.remove('theme-light', 'theme-dark', 'theme-ocean', 'theme-forest', 'theme-sunset', 'theme-candy');
+  if (theme === 'dark') {
+    // dark is the default (no class needed, uses :root vars)
+  } else {
+    body.classList.add('theme-' + theme);
+  }
+  COLORS = THEME_COLORS[theme] || THEME_COLORS.light;
+  invalidateCache();
+}
+
+// ═══════════════════════════════════════════
+// Event Bindings
+// ═══════════════════════════════════════════
+btnRun.addEventListener('click', run);
+btnReset.addEventListener('click', () => { reset(); currentSolution = null; setEditorValue(''); clearBlocks(); });
+speedSlider.addEventListener('input', () => { animSpeed = parseInt(speedSlider.value); savePreferences(); });
+
+document.querySelectorAll('.mode-tab').forEach(tab => { tab.addEventListener('click', () => { setMode(tab.dataset.mode); }); });
+
+document.querySelectorAll('.challenge-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const name = btn.dataset.challenge;
+    if (name === 'fun') {
+      if (currentChallenge === 'fun') cycleFunExample();
+      else setChallenge('fun');
+      statusMsg.textContent = '\u2728 ' + FUN_EXAMPLES[funExampleIdx].name + ' · 点击运行看看效果！再点按钮换下一个';
+    } else if (currentChallenge === name && name !== 'free') {
+      const info = CHALLENGE_SOLUTIONS[name];
+      const code = info ? (currentMode === 'en' ? info.en : info.cn) : null;
+      if (code) {
+        reset();
+        try { currentSolution = parseText(info.cn, 'cn'); } catch(e) { currentSolution = null; }
+        if (currentMode === 'block') {
+          clearBlocks();
+          if (currentSolution) { try { cmdsToBlocks(currentSolution); } catch(e) { setMode('cn'); setEditorValue(code); } }
+        } else {
+          setEditorValue(currentMode === 'en' ? info.en : info.cn); clearBlocks();
+        }
+        statusMsg.textContent = '\u{1F4DD} 已加载「' + btn.textContent.trim() + '」参考解法，点击运行试试！';
+      }
+    } else { setChallenge(name); }
+  });
+});
+
+document.querySelectorAll('.block-btn').forEach(btn => { btn.addEventListener('click', () => { currentSolution = null; pushBlockUndo(); addBlock(btn.dataset.block); }); });
+
+// Text editor undo stack
+let undoStack = [];
+let lastUndoSave = '';
+
+codeEditor.addEventListener('input', () => {
+  if (codeEditor.value === lastUndoSave) return;
+  currentSolution = null;
+  if (undoStack.length >= MAX_UNDO) undoStack.shift();
+  undoStack.push(lastUndoSave);
+  lastUndoSave = codeEditor.value;
+});
+
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.key === 'z') {
+    if (document.activeElement === codeEditor && undoStack.length > 0) {
+      e.preventDefault(); const prev = undoStack.pop(); lastUndoSave = prev; codeEditor.value = prev;
+      codeEditor.dispatchEvent(new Event('input', {bubbles:true}));
+    } else if (currentMode === 'block' && blockUndoStack.length > 0) {
+      e.preventDefault(); const prev = blockUndoStack.pop(); restoreBlockState(prev);
+    }
+    return;
+  }
+  if (e.key === 'Escape') {
+    const openModal = document.querySelector('.confirm-overlay.show');
+    if (openModal) { openModal.classList.remove('show'); if (_lastFocusedElement) _lastFocusedElement.focus(); return; }
+    const openM = document.querySelector('.modal-overlay.show');
+    if (openM) { closeModal(openM.id); return; }
+    stopRun();
+  }
+  if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); run(); }
+});
+
+// Modal toggles
+document.getElementById('btnIntro').addEventListener('click', () => { openModal('modalIntro'); });
+document.getElementById('btnSummary').addEventListener('click', () => { openModal('modalSummary'); });
+document.getElementById('btnLanguage').addEventListener('click', () => { openModal('modalLanguage'); });
+document.getElementById('btnCommands').addEventListener('click', () => { openModal('modalCommands'); });
+
+// Modal close buttons (using data attributes)
+document.querySelectorAll('[data-modal-close]').forEach(btn => {
+  btn.addEventListener('click', () => { closeModal(btn.dataset.modalClose); });
+});
+
+// Click outside modal to close
+document.querySelectorAll('.modal-overlay').forEach(ov => {
+  ov.addEventListener('click', e => { if (e.target === ov) closeModal(ov.id); });
+});
+
+// Start position change
+document.getElementById('startPosSelect').addEventListener('change', () => {
+  stopRun(); resetRobot(); invalidateCache(); draw(); clearHighlights();
+  statusMsg.textContent = '准备就绪'; savePreferences();
+});
+
+// Robot select change
+robotSelect.addEventListener('change', () => {
+  robotEmoji = robotSelect.value;
+  savePreferences(); draw();
+});
+
+// Theme change
+themeSelect.addEventListener('change', () => {
+  currentTheme = themeSelect.value;
+  applyTheme(currentTheme);
+  savePreferences(); draw();
+});
+
+// ═══════════════════════════════════════════
+// Init
+// ═══════════════════════════════════════════
+function init() {
+  loadPreferences();
+  resizeCanvas();
+  requestAnimationFrame(() => requestAnimationFrame(resizeCanvas));
+  resetRobot();
+  draw();
+  // Apply saved mode
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === currentMode));
+  textEditorArea.style.display = currentMode === 'block' ? 'none' : 'flex';
+  blockEditorArea.style.display = currentMode === 'block' ? 'flex' : 'none';
+  if (currentMode === 'cn') {
+    helpCmds.textContent = '指令: 前进N步 | 左转N度 | 右转N度 | 重复N次 ... 结束';
+  } else if (currentMode === 'en') {
+    helpCmds.textContent = 'Commands: forward N | left N | right N | repeat N ... end';
+  }
+  setChallenge('free');
+  animSpeed = parseInt(speedSlider.value);
+  if (currentMode === 'en') setEditorValue('forward 3\nright\nforward 2\nleft\nforward 2');
+  else if (currentMode !== 'block') setEditorValue('前进 3 步\n右转\n前进 2 步\n左转\n前进 2 步');
+  robotEmoji = robotSelect.value;
+}
+init();
+</script>
+</body>
+</html>

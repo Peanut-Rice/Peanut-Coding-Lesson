@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星光琴键：童话魔法乐章</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #a855f7;
+            --secondary: #ec4899;
+            --accent: #3b82f6;
+            --bg-gradient: radial-gradient(circle at center, #11092c 0%, #050212 100%);
+            --panel-bg: rgba(15, 10, 36, 0.65);
+            --key-bg: rgba(15, 10, 36, 0.8);
+            --key-border: rgba(168, 85, 247, 0.2);
+            --shadow-glow: 0 0 20px rgba(168, 85, 247, 0.6);
+            --text-highlight: #a855f7;
+        }
+
+        body {
+            font-family: 'Comfortaa', 'Noto Sans SC', 'Microsoft YaHei', cursive, sans-serif;
+            background: var(--bg-gradient);
+            overflow-x: hidden;
+            transition: background 0.8s ease, color 0.3s ease;
+        }
+        
+        .jetbrains-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .neon-glow {
+            box-shadow: var(--shadow-glow);
+            transition: box-shadow 0.5s ease;
+        }
+
+        .panel-glass {
+            background: var(--panel-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            transition: background 0.8s ease, border-color 0.8s ease;
+        }
+
+        .key-glass {
+            background: var(--key-bg);
+            border: 1px solid var(--key-border);
+            transition: all 0.1s ease, background 0.8s ease, border-color 0.8s ease;
+        }
+
+        /* 隐藏滚动条 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* 琴键激活特效 */
+        .key-active {
+            transform: scale(0.9) translateY(3px) !important;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%) !important;
+            box-shadow: 0 0 20px var(--secondary) !important;
+            border-color: transparent !important;
+            color: #ffffff !important;
+        }
+
+        /* 呼吸等待按键特效 */
+        @keyframes keyPulse {
+            0%, 100% { box-shadow: 0 0 5px var(--accent), inset 0 0 5px var(--accent); filter: brightness(1); }
+            50% { box-shadow: 0 0 22px var(--accent), inset 0 0 12px var(--accent); filter: brightness(1.3); }
+        }
+        .key-target {
+            animation: keyPulse 1s infinite ease-in-out;
+            border-color: var(--accent) !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+            color: var(--accent) !important;
+            font-weight: 800 !important;
+        }
+
+        #starfield {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none;
+        }
+
+        .char-typed {
+            color: #10b981;
+            text-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+        }
+        .char-current {
+            color: var(--accent);
+            background: rgba(255, 255, 255, 0.15);
+            border-bottom: 3px solid var(--accent);
+            animation: cursorBlink 0.8s infinite;
+            border-radius: 2px;
+            padding: 0 2px;
+        }
+        .char-wrong {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.2);
+            border-bottom: 3px solid #ef4444;
+            animation: shake 0.25s ease-in-out;
+        }
+
+        .pinyin-segment {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 6px 14px 6px;
+            padding: 6px 8px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .pinyin-segment.active {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+        .pinyin-segment.completed {
+            background: rgba(16, 185, 129, 0.04);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        @keyframes cursorBlink {
+            0%, 100% { border-color: var(--accent); }
+            50% { border-color: transparent; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.35);
+            transform: scale(0);
+            animation: rippleEffect 0.6s cubic-bezier(0.1, 0.8, 0.3, 1);
+            pointer-events: none;
+        }
+        @keyframes rippleEffect {
+            to { transform: scale(4); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center relative z-10 text-slate-100 p-4 select-none">
+
+    <canvas id="starfield"></canvas>
+
+    <!-- 欢迎开始面板 -->
+    <div id="welcome-modal" class="fixed inset-0 bg-slate-950/90 z-50 flex flex-col items-center justify-center p-6 text-center">
+        <div class="max-w-md bg-slate-900/60 backdrop-blur-xl border border-purple-500/30 rounded-3xl p-8 neon-glow text-center relative overflow-hidden">
+            <div class="absolute -top-10 -left-10 w-40 h-40 bg-purple-500/10 rounded-full blur-2xl"></div>
+            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-pink-500/10 rounded-full blur-2xl"></div>
+            
+            <div class="text-6xl mb-4 animate-bounce">🎹</div>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent mb-3">星光琴键</h1>
+            <p class="text-sm text-purple-200/80 mb-6 leading-relaxed">
+                欢迎来到充满魔力的钢琴森林！在这里你可以敲击键盘演奏经典旋律，不仅好玩，还能学会盲打与拼音输入哦！
+            </p>
+            <button id="btn-enter" class="w-full py-4 px-8 rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 font-bold text-lg text-white hover:scale-105 transition-all duration-300 shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40">
+                ✨ 激活魔力，开启演奏 ✨
+            </button>
+        </div>
+    </div>
+
+    <!-- 成绩结算窗口 -->
+    <div id="success-modal" class="fixed inset-0 bg-slate-950/85 z-40 hidden flex flex-col items-center justify-center p-4">
+        <div class="max-w-lg w-full bg-slate-900/85 backdrop-blur-2xl border border-emerald-500/30 rounded-3xl p-8 neon-glow text-center relative overflow-hidden">
+            <div class="absolute -top-10 -left-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-xl"></div>
+            <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-xl"></div>
+
+            <div class="text-5xl mb-3">🏆</div>
+            <h2 class="text-2xl md:text-3xl font-bold text-emerald-400 mb-1">🎉 完美演奏完成！</h2>
+            <p class="text-slate-400 text-sm mb-6">你弹奏的旋律连星星都在为你鼓掌！</p>
+
+            <div class="grid grid-cols-2 gap-4 mb-6 text-left">
+                <div class="bg-slate-950/40 p-4 rounded-2xl border border-slate-800">
+                    <p class="text-xs text-slate-400">平均打字速度</p>
+                    <p class="text-2xl font-bold text-blue-400 jetbrains-font"><span id="report-wpm">0</span> <span class="text-xs">WPM</span></p>
+                </div>
+                <div class="bg-slate-950/40 p-4 rounded-2xl border border-slate-800">
+                    <p class="text-xs text-slate-400">准确率</p>
+                    <p class="text-2xl font-bold text-emerald-400 jetbrains-font" id="report-acc">100%</p>
+                </div>
+                <div class="bg-slate-950/40 p-4 rounded-2xl border border-slate-800">
+                    <p class="text-xs text-slate-400">最大连击 (Combo)</p>
+                    <p class="text-2xl font-bold text-pink-400 jetbrains-font" id="report-combo">0</p>
+                </div>
+                <div class="bg-slate-950/40 p-4 rounded-2xl border border-slate-800">
+                    <p class="text-xs text-slate-400">获得称号</p>
+                    <p class="text-base font-bold text-amber-400" id="report-title">见习小仙女</p>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <button id="btn-replay" class="flex-1 py-3 px-6 rounded-2xl bg-slate-800 hover:bg-slate-700 font-bold transition-all border border-slate-700">
+                    🔄 重新弹奏
+                </button>
+                <button id="btn-next" class="flex-1 py-3 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 font-bold text-white transition-all shadow-lg">
+                    下一首 🎵
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <header class="w-full max-w-6xl flex flex-wrap gap-4 justify-between items-center panel-glass p-4 rounded-2xl z-10">
+        <!-- 标题 -->
+        <div class="flex items-center gap-3">
+            <span id="title-emoji" class="text-3xl transition-transform duration-500 hover:rotate-12 cursor-pointer">🌌</span>
+            <div>
+                <h1 class="text-lg font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent" id="main-title-text">星光琴键</h1>
+                <p class="text-xs text-slate-300" id="subtitle-text">把指尖变为音符，在星空中飞舞</p>
+            </div>
+        </div>
+        
+        <!-- 主题、选曲与自动演奏 -->
+        <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-300">主题:</span>
+                <select id="theme-select" class="bg-slate-800/80 text-slate-200 text-xs font-semibold py-2 px-3 rounded-xl border border-slate-700 focus:outline-none cursor-pointer">
+                    <option value="starlight">🌌 星空霓虹</option>
+                    <option value="forest">🌲 童话森林</option>
+                    <option value="ocean">🌊 梦幻海洋</option>
+                    <option value="candy">🍬 甜蜜糖果</option>
+                </select>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-300">曲目:</span>
+                <select id="song-select" class="bg-slate-800/80 text-slate-200 text-xs font-semibold py-2 px-3 rounded-xl border border-slate-700 focus:outline-none cursor-pointer max-w-[180px] md:max-w-xs">
+                    <!-- JS动态填充 -->
+                </select>
+            </div>
+
+            <!-- 自动演奏按钮 -->
+            <button id="btn-autoplay" class="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-400 hover:to-purple-400 text-slate-100 font-bold text-xs py-2 px-4 rounded-xl shadow-lg border border-purple-400/20 flex items-center gap-1 transition-all duration-300">
+                <span id="auto-play-icon">🤖</span> <span id="auto-play-text">自动演奏</span>
+            </button>
+        </div>
+
+        <!-- 实时数据面板 -->
+        <div class="flex gap-6 text-sm jetbrains-font">
+            <div class="text-center">
+                <p class="text-xs text-slate-400">速度 WPM</p>
+                <p id="stat-wpm" class="text-xl font-bold text-blue-400">0</p>
+            </div>
+            <div class="text-center">
+                <p class="text-xs text-slate-400">准确率</p>
+                <p id="stat-acc" class="text-xl font-bold text-emerald-400">100%</p>
+            </div>
+            <div class="text-center">
+                <p class="text-xs text-slate-400">连击 Combo</p>
+                <p id="stat-combo" class="text-xl font-bold text-pink-400 animate-pulse">0</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-5xl my-4 flex-1 flex flex-col justify-center items-center gap-4 z-10">
+        <!-- 乐曲与进度 -->
+        <div class="w-full flex items-center justify-between text-xs px-2 text-slate-400">
+            <span id="display-author">作曲家：--</span>
+            <span id="display-progress">进度：0%</span>
+        </div>
+        
+        <div class="w-full bg-slate-900/60 h-2.5 rounded-full overflow-hidden border border-slate-800/80">
+            <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transition-all duration-300" style="width: 0%"></div>
+        </div>
+
+        <!-- 玻璃展示框 -->
+        <div class="w-full panel-glass rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden flex flex-col min-h-[220px] justify-center">
+            <div id="glow-1" class="absolute top-0 right-1/4 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl transition-all duration-1000"></div>
+            <div id="glow-2" class="absolute bottom-0 left-1/4 w-72 h-72 bg-pink-500/10 rounded-full blur-3xl transition-all duration-1000"></div>
+
+            <!-- 打字文本层 (中文和英文自适应渲染) -->
+            <div id="text-container" class="text-2xl md:text-3xl font-medium tracking-wide leading-relaxed text-slate-400 max-h-56 overflow-y-auto no-scrollbar select-none text-center relative z-10">
+                <!-- JS动态加载 -->
+            </div>
+        </div>
+
+        <div id="keyboard-tip" class="text-sm text-slate-300 italic flex items-center gap-2">
+            ✨ 敲下高亮发光的琴键，美妙的钢琴声就会随你的指尖起舞哦...
+        </div>
+    </main>
+
+    <footer class="w-full max-w-4xl z-10 panel-glass p-4 rounded-3xl mb-2">
+        <div id="virtual-keyboard" class="flex flex-col gap-2 w-full jetbrains-font text-sm">
+            <!-- JS自动生成QWERTY虚拟按键 -->
+        </div>
+    </footer>
+
+    <script>
+        // --- STREAMING_CHUNK: 初始化主题配色资源配置文件 ---
+        const THEMES = {
+            starlight: {
+                primary: "#a855f7",
+                secondary: "#ec4899",
+                accent: "#3b82f6",
+                bg: "radial-gradient(circle at center, #11092c 0%, #050212 100%)",
+                panelBg: "rgba(15, 10, 36, 0.65)",
+                keyBg: "rgba(15, 10, 36, 0.8)",
+                keyBorder: "rgba(168, 85, 247, 0.2)",
+                shadow: "0 0 25px rgba(168, 85, 247, 0.6)",
+                textHighlight: "#a855f7",
+                particleColors: ["#a855f7", "#ec4899", "#3b82f6", "#f43f5e"],
+                particleShape: "star",
+                emoji: "🌌",
+                sub: "把指尖变为音符，在星空中飞舞"
+            },
+            forest: {
+                primary: "#10b981",
+                secondary: "#f59e0b",
+                accent: "#10b981",
+                bg: "radial-gradient(circle at center, #062f1c 0%, #020f08 100%)",
+                panelBg: "rgba(4, 25, 15, 0.7)",
+                keyBg: "rgba(4, 25, 15, 0.85)",
+                keyBorder: "rgba(16, 185, 129, 0.2)",
+                shadow: "0 0 25px rgba(16, 185, 129, 0.6)",
+                textHighlight: "#10b981",
+                particleColors: ["#10b981", "#84cc16", "#eab308", "#34d399"],
+                particleShape: "leaf",
+                emoji: "🌲",
+                sub: "踏入童话精灵之林，演奏大自然的古典旋律"
+            },
+            ocean: {
+                primary: "#06b6d4",
+                secondary: "#3b82f6",
+                accent: "#06b6d4",
+                bg: "radial-gradient(circle at center, #052a4a 0%, #010d1a 100%)",
+                panelBg: "rgba(3, 23, 41, 0.7)",
+                keyBg: "rgba(3, 23, 41, 0.85)",
+                keyBorder: "rgba(6, 182, 212, 0.2)",
+                shadow: "0 0 25px rgba(6, 182, 212, 0.6)",
+                textHighlight: "#06b6d4",
+                particleColors: ["#06b6d4", "#3b82f6", "#22d3ee", "#60a5fa"],
+                particleShape: "bubble",
+                emoji: "🌊",
+                sub: "深海中的梦幻气泡，随美妙的琴声飘散"
+            },
+            candy: {
+                primary: "#f43f5e",
+                secondary: "#ec4899",
+                accent: "#ff80b5",
+                bg: "radial-gradient(circle at center, #420f26 0%, #17030b 100%)",
+                panelBg: "rgba(38, 7, 21, 0.7)",
+                keyBg: "rgba(38, 7, 21, 0.85)",
+                keyBorder: "rgba(244, 63, 94, 0.2)",
+                shadow: "0 0 25px rgba(244, 63, 94, 0.6)",
+                textHighlight: "#f43f5e",
+                particleColors: ["#f43f5e", "#ec4899", "#fbbf24", "#fda4af"],
+                particleShape: "candy",
+                emoji: "🍬",
+                sub: "甜蜜软糖与粉色城堡，敲击出香甜梦幻的味道"
+            }
+        };
+
+        let currentTheme = "starlight";
+
+        // 主题动态转换引擎
+        function changeTheme(themeKey) {
+            currentTheme = themeKey;
+            const theme = THEMES[themeKey];
+            
+            document.documentElement.style.setProperty('--primary', theme.primary);
+            document.documentElement.style.setProperty('--secondary', theme.secondary);
+            document.documentElement.style.setProperty('--accent', theme.accent);
+            document.documentElement.style.setProperty('--bg-gradient', theme.bg);
+            document.documentElement.style.setProperty('--panel-bg', theme.panelBg);
+            document.documentElement.style.setProperty('--key-bg', theme.keyBg);
+            document.documentElement.style.setProperty('--key-border', theme.keyBorder);
+            document.documentElement.style.setProperty('--shadow-glow', theme.shadow);
+            document.documentElement.style.setProperty('--text-highlight', theme.textHighlight);
+            
+            document.getElementById('title-emoji').innerText = theme.emoji;
+            document.getElementById('subtitle-text').innerText = theme.sub;
+
+            document.getElementById('glow-1').style.backgroundColor = theme.primary + "1D";
+            document.getElementById('glow-2').style.backgroundColor = theme.secondary + "1D";
+
+            highlightNextKeyOnKeyboard();
+        }
+
+        // --- STREAMING_CHUNK: 编写环境粒子渲染动画系统 ---
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class GameParticle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1.5;
+                this.speedX = Math.random() * 0.25 - 0.125;
+                this.speedY = Math.random() * 0.25 - 0.125;
+                this.opacity = Math.random() * 0.5 + 0.3;
+                this.angle = Math.random() * Math.PI * 2;
+                this.spin = Math.random() * 0.02 - 0.01;
+                
+                const themeColors = THEMES[currentTheme].particleColors;
+                this.color = themeColors[Math.floor(Math.random() * themeColors.length)];
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.angle += this.spin;
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                    this.reset();
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.opacity;
+
+                const shape = THEMES[currentTheme].particleShape;
+                if (shape === "star") {
+                    ctx.beginPath();
+                    for (let i = 0; i < 4; i++) {
+                        ctx.lineTo(0, -this.size * 2);
+                        ctx.rotate(Math.PI / 4);
+                        ctx.lineTo(0, -this.size * 0.5);
+                        ctx.rotate(Math.PI / 4);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                } else if (shape === "leaf") {
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, this.size * 2, this.size, 0, 0, Math.PI * 2);
+                    ctx.closePath();
+                    ctx.fill();
+                } else if (shape === "bubble") {
+                    ctx.strokeStyle = this.color;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.size * 2, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.fillStyle = "#ffffff";
+                    ctx.globalAlpha = this.opacity * 0.4;
+                    ctx.beginPath();
+                    ctx.arc(-this.size * 0.6, -this.size * 0.6, this.size * 0.4, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (shape === "candy") {
+                    ctx.beginPath();
+                    const d = this.size * 1.8;
+                    ctx.moveTo(0, d / 4);
+                    ctx.quadraticCurveTo(0, 0, d / 4, 0);
+                    ctx.quadraticCurveTo(d / 2, 0, d / 2, d / 4);
+                    ctx.quadraticCurveTo(d / 2, d / 2, 0, d * 0.85);
+                    ctx.quadraticCurveTo(-d / 2, d / 2, -d / 2, d / 4);
+                    ctx.quadraticCurveTo(-d / 2, 0, -d / 4, 0);
+                    ctx.quadraticCurveTo(0, 0, 0, d / 4);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < 80; i++) {
+            particles.push(new GameParticle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // --- STREAMING_CHUNK: 编写钢琴谐波包络声效引擎 ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function playPianoTone(freq, duration = 1.3) {
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            
+            // 基准弦音
+            const osc1 = audioCtx.createOscillator();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(freq, now);
+
+            // 一次谐波
+            const osc2 = audioCtx.createOscillator();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(freq * 2, now);
+
+            // 金属共振饱和
+            const osc3 = audioCtx.createOscillator();
+            osc3.type = 'triangle';
+            osc3.frequency.setValueAtTime(freq * 3, now);
+
+            const mainGain = audioCtx.createGain();
+            mainGain.gain.setValueAtTime(0, now);
+            mainGain.gain.linearRampToValueAtTime(0.4, now + 0.005);
+            mainGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+            const overtoneGain = audioCtx.createGain();
+            overtoneGain.gain.setValueAtTime(0.12, now);
+
+            const metallicGain = audioCtx.createGain();
+            metallicGain.gain.setValueAtTime(0.05, now);
+
+            osc1.connect(mainGain);
+            osc2.connect(overtoneGain);
+            overtoneGain.connect(mainGain);
+            osc3.connect(metallicGain);
+            metallicGain.connect(mainGain);
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(1400, now);
+            filter.frequency.exponentialRampToValueAtTime(320, now + duration);
+
+            mainGain.connect(filter);
+            filter.connect(audioCtx.destination);
+
+            osc1.start(now);
+            osc1.stop(now + duration);
+            osc2.start(now);
+            osc2.stop(now + duration);
+            osc3.start(now);
+            osc3.stop(now + duration);
+        }
+
+        function playDampTone() {
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(85, now);
+
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(130, now);
+
+            osc.connect(gain);
+            gain.connect(filter);
+            filter.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.15);
+        }
+
+        // --- STREAMING_CHUNK: 编写和弦频率与10大名曲曲库映射表 ---
+        const NOTES = {
+            C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88,
+            C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, A5: 880.00, B5: 987.77,
+            C6: 1046.50
+        };
+
+        const SONGS = [
+            // ================== 中文歌单 (5首) ==================
+            {
+                title: "🇨🇳 《静夜思》- 李白",
+                author: "古典诗词 拼音练习",
+                isPinyin: true,
+                segments: [
+                    {c:"床", p:"chuang"}, {c:"前", p:"qian"}, {c:"明", p:"ming"}, {c:"月", p:"yue"}, {c:"光", p:"guang"}, {c:"，", p:","},
+                    {c:"疑", p:"yi"}, {c:"是", p:"shi"}, {c:"地", p:"di"}, {c:"上", p:"shang"}, {c:"霜", p:"shuang"}, {c:"。", p:"."},
+                    {c:"举", p:"ju"}, {c:"头", p:"tou"}, {c:"望", p:"wang"}, {c:"明", p:"ming"}, {c:"月", p:"yue"}, {c:"光", p:"guang"}, {c:"，", p:","},
+                    {c:"低", p:"di"}, {c:"头", p:"tou"}, {c:"思", p:"si"}, {c:"故", p:"gu"}, {c:"乡", p:"xiang"}, {c:"。", p:"."}
+                ],
+                melody: ["C4", "C4", "G4", "G4", "A4", "A4", "G4", "F4", "F4", "E4", "E4", "D4", "D4", "C4", "G4", "G4", "F4", "F4", "E4", "E4", "D4", "G4", "G4", "F4", "F4", "E4", "E4", "D4", "C4"]
+            },
+            {
+                title: "🇨🇳 《咏鹅》- 骆宾王",
+                author: "国学启蒙 拼音练习",
+                isPinyin: true,
+                segments: [
+                    {c:"鹅", p:"e"}, {c:"，", p:","}, {c:"鹅", p:"e"}, {c:"，", p:","}, {c:"鹅", p:"e"}, {c:"，", p:","},
+                    {c:"曲", p:"qu"}, {c:"项", p:"xiang"}, {c:"向", p:"xiang"}, {c:"天", p:"tian"}, {c:"歌", p:"ge"}, {c:"。", p:"."},
+                    {c:"白", p:"bai"}, {c:"毛", p:"mao"}, {c:"浮", p:"fu"}, {c:"绿", p:"lv"}, {c:"水", p:"shui"}, {c:"，", p:","},
+                    {c:"红", p:"hong"}, {c:"掌", p:"zhang"}, {c:"拨", p:"bo"}, {c:"清", p:"qing"}, {c:"波", p:"bo"}, {c:"。", p:"."}
+                ],
+                melody: ["C5", "D5", "E5", "C5", "E5", "C5", "E5", "D5", "E5", "F5", "F5", "E5", "D5", "F5", "E5", "D5", "C5", "E5", "D5", "C5", "D5", "G4", "C5"]
+            },
+            {
+                title: "🇨🇳 《春晓》- 孟浩然",
+                author: "春之交响 拼音练习",
+                isPinyin: true,
+                segments: [
+                    {c:"春", p:"chun"}, {c:"眠", p:"mian"}, {c:"不", p:"bu"}, {c:"觉", p:"jue"}, {c:"晓", p:"xiao"}, {c:"，", p:","},
+                    {c:"处", p:"chu"}, {c:"处", p:"chu"}, {c:"闻", p:"wen"}, {c:"啼", p:"ti"}, {c:"鸟", p:"niao"}, {c:"。", p:"."},
+                    {c:"夜", p:"ye"}, {c:"来", p:"lai"}, {c:"风", p:"feng"}, {c:"雨", p:"yu"}, {c:"声", p:"sheng"}, {c:"，", p:","},
+                    {c:"花", p:"hua"}, {c:"落", p:"luo"}, {c:"知", p:"zhi"}, {c:"多", p:"duo"}, {c:"少", p:"shao"}, {c:"。", p:"."}
+                ],
+                melody: ["G4", "A4", "B4", "G4", "C5", "D5", "E5", "C5", "F5", "E5", "D5", "C5", "G4", "E5", "D5", "C5", "D5", "B4", "A4", "G4", "G5", "F5", "E5", "C5"]
+            },
+            {
+                title: "🇨🇳 《寻隐者不遇》- 贾岛",
+                author: "高山古风 拼音练习",
+                isPinyin: true,
+                segments: [
+                    {c:"松", p:"song"}, {c:"下", p:"xia"}, {c:"问", p:"wen"}, {c:"童", p:"tong"}, {c:"子", p:"zi"}, {c:"，", p:","},
+                    {c:"言", p:"yan"}, {c:"师", p:"shi"}, {c:"采", p:"cai"}, {c:"药", p:"yao"}, {c:"去", p:"qu"}, {c:"。", p:"."},
+                    {c:"只", p:"zhi"}, {c:"在", p:"zai"}, {c:"此", p:"ci"}, {c:"山", p:"shan"}, {c:"中", p:"zhong"}, {c:"，", p:","},
+                    {c:"云", p:"yun"}, {c:"深", p:"shen"}, {c:"不", p:"bu"}, {c:"知", p:"zhi"}, {c:"处", p:"chu"}, {c:"。", p:"."}
+                ],
+                melody: ["G4", "G4", "D5", "D5", "E5", "D5", "C5", "C5", "A4", "A4", "G4", "G4", "C5", "D5", "E5", "E5", "D5", "G5", "E5", "D5", "C5", "A4", "G4"]
+            },
+            {
+                title: "🇨🇳 《小红帽》- 经典童话",
+                author: "森林历险 拼音练习",
+                isPinyin: true,
+                segments: [
+                    {c:"从", p:"cong"}, {c:"前", p:"qian"}, {c:"有", p:"you"}, {c:"一", p:"yi"}, {c:"个", p:"ge"}, {c:"可", p:"ke"}, {c:"爱", p:"ai"}, {c:"的", p:"de"}, {c:"小", p:"xiao"}, {c:"姑", p:"gu"}, {c:"娘", p:"niang"}, {c:"，", p:","},
+                    {c:"她", p:"ta"}, {c:"最", p:"zui"}, {c:"喜", p:"xi"}, {c:"欢", p:"huan"}, {c:"红", p:"hong"}, {c:"色", p:"se"}, {c:"的", p:"de"}, {c:"小", p:"xiao"}, {c:"帽", p:"mao"}, {c:"子", p:"zi"}, {c:"。", p:"."}
+                ],
+                melody: ["E4", "G4", "A4", "G4", "E4", "G4", "C5", "A4", "G4", "E4", "D4", "C4", "E4", "G4", "A4", "G4", "C5", "A4", "G4", "A4", "C5", "E5", "D5"]
+            },
+
+            // ================== 英文歌单 (5首) ==================
+            {
+                title: "🇬🇧 《天空之城》- Carrying You",
+                author: "久石让 (Joe Hisaishi)",
+                isPinyin: false,
+                text: "The horizon is shining because it is hiding you. Let's start our magic journey with a brave heart. No matter how deep the darkness is, we will fly to the castle.",
+                melody: [
+                    "A4", "B4", "C5", "B4", "C5", "E5", "B4", "E4", "A4", "G4", "A4", "C5", "G4",
+                    "F4", "E4", "F4", "C5", "E4", "F4", "E4", "D4", "E4", "A4", "B4", "C5", "B4", "C5"
+                ]
+            },
+            {
+                title: "🇬🇧 《千与千寻》- Always With Me",
+                author: "木村弓 (Yumi Kimura)",
+                isPinyin: false,
+                text: "The calling voice within the heart, always wants to dream a dreamy dream. No need to speak of sadness, just let the heart whisper silently.",
+                melody: [
+                    "G4", "C5", "E5", "G5", "F5", "E5", "F5", "D5", "F5", "A5", "G5", "F5", "E5", "D5", "E5", "C5",
+                    "E5", "G5", "A5", "B5", "C6", "B5", "A5", "G5", "F5"
+                ]
+            },
+            {
+                title: "🇬🇧 《欢乐颂》- Ode to Joy",
+                author: "路德维希·凡·贝多芬",
+                isPinyin: false,
+                text: "Joy, beautiful spark of divinity, daughter of Elysium, we enter fire-imbued, heavenly one, thy sanctuary. Your magic binds again what custom strictly divided.",
+                melody: [
+                    "E5", "E5", "F5", "G5", "G5", "F5", "E5", "D5", "C5", "C5", "D5", "E5", "E5", "D5", "D5",
+                    "E5", "E5", "F5", "G5", "G5", "F5", "E5", "D5", "C5", "C5", "D5", "E5", "D5", "C5", "C5"
+                ]
+            },
+            {
+                title: "🇬🇧 《闪闪的小星》- Twinkle Little Star",
+                author: "经典莫扎特儿歌",
+                isPinyin: false,
+                text: "Twinkle, twinkle, little star, how I wonder what you are! Up above the world so high, like a diamond in the sky. When the blazing sun is gone, you shine.",
+                melody: [
+                    "C4", "C4", "G4", "G4", "A4", "A4", "G4", "F4", "F4", "E4", "E4", "D4", "D4", "C4",
+                    "G4", "G4", "F4", "F4", "E4", "E4", "D4", "G4", "G4", "F4", "F4", "E4", "E4", "D4"
+                ]
+            },
+            {
+                title: "🇬🇧 《小王子》- The Little Prince",
+                author: "安东尼·德·圣-埃克苏佩里",
+                isPinyin: false,
+                text: "It is only with the heart that one can see rightly; what is essential is invisible to the eye. You become responsible, forever, for what you have tamed.",
+                melody: [
+                    "E4", "G4", "C5", "B4", "A4", "G4", "A4", "C5", "G4", "F4", "E4", "D4", "E4", "G4", "A4", "G4",
+                    "C5", "B4", "C5", "D5", "E5", "C5", "D5", "C5", "G4", "E5", "D5", "C5"
+                ]
+            }
+        ];
+
+        // --- STREAMING_CHUNK: 编写键盘物理排版映射表 ---
+        const KEYBOARD_ROWS = [
+            ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+            ["A", "S", "D", "F", "G", "H", "J", "K", "L", ";"],
+            ["Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"]
+        ];
+
+        // --- STREAMING_CHUNK: 初始化核心打字逻辑状态器 ---
+        let currentSongIndex = 0;
+        let typedTextLength = 0; 
+        let currentSegmentIndex = 0; 
+        let currentPinyinCharIndex = 0; 
+
+        let keystrokes = 0;
+        let errors = 0;
+        let correctCount = 0;
+        let combo = 0;
+        let maxCombo = 0;
+        let startTime = null;
+        let typingTimer = null;
+
+        // 自动演奏相关状态
+        let isAutoPlaying = false;
+        let autoPlayIntervalId = null;
+
+        // DOM元素绑定
+        const welcomeModal = document.getElementById('welcome-modal');
+        const successModal = document.getElementById('success-modal');
+        const btnEnter = document.getElementById('btn-enter');
+        const btnReplay = document.getElementById('btn-replay');
+        const btnNext = document.getElementById('btn-next');
+        const songSelect = document.getElementById('song-select');
+        const themeSelect = document.getElementById('theme-select');
+        const btnAutoplay = document.getElementById('btn-autoplay');
+        const textContainer = document.getElementById('text-container');
+        const displayAuthor = document.getElementById('display-author');
+        const displayProgress = document.getElementById('display-progress');
+        const progressBar = document.getElementById('progress-bar');
+        const virtualKeyboard = document.getElementById('virtual-keyboard');
+
+        const statWpm = document.getElementById('stat-wpm');
+        const statAcc = document.getElementById('stat-acc');
+        const statCombo = document.getElementById('stat-combo');
+
+        // 初始化下拉菜单
+        SONGS.forEach((song, idx) => {
+            const opt = document.createElement('option');
+            opt.value = idx;
+            opt.innerText = song.title;
+            songSelect.appendChild(opt);
+        });
+
+        // 生成QWERTY屏幕键盘
+        function generateKeyboard() {
+            virtualKeyboard.innerHTML = "";
+            KEYBOARD_ROWS.forEach(row => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = "flex justify-center gap-1 md:gap-2 w-full";
+                row.forEach(key => {
+                    const keyDiv = document.createElement('div');
+                    keyDiv.id = `key-${key.toLowerCase()}`;
+                    keyDiv.innerText = key;
+                    keyDiv.className = "key-glass flex-1 max-w-[70px] h-10 md:h-12 rounded-xl flex items-center justify-center font-bold text-slate-300 shadow-md relative overflow-hidden";
+                    rowDiv.appendChild(keyDiv);
+                });
+                virtualKeyboard.appendChild(rowDiv);
+            });
+        }
+        generateKeyboard();
+
+        // --- STREAMING_CHUNK: 编写打字曲目数据重置载入引擎 ---
+        function loadSong(index) {
+            stopAutoPlay(); // 载入新歌时必须终止自动演奏
+            
+            currentSongIndex = index;
+            const song = SONGS[index];
+            
+            displayAuthor.innerText = `编曲与作词作者：${song.author}`;
+            
+            typedTextLength = 0;
+            currentSegmentIndex = 0;
+            currentPinyinCharIndex = 0;
+
+            keystrokes = 0;
+            errors = 0;
+            correctCount = 0;
+            combo = 0;
+            maxCombo = 0;
+            startTime = null;
+            if (typingTimer) clearInterval(typingTimer);
+            
+            updateStatsUI();
+            renderTextDisplay();
+            highlightNextKeyOnKeyboard();
+        }
+
+        // 渲染文本和拼音排版
+        function renderTextDisplay() {
+            textContainer.innerHTML = "";
+            const song = SONGS[currentSongIndex];
+
+            if (song.isPinyin) {
+                // 中文拼音拼卡模式
+                song.segments.forEach((seg, sIdx) => {
+                    const segSpan = document.createElement('div');
+                    segSpan.className = "pinyin-segment";
+                    
+                    const charDiv = document.createElement('div');
+                    charDiv.innerText = seg.c;
+                    charDiv.className = "text-xl md:text-2xl font-bold transition-all duration-200";
+
+                    const pinyinDiv = document.createElement('div');
+                    pinyinDiv.className = "text-xs jetbrains-font tracking-tighter text-slate-400 mt-1 uppercase";
+                    
+                    for (let charI = 0; charI < seg.p.length; charI++) {
+                        const letterSpan = document.createElement('span');
+                        letterSpan.innerText = seg.p[charI];
+                        
+                        if (sIdx < currentSegmentIndex) {
+                            letterSpan.className = "text-emerald-400 font-bold";
+                        } else if (sIdx === currentSegmentIndex) {
+                            if (charI < currentPinyinCharIndex) {
+                                letterSpan.className = "text-emerald-400 font-bold";
+                            } else if (charI === currentPinyinCharIndex) {
+                                letterSpan.className = "text-blue-400 font-bold border-b-2 border-blue-400 animate-pulse";
+                            }
+                        }
+                        pinyinDiv.appendChild(letterSpan);
+                    }
+
+                    if (sIdx < currentSegmentIndex) {
+                        segSpan.classList.add('completed');
+                        charDiv.className = "text-emerald-400 font-bold drop-shadow-[0_0_5px_rgba(16,185,129,0.4)]";
+                    } else if (sIdx === currentSegmentIndex) {
+                        segSpan.classList.add('active');
+                        charDiv.style.color = "var(--primary)";
+                        charDiv.classList.add("scale-105", "font-extrabold");
+                    } else {
+                        charDiv.className = "text-slate-600";
+                    }
+
+                    segSpan.appendChild(charDiv);
+                    segSpan.appendChild(pinyinDiv);
+                    textContainer.appendChild(segSpan);
+                });
+
+                const progressPercent = Math.round((currentSegmentIndex / song.segments.length) * 100);
+                displayProgress.innerText = `进度：${progressPercent}%`;
+                progressBar.style.width = `${progressPercent}%`;
+
+                const curEl = textContainer.querySelector('.active');
+                if (curEl) {
+                    textContainer.scrollTop = curEl.offsetTop - textContainer.clientHeight / 2 + 15;
+                }
+
+            } else {
+                // 英文滚屏模式
+                const text = song.text;
+                for (let i = 0; i < text.length; i++) {
+                    const span = document.createElement('span');
+                    span.innerText = text[i];
+                    if (i < typedTextLength) {
+                        span.className = "char-typed";
+                    } else if (i === typedTextLength) {
+                        span.className = "char-current";
+                    } else {
+                        span.className = "text-slate-600";
+                    }
+                    textContainer.appendChild(span);
+                }
+
+                const curEl = textContainer.querySelector('.char-current');
+                if (curEl) {
+                    textContainer.scrollTop = curEl.offsetTop - textContainer.clientHeight / 2 + 15;
+                }
+
+                const progressPercent = Math.round((typedTextLength / text.length) * 100);
+                displayProgress.innerText = `进度：${progressPercent}%`;
+                progressBar.style.width = `${progressPercent}%`;
+            }
+        }
+
+        // --- STREAMING_CHUNK: 编写屏幕键盘发光指向标记定位功能 ---
+        function highlightNextKeyOnKeyboard() {
+            document.querySelectorAll('.key-target').forEach(el => el.classList.remove('key-target'));
+            
+            const song = SONGS[currentSongIndex];
+            let nextChar = "";
+
+            if (song.isPinyin) {
+                if (currentSegmentIndex >= song.segments.length) return; 
+                const seg = song.segments[currentSegmentIndex];
+                nextChar = seg.p[currentPinyinCharIndex];
+            } else {
+                if (typedTextLength >= song.text.length) return; 
+                nextChar = song.text[typedTextLength].toLowerCase();
+            }
+
+            if (!nextChar) return;
+
+            let keyId = `key-${nextChar}`;
+            const keyEl = document.getElementById(keyId);
+            if (keyEl) {
+                keyEl.classList.add('key-target');
+            }
+        }
+
+        function createRippleEffect(element) {
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            element.appendChild(ripple);
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+
+        // --- STREAMING_CHUNK: 编写自动演奏模拟点击触发机理 ---
+        function toggleAutoPlay() {
+            if (isAutoPlaying) {
+                stopAutoPlay();
+            } else {
+                startAutoPlay();
+            }
+        }
+
+        function startAutoPlay() {
+            initAudio();
+            isAutoPlaying = true;
+            btnAutoplay.classList.remove('from-indigo-500', 'to-purple-500');
+            btnAutoplay.classList.add('from-red-500', 'to-orange-500');
+            document.getElementById('auto-play-text').innerText = "停止演奏";
+            document.getElementById('auto-play-icon').innerText = "⏹️";
+
+            if (!startTime) {
+                startTime = new Date();
+                typingTimer = setInterval(updateStatsUI, 1000);
+            }
+
+            // 智能自动输入定时器：每 240ms 弹奏一个按键
+            autoPlayIntervalId = setInterval(() => {
+                simulateNextKeypress();
+            }, 240);
+        }
+
+        function stopAutoPlay() {
+            isAutoPlaying = false;
+            if (autoPlayIntervalId) {
+                clearInterval(autoPlayIntervalId);
+                autoPlayIntervalId = null;
+            }
+            btnAutoplay.classList.remove('from-red-500', 'to-orange-500');
+            btnAutoplay.classList.add('from-indigo-500', 'to-purple-500');
+            document.getElementById('auto-play-text').innerText = "自动演奏";
+            document.getElementById('auto-play-icon').innerText = "🤖";
+        }
+
+        // 模拟按键事件发生器
+        function simulateNextKeypress() {
+            const song = SONGS[currentSongIndex];
+            let nextChar = "";
+
+            if (song.isPinyin) {
+                if (currentSegmentIndex >= song.segments.length) {
+                    stopAutoPlay();
+                    return;
+                }
+                const seg = song.segments[currentSegmentIndex];
+                nextChar = seg.p[currentPinyinCharIndex];
+            } else {
+                if (typedTextLength >= song.text.length) {
+                    stopAutoPlay();
+                    return;
+                }
+                nextChar = song.text[typedTextLength].toLowerCase();
+            }
+
+            if (!nextChar) return;
+
+            keystrokes++;
+
+            // 触发虚拟键盘发光动画
+            const virtualKeyEl = document.getElementById(`key-${nextChar.toLowerCase()}`);
+            if (virtualKeyEl) {
+                virtualKeyEl.classList.add('key-active');
+                createRippleEffect(virtualKeyEl);
+                setTimeout(() => virtualKeyEl.classList.remove('key-active'), 120);
+            }
+
+            // 执行正确的模拟逻辑
+            if (song.isPinyin) {
+                const activeSegment = song.segments[currentSegmentIndex];
+                currentPinyinCharIndex++;
+                if (currentPinyinCharIndex >= activeSegment.p.length) {
+                    currentSegmentIndex++;
+                    currentPinyinCharIndex = 0;
+                }
+                if (currentSegmentIndex >= song.segments.length) {
+                    stopAutoPlay();
+                    clearInterval(typingTimer);
+                    congratulateFinished();
+                }
+            } else {
+                typedTextLength++;
+                if (typedTextLength >= song.text.length) {
+                    stopAutoPlay();
+                    clearInterval(typingTimer);
+                    congratulateFinished();
+                }
+            }
+
+            // 完美输出钢琴正音
+            const melodyNote = song.melody[correctCount % song.melody.length];
+            const freq = NOTES[melodyNote] || 261.63;
+            playPianoTone(freq);
+
+            correctCount++;
+            combo++;
+            if (combo > maxCombo) maxCombo = combo;
+
+            renderTextDisplay();
+            highlightNextKeyOnKeyboard();
+            updateStatsUI();
+        }
+
+        // --- STREAMING_CHUNK: 编写物理键盘主输入处理器与自锁过滤器 ---
+        window.addEventListener('keydown', (e) => {
+            if (welcomeModal.style.display !== 'none' || successModal.style.display === 'flex') return;
+            
+            // 如果正在自动演奏，阻断玩家键盘物理输入
+            if (isAutoPlaying) {
+                e.preventDefault();
+                return;
+            }
+
+            if (e.key === 'Tab' || e.key === 'Backspace' || e.key === 'Enter') {
+                e.preventDefault();
+                return;
+            }
+
+            const pressedKey = e.key;
+            if (pressedKey.length !== 1) return; 
+
+            if (!startTime) {
+                startTime = new Date();
+                typingTimer = setInterval(updateStatsUI, 1000);
+            }
+
+            keystrokes++;
+            const song = SONGS[currentSongIndex];
+            let isCorrect = false;
+
+            const virtualKeyEl = document.getElementById(`key-${pressedKey.toLowerCase()}`);
+            if (virtualKeyEl) {
+                virtualKeyEl.classList.add('key-active');
+                createRippleEffect(virtualKeyEl);
+                setTimeout(() => virtualKeyEl.classList.remove('key-active'), 120);
+            }
+
+            if (song.isPinyin) {
+                const activeSegment = song.segments[currentSegmentIndex];
+                const expectedChar = activeSegment.p[currentPinyinCharIndex];
+
+                if (pressedKey.toLowerCase() === expectedChar.toLowerCase()) {
+                    isCorrect = true;
+                    currentPinyinCharIndex++;
+
+                    if (currentPinyinCharIndex >= activeSegment.p.length) {
+                        currentSegmentIndex++;
+                        currentPinyinCharIndex = 0;
+                    }
+
+                    if (currentSegmentIndex >= song.segments.length) {
+                        clearInterval(typingTimer);
+                        congratulateFinished();
+                    }
+                }
+            } else {
+                const expectedChar = song.text[typedTextLength];
+                
+                if (pressedKey.toLowerCase() === expectedChar.toLowerCase()) {
+                    isCorrect = true;
+                    typedTextLength++;
+
+                    if (typedTextLength >= song.text.length) {
+                        clearInterval(typingTimer);
+                        congratulateFinished();
+                    }
+                }
+            }
+
+            if (isCorrect) {
+                const melodyNote = song.melody[correctCount % song.melody.length];
+                const freq = NOTES[melodyNote] || 261.63;
+                playPianoTone(freq);
+
+                correctCount++;
+                combo++;
+                if (combo > maxCombo) maxCombo = combo;
+
+                renderTextDisplay();
+                highlightNextKeyOnKeyboard();
+            } else {
+                playDampTone();
+                errors++;
+                combo = 0;
+
+                if (song.isPinyin) {
+                    const segs = textContainer.getElementsByClassName('pinyin-segment');
+                    const curSeg = segs[currentSegmentIndex];
+                    if (curSeg) {
+                        curSeg.classList.add('char-wrong');
+                        setTimeout(() => curSeg.classList.remove('char-wrong'), 250);
+                    }
+                } else {
+                    const spans = textContainer.getElementsByTagName('span');
+                    const curSpan = spans[typedTextLength];
+                    if (curSpan) {
+                        curSpan.classList.add('char-wrong');
+                        setTimeout(() => curSpan.classList.remove('char-wrong'), 250);
+                    }
+                }
+            }
+
+            updateStatsUI();
+        });
+
+        function updateStatsUI() {
+            statCombo.innerText = combo;
+
+            const accuracy = keystrokes > 0 ? Math.round(((keystrokes - errors) / keystrokes) * 100) : 100;
+            statAcc.innerText = `${accuracy}%`;
+
+            let wpm = 0;
+            if (startTime) {
+                const elapsedMin = (new Date() - startTime) / 1000 / 60;
+                if (elapsedMin > 0) {
+                    const letterTypedCount = SONGS[currentSongIndex].isPinyin 
+                        ? getPinyinTypedLettersCount()
+                        : typedTextLength;
+                    wpm = Math.round((letterTypedCount / 5) / elapsedMin);
+                }
+            }
+            statWpm.innerText = wpm;
+        }
+
+        function getPinyinTypedLettersCount() {
+            const song = SONGS[currentSongIndex];
+            let count = 0;
+            for (let i = 0; i < currentSegmentIndex; i++) {
+                count += song.segments[i].p.length;
+            }
+            count += currentPinyinCharIndex;
+            return count;
+        }
+
+        // --- STREAMING_CHUNK: 编写结算勋章荣誉算法 ---
+        function congratulateFinished() {
+            setTimeout(() => {
+                const accuracy = Math.round(((keystrokes - errors) / keystrokes) * 100);
+                
+                let wpm = 0;
+                if (startTime) {
+                    const elapsedMin = (new Date() - startTime) / 1000 / 60;
+                    const letterTypedCount = SONGS[currentSongIndex].isPinyin 
+                        ? getPinyinTypedLettersCount()
+                        : typedTextLength;
+                    wpm = Math.round((letterTypedCount / 5) / elapsedMin);
+                }
+
+                let rankTitle = "见习音乐仙女 ✨";
+                if (accuracy >= 96 && wpm >= 42) rankTitle = "星光至尊琴魔 👑";
+                else if (accuracy >= 92 && wpm >= 28) rankTitle = "精灵大琴师 🦄";
+                else if (accuracy >= 80) rankTitle = "星空吟游乐徒 🎵";
+
+                document.getElementById('report-wpm').innerText = wpm;
+                document.getElementById('report-acc').innerText = `${accuracy}%`;
+                document.getElementById('report-combo').innerText = maxCombo;
+                document.getElementById('report-title').innerText = rankTitle;
+
+                successModal.style.display = "flex";
+            }, 600);
+        }
+
+        // 绑定各种面板控制点击事件
+        btnEnter.addEventListener('click', () => {
+            initAudio();
+            welcomeModal.style.display = 'none';
+            loadSong(0); 
+        });
+
+        btnReplay.addEventListener('click', () => {
+            successModal.style.display = "none";
+            loadSong(currentSongIndex);
+        });
+
+        btnNext.addEventListener('click', () => {
+            successModal.style.display = "none";
+            let nextIndex = (currentSongIndex + 1) % SONGS.length;
+            songSelect.value = nextIndex;
+            loadSong(nextIndex);
+        });
+
+        songSelect.addEventListener('change', (e) => {
+            loadSong(parseInt(e.target.value));
+        });
+
+        themeSelect.addEventListener('change', (e) => {
+            changeTheme(e.target.value);
+        });
+
+        btnAutoplay.addEventListener('click', () => {
+            toggleAutoPlay();
+        });
+
+        // 初始化默认星空主题
+        changeTheme("starlight");
+    </script>
+</body>
+</html>
