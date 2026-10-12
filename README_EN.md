@@ -24,6 +24,14 @@ A set of child-friendly coding learning tools.
 - Fairy-tale themed visual experience
 - Progressive difficulty levels
 
+### 3. 🧪 Little Physics Lab
+**File:** `小小物理实验室.html`
+
+- A single-file, offline 3D (WebGL) interactive physics lab
+- Six experiment scenes: straight-line motion & friction, spring-wall bounce, ramp energy, incline acceleration, free fall, momentum conservation
+- Real-time v-t chart, experiment log table, and CSV export of results
+- A "guess → try → think" explanation flow, plus a glossary of physics terms
+
 ## 🚀 Quick Start
 
 1. Clone or download this repository
@@ -41,6 +49,12 @@ A set of child-friendly coding learning tools.
 - Open `星光琴键：童话魔法乐章.html`
 - Follow on-screen prompts to practice typing
 - Complete challenges to receive feedback
+
+### Physics Lab
+- Open `小小物理实验室.html`
+- Pick a scene and tune the parameters (mass, push force, friction, angle, ...) in the Control Panel
+- Hit "push / release" and watch the ball, the live v-t chart, and the experiment log
+- Follow the task and "why" prompts to verify the conclusions yourself
 
 ## 🎨 Features
 
