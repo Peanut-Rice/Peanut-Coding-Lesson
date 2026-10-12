@@ -1,0 +1,1352 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>小小物理实验室 · 互动实验台</title>
+<style>
+:root{
+  --bg:#081426;--panel:rgba(7,17,31,.92);--line:rgba(255,255,255,.16);--shadow:0 18px 50px #0007;
+  --txt:#eaf3fb;--dim:#a9bed2;--label:#a9bed2;--hint:#a9bed2;--empty:#a9bed2;
+  --accent:#42c5f5;--accent2:#2ab5ed;--onAccent:#03111b;--value:#42c5f5;
+  --gold:#e8b94e;--onGold:#231b06;--btn:#173954;--onBtn:#eaf8ff;--ghost:#12293e;
+  --inputBg:#122b43;--inputBorder:#31516d;--inputText:#ffffff;
+  --hair:rgba(255,255,255,.13);--hair2:rgba(255,255,255,.07);--hover:rgba(255,255,255,.06);
+  --sel:rgba(66,197,245,.20);
+  --toastBg:#ffd15c;--toastText:#18212b;--badgeBg:#12334d;--badgeText:#7fe0ff;
+  --chartBg:#0a1c2e;--chartArea:rgba(66,197,245,.16);
+  --theadBg:#0e2439;--theadText:#a9bed2;--scroll:#27455f;--kbdBg:#16324a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--txt);
+  font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;-webkit-user-select:none;user-select:none}
+#gl{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#gl:active{cursor:grabbing}
+#ui{position:absolute;inset:0;pointer-events:none}
+.panel{position:absolute;background:var(--panel);border:1px solid var(--line);border-radius:18px;
+  box-shadow:var(--shadow);backdrop-filter:blur(14px);pointer-events:auto}
+/* 主题过渡只在首帧之后启用，避免页面打开时从默认配色渐变过来 */
+html.anim .panel{transition:background .25s,border-color .25s}
+h3{margin:0 0 10px;font-size:17px}
+#title{left:22px;top:20px;padding:14px 18px}
+#title b{font-size:20px}
+#title small{display:block;color:var(--dim);margin-top:4px;font-size:12px}
+.badge{display:inline-block;padding:3px 8px;border-radius:999px;background:var(--badgeBg);color:var(--badgeText);font-size:11px;margin-left:6px;vertical-align:2px}
+
+#hud{left:22px;top:104px;width:212px;padding:12px 13px}
+.stat{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid var(--hair2);font-size:12px}
+.stat:last-of-type{border-bottom:0}
+.stat span{color:var(--dim)}
+.stat b{font-variant-numeric:tabular-nums;font-weight:700}
+#chart{display:block;width:100%;height:76px;margin-top:8px;border-radius:9px;background:var(--chartBg);border:1px solid var(--hair)}
+
+#controls{right:18px;top:18px;width:318px;max-height:calc(100vh - 36px);overflow:auto;padding:17px}
+#controls::-webkit-scrollbar{width:8px}
+#controls::-webkit-scrollbar-thumb{background:var(--scroll);border-radius:8px}
+.row{margin:10px 0}
+.row>label{display:flex;justify-content:space-between;gap:12px;color:var(--label);font-size:13px;margin-bottom:6px}
+.row strong{color:var(--value);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
+select{width:100%;background:var(--inputBg);color:var(--inputText);border:1px solid var(--inputBorder);border-radius:9px;padding:8px;font-size:13px}
+.check{display:flex;align-items:center;gap:8px;color:var(--label);font-size:13px;margin:8px 0;cursor:pointer}
+.group{border-top:1px solid var(--hair);padding-top:11px;margin-top:11px}
+.group:first-of-type{border-top:0;padding-top:0;margin-top:0}
+button{border:0;border-radius:10px;padding:9px 12px;font-weight:800;cursor:pointer;background:var(--btn);color:var(--onBtn);margin:3px 3px 0 0;font-size:13px}
+button:active{transform:translateY(1px)}
+button.primary{background:var(--accent2);color:var(--onAccent)}
+button.gold{background:var(--gold);color:var(--onGold)}
+button.ghost{background:var(--ghost)}
+.buttons{margin-top:12px}
+.hint{color:var(--hint);font-size:12.5px;line-height:1.6;margin-top:9px;padding-top:9px;border-top:1px solid var(--hair2)}
+
+#mission{left:22px;bottom:20px;width:min(430px,calc(100% - 44px));padding:15px 17px}
+#mission .big{font-size:15.5px;font-weight:800}
+#mission .hint{margin-top:6px;padding-top:0;border-top:0}
+
+#toast{position:absolute;left:50%;top:13%;transform:translateX(-50%) translateY(-12px);opacity:0;
+  padding:11px 20px;border-radius:999px;background:var(--toastBg);color:var(--toastText);font-weight:900;transition:.25s;
+  box-shadow:var(--shadow);pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+#records{left:50%;top:50%;transform:translate(-50%,-50%);width:min(940px,calc(100% - 40px));
+  max-height:78vh;padding:20px;display:none;flex-direction:column}
+#records.show{display:flex}
+.tableWrap{overflow:auto;border-radius:10px;border:1px solid var(--hair);margin-bottom:12px}
+table{border-collapse:collapse;width:100%;font-size:12.5px;white-space:nowrap}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--hair2)}
+th{position:sticky;top:0;background:var(--theadBg);color:var(--theadText);font-weight:700;z-index:1}
+td:first-child,th:first-child{text-align:left}
+tbody tr:hover{background:var(--hover);cursor:pointer}
+tbody tr.sel{background:var(--sel)}
+.empty{padding:26px;text-align:center;color:var(--empty);font-size:13px}
+.key{color:var(--empty);font-size:11.5px;line-height:1.7;margin-top:2px}
+kbd{background:var(--kbdBg);border-radius:5px;padding:1px 6px;font-family:inherit;font-size:11px;border:1px solid var(--hair)}
+
+/* ---- 小朋友版原理讲解 ---- */
+#mission .oneline{margin-top:9px;font-size:13px;line-height:1.6;padding:8px 11px;
+  border-radius:0 10px 10px 0;background:var(--sel);border-left:3px solid var(--accent);color:var(--txt)}
+#mission .whyRow{margin-top:10px}
+.whyBtn{background:var(--accent2);color:var(--onAccent);padding:8px 15px;font-size:13.5px}
+#why{left:50%;top:50%;transform:translate(-50%,-50%);width:min(690px,calc(100% - 40px));
+  max-height:84vh;padding:20px 22px;display:none;flex-direction:column}
+#why.show{display:flex}
+.whyHead{display:flex;gap:13px;align-items:center;margin-bottom:13px;flex:none}
+.whyAvatar{font-size:36px;line-height:1;flex:none}
+.whyHead h3{margin:0;font-size:18px}
+.whySub{color:var(--dim);font-size:12.5px;margin-top:4px;line-height:1.5}
+.whyBody{overflow:auto;padding-right:5px;flex:1}
+.blk{margin-bottom:10px;padding:11px 14px;border-radius:12px;background:var(--hover);border-left:3px solid var(--accent)}
+.blk.hi{border-left-color:var(--gold);background:var(--sel)}
+/* 只让"段落标题"独占一行；正文里的 <b> 必须保持行内，否则会把句子拆断 */
+.blk>b{display:block;font-size:13.5px;margin-bottom:5px;color:var(--accent)}
+.blk.hi>b{color:var(--gold)}
+.blk>p{margin:0;font-size:13.5px;line-height:1.8;color:var(--txt)}
+.blk>p b{color:var(--value)}
+.whyWords{margin-top:2px;padding:12px 14px;border-radius:12px;border:1px dashed var(--line)}
+.whyWords>b{display:block;font-size:13.5px;margin-bottom:8px;color:var(--txt)}
+.wd{display:flex;gap:9px;font-size:12.5px;line-height:1.7;margin-bottom:5px}
+.wd i{font-style:normal;color:var(--value);font-weight:700;flex:none;min-width:70px}
+.wd span{color:var(--dim)}
+#why .buttons{margin-top:13px;flex:none}
+
+@media(max-width:900px){
+  #hud{display:none}
+  #controls{width:266px;padding:13px}
+  #title,#mission{left:12px}
+  #controls{right:12px;top:12px}
+  #title small{display:none}
+  #why{width:calc(100% - 20px);max-height:88vh;padding:16px}
+  .blk p,.blk b{font-size:13px}
+}
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+
+<div id="ui">
+  <div id="title" class="panel">
+    <b>🧪 小小物理实验室 <span class="badge" id="sceneBadge">直线实验</span></b>
+    <small>拖动鼠标可旋转视角 · 滚轮缩放 · 所有物理量均为真实单位</small>
+  </div>
+
+  <div id="hud" class="panel">
+    <div class="stat"><span>速度 v</span><b id="rSpeed">0.00 m/s</b></div>
+    <div class="stat"><span>加速度 a</span><b id="rAcc">0.00 m/s²</b></div>
+    <div class="stat"><span>位移 Δs</span><b id="rDist">0.00 m</b></div>
+    <div class="stat"><span>用时 t</span><b id="rTime">0.00 s</b></div>
+    <div class="stat"><span>动量 p</span><b id="rMom">0.00 kg·m/s</b></div>
+    <div class="stat"><span>动能 Ek</span><b id="rEk">0.00 J</b></div>
+    <div class="stat"><span>重力势能 Ep</span><b id="rEp">0.00 J</b></div>
+    <div class="stat"><span>碰撞次数</span><b id="rHits">0</b></div>
+    <div class="stat"><span>状态</span><b id="rState">准备中</b></div>
+    <canvas id="chart"></canvas>
+  </div>
+
+  <div id="controls" class="panel">
+    <h3>🎛️ 实验控制台</h3>
+
+    <div class="row">
+      <label><span>配色主题</span></label>
+      <select id="theme"></select>
+    </div>
+
+    <div class="row">
+      <label><span>实验场景</span></label>
+      <select id="scene"></select>
+    </div>
+
+    <div id="params"></div>
+
+    <div class="group">
+      <div class="row">
+        <label><span>地面材料</span></label>
+        <select id="surface">
+          <option value="0">冰面 —— 很滑 (×0.15)</option>
+          <option value="1" selected>木板 —— 普通 (×1.0)</option>
+          <option value="2">橡胶 —— 很涩 (×1.8)</option>
+        </select>
+      </div>
+      <div class="row">
+        <label><span>重力 g</span><strong id="gVal">9.8 m/s²</strong></label>
+        <input id="gravity" type="range" min="0" max="2" step=".1" value="1">
+      </div>
+      <div class="row">
+        <label><span>小球大小</span><strong id="sizeVal">1.00</strong></label>
+        <input id="size" type="range" min=".6" max="1.6" step=".05" value="1">
+      </div>
+      <label class="check"><input id="grid" type="checkbox" checked> 显示测量刻度</label>
+      <label class="check"><input id="vector" type="checkbox" checked> 显示速度 / 受力箭头</label>
+      <label class="check"><input id="slow" type="checkbox"> 慢动作 0.3×（方便看自由落体）</label>
+    </div>
+
+    <div class="buttons">
+      <button class="primary" id="push">🚀 推一下</button>
+      <button id="pushHard">💥 猛推</button>
+      <button class="gold" id="reset">↺ 重置</button>
+      <button class="ghost" id="openRec">📋 数据记录</button>
+    </div>
+
+    <div class="hint" id="forceInfo"></div>
+    <div class="key">快捷键 <kbd>空格</kbd> 推/释放 · <kbd>R</kbd> 重置 · <kbd>W</kbd> 小课堂 · <kbd>C</kbd> 记录表</div>
+  </div>
+
+  <div id="mission" class="panel">
+    <div class="big" id="taskTitle">🎯 实验任务</div>
+    <div class="hint" id="hint"></div>
+    <div class="oneline" id="oneLine"></div>
+    <div class="whyRow"><button class="whyBtn" id="openWhy">🧠 为什么呀？</button></div>
+  </div>
+
+  <div id="records" class="panel">
+    <h3>📋 实验记录 <span class="badge" id="recCount">0 条</span></h3>
+    <div class="tableWrap" id="recWrap"></div>
+    <div>
+      <button class="primary" id="exportCsv">⬇ 导出 CSV</button>
+      <button id="clearRec">🗑 清空记录</button>
+      <button class="ghost" id="closeRec">关闭</button>
+      <span class="key" style="margin-left:8px">点击任意一行可载入该次实验的参数重做</span>
+    </div>
+  </div>
+
+  <div id="why" class="panel">
+    <div class="whyHead">
+      <span class="whyAvatar">🦉</span>
+      <div>
+        <h3 id="whyTitle">小课堂</h3>
+        <div class="whySub" id="whySub"></div>
+      </div>
+    </div>
+    <div class="whyBody" id="whyBody"></div>
+    <div class="buttons">
+      <button class="primary" id="closeWhy">我知道啦！</button>
+      <button class="ghost" id="whyNext">看看下一个实验 →</button>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+</div>
+
+<script>
+'use strict';
+/* ==========================================================================
+   小小物理实验室 —— 单文件离线 WebGL 实验台
+   物理量全部使用国际单位（m, s, kg, N, J），渲染时再换算成世界坐标。
+   1 世界单位 = 0.5 m，实验台长 7.2 m，右端挡板在 6.7 m 处。
+   ========================================================================== */
+
+/* ---------- 常量 ---------- */
+const UPM = 2;              // 每米对应的世界单位数
+const BENCH_M = 7.2;        // 实验台长度（米）
+const TABLE_TOP = 0.10;     // 台面在世界坐标中的高度
+const WALL_S = 6.7;         // 挡板所在位置（米）
+const GOAL_S = 5.85;        // 终点区起点（米）
+const RAMP_A = 0.30, RAMP_B = 3.60, RAMP_DEG = 30;  // 坡道（固定 30°）
+const SLOPE_LEN = 3.30;     // 斜面场景的水平长度
+const PUSH_T = 0.22;        // 推击持续时间（秒），冲量 J = F·Δt
+const X = s => (s - BENCH_M / 2) * UPM;   // 米 -> 世界横坐标
+
+/* ---------- 场景 / 参数定义 ---------- */
+/* ---------- 场景 / 参数定义 ----------
+   why 面向 10 岁小朋友：先描述现象，再打比方解释，然后给一个"反直觉的秘密"，
+   最后让他自己动手验证、并联系生活。words 是这个小实验会用到的名词。
+   ------------------------------------------------------------------ */
+const SCENES = {
+  line:    {name:'直线实验', params:['mass','force','mu'], goalZone:true,
+            task:'🎯 把小球推进绿色终点',
+            hint:'「推一下」给的是固定冲量 J：质量翻倍，初速度减半（v = J/m）。但摩擦减速度 a = μg 与质量毫无关系 —— 推完盯着「速度」和「加速度」两行看。',
+            one:'💡 摩擦力一直在和运动方向作对，所以没人推，小球就会慢慢停下来。',
+            words:['speed','accel','mass','friction','force'],
+            why:{
+              see:'推一下，小球就"嗖"地跑起来；手一松，它又慢慢停下来了。<br>奇怪，为什么它不会自己一直跑下去呢？',
+              why:'因为桌面上有无数看不见的小疙瘩。小球一边跑，一边在和这些疙瘩刮蹭，这种刮蹭产生的阻力就叫<b>摩擦力</b>。<br>摩擦力永远和运动方向<b>相反</b>，所以它只会给小球"踩刹车"，越跑越慢。',
+              secret:'摩擦力让小球"<b>每秒减慢同样多</b>"的速度。而且这个减慢的快慢，只跟地面粗不粗糙有关，<b>跟小球有多重完全没关系</b>！<br>重的球只是被同样一推，起步速度更小而已（因为 v = 冲量 ÷ 质量）。',
+              test:'把"地面材料"换成<b>冰面</b>再推一次，看看小球能跑多远；再换成<b>橡胶</b>比一比。<br>然后把"小球质量"从 2 kg 调到 10 kg，盯着「加速度」那一行 —— 变了吗？',
+              life:'滑冰为什么比在水泥地上滑得远得多？<br>汽车刹车为什么要用力踩？雨天路滑为什么要慢点开？<br>全都是摩擦力在起作用。'
+            }},
+  spring:  {name:'弹簧墙实验', params:['mass','force','bounce','mu'],
+            task:'🎯 观察每次撞墙后速度怎么衰减',
+            hint:'墙壁弹性 e 就是反弹后速度与撞前速度之比。分别取 e=1.0 和 e=0.3 各推一次，比较第一次反弹的速度。',
+            one:'💡 每次撞墙都会"丢掉"一点运动的能量，所以弹回来的球一次比一次慢。',
+            words:['speed','mass','energy','elastic'],
+            why:{
+              see:'小球"砰"地撞上挡板，弹回来了 —— 可是弹回来的速度，比撞过去的时候<b>慢了一点</b>。',
+              why:'小球撞上挡板的时候，会把一部分运动"传"给挡板。挡板被压得稍微凹进去一点点，再弹回来把小球的推回。<br>就在这一压一弹之间，有一小部分能量变成了<b>听不见的热</b>和很轻的"砰"声，跑掉了。',
+              secret:'"墙壁弹性 e"就是<b>还回来多少</b>的意思：<br>e = 1.0 表示一点不丢，原封不动全还给你；e = 0.3 表示只还三成，另外七成都变成热跑掉了。<br>所以只要 e 小于 1，小球早晚会停下来。',
+              test:'把弹性分别调到 <b>1.0</b> 和 <b>0.3</b>，各推一次，盯着「速度」那一行，看第一次弹回来时差多少。<br>再把 e 调到 0 试试 —— 小球会像撞进棉花一样贴住不动。',
+              life:'篮球拍在地上能弹起来，橡皮泥掉下去却"啪"一下就不动了。<br>篮球的 e 很大，橡皮泥的 e 几乎是 0。'
+            }},
+  ramp:    {name:'坡道实验', params:['mass','height','mu'], goalZone:true,
+            task:'🎯 从坡道释放小球，看它能滑多远',
+            hint:'高度越高，到达坡底的速度越大。忽略拐角损失时 Ep=mgh 全部变成 Ek=½mv²。',
+            one:'💡 小球在高处"存"着能量，滑下来时这些能量变成了运动，所以越滑越快。',
+            words:['speed','mass','energy','pe','ke','gravity'],
+            why:{
+              see:'小球从坡上滑下来，<b>越滑越快</b>，冲到平地上还要滑好远才停下来。',
+              why:'小球站在高处的时候，身上"存"着一份能量，叫<b>重力势能</b>。<br>就像你把书包举得越高，松手砸下来越响 —— 举得高，存得多。<br>小球往下滑的时候，这份存起来的能量一点点变成"运动的能量"，所以速度越来越快。',
+              secret:'如果一点摩擦都没有，存了多少能量就能换回来多少，<b>一个不少</b>。<br>真实世界里，摩擦力会偷偷拿走一小份，所以你算出来的滑行距离常常比理论值短一点点。',
+              test:'把"释放高度"调到最高再释放，看看小球滑得更远还是更近？<br>再把地面换成<b>橡胶</b>，同样的高度，结果又变了。想一想：是"存"的少了，还是"路上被偷"的多了？',
+              life:'过山车为什么一定要先"哐当哐当"慢慢爬到最高点？<br>那是在给整趟旅程存能量，后面所有的尖叫都靠它。'
+            }},
+  incline: {name:'斜面加速度', params:['mass','angle','mu'],
+            task:'🎯 测出小球在斜面上的加速度',
+            hint:'理论上 a = g(sinθ − μcosθ)，与小球的 m 无关。把摩擦力调到 tanθ 以上，小球就再也不动了。',
+            one:'💡 坡越陡，往下拉的那部分重力越大；a = g×sinθ 里没有质量，所以轻重球跑得一样快。',
+            words:['accel','gravity','mass','friction'],
+            why:{
+              see:'坡越陡，小球冲得越快；把摩擦因数调得足够大，小球干脆<b>一动不动</b>，像被粘住了一样。',
+              why:'地球一直在往下拉小球（这就是<b>重力</b>）。<br>可是坡面是斜的，重力就被"分成"两份：一份顺着坡面把球往下推，另一份压在坡面上、被坡面顶住了。<br>坡越陡，往下推的那一份就越大，球就跑得越快。',
+              secret:'顺着坡面的加速度写成式子是 <b>a = g×sinθ</b>（θ 是坡的角度）。<br>仔细看 —— <b>里面根本没有"质量"</b>！<br>所以 1 公斤的球和 10 公斤的球放在同一个坡上，跑起来一模一样快。这跟"重的球掉得快"的直觉是相反的。',
+              test:'把角度调到 <b>5°</b>（几乎平的），再把"摩擦因数"调到最大，小球还会动吗？<br>提示：当 μ 大于 tanθ 的时候，摩擦力就足够把球"粘"在坡上了。',
+              life:'四百年前，伽利略就是拿斜面做实验的。<br>为什么不用自由落体？因为东西掉得太快来不及测，而小球在斜面上滚得慢悠悠的，正好量。他靠这个弄明白了"加速度"到底是什么。'
+            }},
+  fall:    {name:'自由落体', params:['mass','height','bounce'],
+            task:'🎯 测量小球落到台面的时间',
+            hint:'理论落地时间 t = √(2h/g)，只与高度和 g 有关。换个质量试试，落地时间会变吗？',
+            one:'💡 落地时间 t = √(2h/g)，只看高度，跟球有多重没关系。',
+            words:['accel','gravity','mass','speed','elastic'],
+            why:{
+              see:'小球悬在半空，一松手就直直往下掉，而且<b>越掉越快</b>。',
+              why:'重力一直拉着小球。每过一小段时间，小球的速度就增加一点点，所以掉得越久、速度越大。<br>这种"速度不断变大"的现象，就叫<b>加速度</b>。地球给东西的加速度大约都是 9.8 m/s² —— 也就是说每过 1 秒，下落速度快 9.8 m/s。',
+              secret:'落地时间只跟高度和重力有关，式子是 <b>t = √(2h/g)</b> —— <b>里面同样没有质量</b>！<br>如果抽掉空气，一个大铁球和一根羽毛会<b>同时落地</b>。宇航员在月球上真的做过这个实验，全世界都看到了。',
+              test:'把"小球质量"分别调成 <b>1 kg</b> 和 <b>10 kg</b>，各释放一次，盯着「用时」那一行。<br>变了吗？（没有！）<br>再把"重力 g"调小 —— 那就像在月球上掉球了，小球会慢吞吞地飘下去。',
+              life:'为什么雨滴从那么高的天上掉下来，没有把我们的头砸破？<br>因为空气帮忙"拖"住了它。要是没有空气，雨滴可就危险了。'
+            }},
+  momentum:{name:'动量守恒', params:['mass','force','massB','rest'],
+            task:'🎯 比较碰撞前后的总动量',
+            hint:'p = mv。弹性碰撞时动量守恒，完全非弹性（粘在一起）时动量同样守恒，但动能会损失。',
+            one:'💡 碰撞时总"撞人本领"（动量 = 质量 × 速度）不会凭空多出来或消失，只是从 A 传给了 B。',
+            words:['momentum','mass','speed','energy','ke','conserve'],
+            why:{
+              see:'A 球撞上 B 球，B 球"嗖"地飞出去，A 球自己慢了下来，有时候还会<b>往回退</b>。',
+              why:'每个运动的球都有一种"撞人的本领"，大小等于 <b>质量 × 速度</b>，这个本领叫<b>动量</b>。<br>碰撞的时候，本领只是从 A 球交给了 B 球。总共的本领不会凭空变多，也不会凭空消失 —— 这就叫<b>动量守恒</b>。',
+              secret:'动量<b>永远</b>守恒，但"运动的能量"<b>不一定</b>！<br>把碰撞类型选成"完全非弹性"，两球粘在一起往前滚 —— 动量一点没少，动能却少了一大截。<br>那些不见了的能量去哪儿了？变成了热和"砰"的一声。',
+              test:'把 A、B 两个球的质量调成<b>一样</b>，用"弹性碰撞"试试：<br>A 会停下来，B 会以 A 原来的速度飞出去 —— 就像打台球。<br>再把 B 的质量调到最大，看看 A 会不会被撞得倒退回来。',
+              life:'打台球的时候，白球撞上红球，白球停住、红球跑掉，这就是动量在"搬家"。'
+            }}
+};
+
+/* ---------- 名词小词典（给小朋友看的说法） ---------- */
+const WORDS = {
+  speed:   ['速度',     '小球跑得多快，单位是"米每秒"（m/s）。10 m/s 就是每 1 秒跑 10 米。'],
+  accel:   ['加速度',   '速度变化得快不快。加速度 2 m/s² 的意思是：每过 1 秒，速度快 2 m/s。'],
+  mass:    ['质量',     '小球"有多少东西"，单位是公斤（kg）。质量越大越难推动，也越难停下来。'],
+  force:   ['力',       '推或者拉的劲儿，单位是牛顿（N）。1 N 差不多是托起一个鸡蛋用的力。'],
+  friction:['摩擦力',   '两个面互相刮蹭产生的力，专门和运动方向作对，所以东西会越跑越慢。'],
+  gravity: ['重力',     '地球把东西往下拉的力。它给所有东西的加速度都是大约 9.8 m/s²。'],
+  momentum:['动量',     '东西"撞人的本领"，等于 质量 × 速度。又重又快的东西，动量就大。'],
+  conserve:['守恒',     '一个总数在变化前后完全不变，就叫守恒。动量就是守恒的。'],
+  energy:  ['能量',     '做事儿的本领，单位是焦耳（J）。它会变来变去，但总量不会凭空增减。'],
+  ke:      ['动能',     '因为"在运动"而带有的能量，等于 ½ × 质量 × 速度²。越快能量越大。'],
+  pe:      ['重力势能', '因为"站在高处"而存起来的能量，等于 质量 × g × 高度。举得越高存得越多。'],
+  elastic: ['弹性 e',   '撞墙之后"还回来"的比例。e = 1 表示原封不动全还你，e = 0.3 表示只还三成。']
+};
+
+const PARAMS = {
+  mass:   {label:'小球质量 A', unit:'kg', min:1,  max:10, step:.1, def:2,   dec:1},
+  massB:  {label:'小球质量 B', unit:'kg', min:1,  max:10, step:.1, def:5,   dec:1},
+  force:  {label:'推力 F',      unit:'N',  min:0,  max:60, step:1,  def:32,  dec:0},
+  mu:     {label:'摩擦因数 μ×10', unit:'', min:0,  max:10, step:.1, def:1.0, dec:1},
+  bounce: {label:'墙壁弹性 e',  unit:'',   min:0,  max:10, step:.1, def:7,   dec:1},
+  angle:  {label:'斜面角度 θ',  unit:'°',  min:5,  max:45, step:1,  def:25,  dec:0},
+  height: {label:'释放高度 h',  unit:'m',  min:.2, max:1.8,step:.1, def:1.2, dec:1},
+  rest:   {label:'碰撞类型', type:'select', def:'elastic',
+           options:[['elastic','弹性碰撞（分开）'],['inelastic','完全非弹性（粘住）']]}
+};
+const SURF = [{mu:.15,label:'冰面'},{mu:1,label:'木板'},{mu:1.8,label:'橡胶'}];
+
+/* ==========================================================================
+   配色主题
+   每套主题同时定义两件事：
+   1) css —— UI 面板用（会写进 :root 的 CSS 变量）
+   2) scene —— 3D 场景里各种物体的基色，最终颜色 = 基色 × 烘焙光照系数
+   ink 是正文颜色的 rgb，用来推导发丝线/分隔线的半透明色（浅色主题必须给深色）。
+   ========================================================================== */
+const THEMES = {
+  ocean:{ name:'🌊 海洋蓝（默认）',
+    bg:'#081426', panel:'rgba(7,17,31,.92)', txt:'#eaf3fb', dim:'#a9bed2', ink:[255,255,255],
+    accent:'#42c5f5', accentRgb:[66,197,245], accent2:'#2ab5ed', onAccent:'#03111b',
+    gold:'#e8b94e', onGold:'#231b06', btn:'#173954', onBtn:'#eaf8ff', ghost:'#12293e',
+    inputBg:'#122b43', inputBorder:'#31516d', inputText:'#ffffff',
+    toastBg:'#ffd15c', toastText:'#18212b', badgeBg:'#12334d', badgeText:'#7fe0ff',
+    chartBg:'#0a1c2e', chartGrid:'#1b3a55', theadBg:'#0e2439', scroll:'#27455f', kbdBg:'#16324a',
+    shadow:'0 18px 50px #0007',
+    scene:{ clear:[.025,.065,.12], tableBody:[.07,.11,.16],
+      surfaces:[[.20,.36,.46],[.43,.30,.17],[.20,.26,.24]],
+      rail:[.08,.60,.74], rulerMajor:[.92,.82,.38], rulerMinor:[.55,.63,.70],
+      goalPad:[.12,.68,.36], goalPole:[.92,.92,.92], goalFlag:[.24,.95,.45],
+      ramp:[.92,.55,.22], rampIncline:[.86,.62,.26], rampBack:[.55,.36,.16], rampSide:[.72,.44,.18], rampEdge:[.98,.86,.55],
+      wall:[.92,.35,.30], springWall:[.78,.35,.88], coil:[.85,.55,1], rulerBar:[.98,.78,.30],
+      shadow:[.03,.06,.09], startMark:[.55,.62,.70],
+      ballA:[.10,.66,1.00], ballASpec:[.78,.96,1.00], ballB:[1.00,.55,.18], ballBSpec:[1.00,.88,.66],
+      arrow:[1.00,.74,.18], arrowB:[1.00,.62,.30] } },
+
+  sakura:{ name:'🌸 樱花粉',
+    bg:'#fff2f7', panel:'rgba(255,255,255,.93)', txt:'#6d3350', dim:'#b0798f', ink:[109,51,80],
+    accent:'#ff7fb2', accentRgb:[255,127,178], accent2:'#ff6aa6', onAccent:'#ffffff',
+    gold:'#ffc44d', onGold:'#6b4700', btn:'#ffe1ec', onBtn:'#8e3f61', ghost:'#ffeef5',
+    inputBg:'#fff6fa', inputBorder:'#f5bcd6', inputText:'#6d3350',
+    toastBg:'#ffb3d1', toastText:'#6b2340', badgeBg:'#ffe0ee', badgeText:'#d4427f',
+    chartBg:'#fff4f9', chartGrid:'#f3c9dc', theadBg:'#ffe9f1', scroll:'#f2b9d2', kbdBg:'#ffe4ef',
+    shadow:'0 18px 46px rgba(196,110,150,.20)',
+    scene:{ clear:[1.00,.906,.941], tableBody:[.902,.706,.780],
+      surfaces:[[.80,.90,.97],[.93,.76,.62],[.83,.72,.78]],
+      rail:[1.00,.55,.78], rulerMajor:[.95,.42,.66], rulerMinor:[.80,.60,.72],
+      goalPad:[.42,.87,.66], goalPole:[1,1,1], goalFlag:[.35,.93,.62],
+      ramp:[1.00,.72,.66], rampIncline:[1.00,.78,.72], rampBack:[.86,.58,.58], rampSide:[.92,.64,.62], rampEdge:[1.00,.95,.70],
+      wall:[1.00,.55,.55], springWall:[.78,.55,.95], coil:[.90,.75,1], rulerBar:[.98,.62,.72],
+      shadow:[.62,.42,.52], startMark:[.80,.62,.72],
+      ballA:[1.00,.45,.70], ballASpec:[1.00,.88,.94], ballB:[1.00,.72,.45], ballBSpec:[1.00,.94,.85],
+      arrow:[1.00,.62,.15], arrowB:[.98,.45,.30] } },
+
+  lavender:{ name:'🔮 梦幻紫',
+    bg:'#1b1130', panel:'rgba(31,20,54,.92)', txt:'#efe6ff', dim:'#b6a3d6', ink:[239,230,255],
+    accent:'#c08bff', accentRgb:[192,139,255], accent2:'#a86cf5', onAccent:'#1b0b30',
+    gold:'#ffd166', onGold:'#3a2600', btn:'#3a2a5e', onBtn:'#f0e7ff', ghost:'#2a1d46',
+    inputBg:'#2b1e49', inputBorder:'#54407c', inputText:'#f2ecff',
+    toastBg:'#ffd166', toastText:'#2a1a00', badgeBg:'#3a2760', badgeText:'#d9b8ff',
+    chartBg:'#241740', chartGrid:'#3d2c63', theadBg:'#2c1e4c', scroll:'#4a3576', kbdBg:'#332350',
+    shadow:'0 18px 50px rgba(8,2,25,.55)',
+    scene:{ clear:[.075,.045,.145], tableBody:[.16,.11,.28],
+      surfaces:[[.40,.44,.74],[.46,.34,.44],[.34,.28,.48]],
+      rail:[.72,.45,1.00], rulerMajor:[.98,.84,.40], rulerMinor:[.58,.50,.76],
+      goalPad:[.28,.84,.60], goalPole:[.96,.96,1], goalFlag:[.42,.95,.68],
+      ramp:[.78,.50,.92], rampIncline:[.70,.46,.88], rampBack:[.40,.26,.56], rampSide:[.56,.36,.72], rampEdge:[.98,.86,.60],
+      wall:[1.00,.42,.72], springWall:[.62,.42,1.00], coil:[.80,.62,1],
+      rulerBar:[.98,.78,.40], shadow:[.06,.03,.12], startMark:[.56,.48,.72],
+      ballA:[.72,.45,1.00], ballASpec:[.92,.84,1.00], ballB:[1.00,.62,.85], ballBSpec:[1.00,.90,.96],
+      arrow:[1.00,.78,.28], arrowB:[1.00,.55,.75] } },
+
+  candy:{ name:'🍬 糖果马卡龙',
+    bg:'#fbf7ff', panel:'rgba(255,255,255,.94)', txt:'#4a3b6b', dim:'#8d82ad', ink:[74,59,107],
+    accent:'#8f7bff', accentRgb:[143,123,255], accent2:'#7a63f0', onAccent:'#ffffff',
+    gold:'#ffc857', onGold:'#5c3d00', btn:'#eee9ff', onBtn:'#5a48a0', ghost:'#f5f2ff',
+    inputBg:'#f8f6ff', inputBorder:'#cfc4f5', inputText:'#4a3b6b',
+    toastBg:'#ffd6e8', toastText:'#7a3a5c', badgeBg:'#efe8ff', badgeText:'#7a63f0',
+    chartBg:'#f9f7ff', chartGrid:'#ddd5f7', theadBg:'#f1ecff', scroll:'#cfc4f5', kbdBg:'#f0ebff',
+    shadow:'0 18px 46px rgba(120,100,190,.18)',
+    scene:{ clear:[.965,.949,.996], tableBody:[.86,.80,.96],
+      surfaces:[[.78,.90,.99],[.98,.90,.72],[.88,.80,.90]],
+      rail:[.62,.86,.98], rulerMajor:[.98,.70,.35], rulerMinor:[.70,.66,.86],
+      goalPad:[.45,.92,.72], goalPole:[1,1,1], goalFlag:[.40,.96,.70],
+      ramp:[.98,.80,.62], rampIncline:[.96,.86,.70], rampBack:[.78,.62,.72], rampSide:[.88,.72,.80], rampEdge:[1.00,.93,.68],
+      wall:[1.00,.58,.72], springWall:[.72,.62,1.00], coil:[.86,.78,1],
+      rulerBar:[.98,.72,.40], shadow:[.60,.55,.75], startMark:[.72,.66,.86],
+      ballA:[.62,.72,1.00], ballASpec:[.90,.94,1.00], ballB:[1.00,.62,.85], ballBSpec:[1.00,.90,.96],
+      arrow:[.98,.66,.20], arrowB:[1.00,.52,.72] } },
+
+  mint:{ name:'🌿 薄荷绿',
+    bg:'#f2fbf7', panel:'rgba(255,255,255,.94)', txt:'#28544b', dim:'#7fa39a', ink:[40,84,75],
+    accent:'#2fc4a8', accentRgb:[47,196,168], accent2:'#22ad93', onAccent:'#ffffff',
+    gold:'#f0b429', onGold:'#4a3200', btn:'#dcf5ee', onBtn:'#1d6b5c', ghost:'#eafaf5',
+    inputBg:'#f5fdfa', inputBorder:'#a8ddd0', inputText:'#28544b',
+    toastBg:'#b9f0dd', toastText:'#12503f', badgeBg:'#dcf5ee', badgeText:'#22ad93',
+    chartBg:'#f4fdfa', chartGrid:'#c9ece2', theadBg:'#e8f8f3', scroll:'#a8ddd0', kbdBg:'#e6f8f2',
+    shadow:'0 18px 46px rgba(40,140,120,.16)',
+    scene:{ clear:[.949,.988,.976], tableBody:[.80,.92,.88],
+      surfaces:[[.80,.94,.98],[.86,.94,.80],[.74,.84,.80]],
+      rail:[.30,.82,.72], rulerMajor:[.98,.76,.30], rulerMinor:[.62,.80,.74],
+      goalPad:[.35,.88,.58], goalPole:[1,1,1], goalFlag:[.30,.94,.60],
+      ramp:[.96,.82,.52], rampIncline:[.94,.88,.62], rampBack:[.60,.76,.68], rampSide:[.72,.86,.78], rampEdge:[1.00,.94,.66],
+      wall:[1.00,.58,.55], springWall:[.55,.80,.95], coil:[.72,.90,1],
+      rulerBar:[.98,.72,.34], shadow:[.50,.66,.62], startMark:[.62,.80,.74],
+      ballA:[.22,.78,.70], ballASpec:[.84,.98,.95], ballB:[1.00,.78,.35], ballBSpec:[1.00,.95,.80],
+      arrow:[.98,.70,.18], arrowB:[1.00,.58,.35] } },
+
+  peach:{ name:'🍑 蜜桃橘',
+    bg:'#fff6f0', panel:'rgba(255,255,255,.94)', txt:'#6b4029', dim:'#b08a72', ink:[107,64,41],
+    accent:'#ff8a5c', accentRgb:[255,138,92], accent2:'#f5744a', onAccent:'#ffffff',
+    gold:'#f5b942', onGold:'#5a3a00', btn:'#ffe8dc', onBtn:'#a34f2c', ghost:'#fff1e9',
+    inputBg:'#fff9f5', inputBorder:'#f5c6ad', inputText:'#6b4029',
+    toastBg:'#ffd0a8', toastText:'#6b3410', badgeBg:'#ffe8dc', badgeText:'#e0663a',
+    chartBg:'#fff8f4', chartGrid:'#f6d8c6', theadBg:'#fff0e6', scroll:'#f5c6ad', kbdBg:'#ffefe4',
+    shadow:'0 18px 46px rgba(190,120,80,.18)',
+    scene:{ clear:[.996,.965,.945], tableBody:[.92,.82,.74],
+      surfaces:[[.82,.92,.97],[.98,.84,.68],[.86,.78,.74]],
+      rail:[1.00,.62,.42], rulerMajor:[.92,.62,.24], rulerMinor:[.78,.64,.56],
+      goalPad:[.42,.86,.62], goalPole:[1,1,1], goalFlag:[.38,.92,.60],
+      ramp:[.98,.62,.42], rampIncline:[.96,.70,.52], rampBack:[.80,.52,.38], rampSide:[.90,.60,.46], rampEdge:[1.00,.92,.62],
+      wall:[.95,.42,.55], springWall:[.80,.55,.92], coil:[.92,.74,1],
+      rulerBar:[.96,.68,.28], shadow:[.66,.50,.44], startMark:[.78,.64,.56],
+      ballA:[1.00,.52,.38], ballASpec:[1.00,.90,.86], ballB:[.98,.72,.30], ballBSpec:[1.00,.94,.78],
+      arrow:[.90,.55,.16], arrowB:[1.00,.62,.30] } }
+};
+
+function themeCss(t){
+  const k = t.ink.join(','), a = t.accentRgb.join(',');
+  return {
+    '--bg':t.bg, '--panel':t.panel, '--line':`rgba(${k},.16)`, '--shadow':t.shadow,
+    '--txt':t.txt, '--dim':t.dim, '--label':t.dim, '--hint':t.dim, '--empty':t.dim,
+    '--accent':t.accent, '--accent2':t.accent2, '--onAccent':t.onAccent, '--value':t.accent,
+    '--gold':t.gold, '--onGold':t.onGold, '--btn':t.btn, '--onBtn':t.onBtn, '--ghost':t.ghost,
+    '--inputBg':t.inputBg, '--inputBorder':t.inputBorder, '--inputText':t.inputText,
+    '--hair':`rgba(${k},.14)`, '--hair2':`rgba(${k},.07)`, '--hover':`rgba(${k},.06)`,
+    '--sel':`rgba(${a},.20)`,
+    '--toastBg':t.toastBg, '--toastText':t.toastText,
+    '--badgeBg':t.badgeBg, '--badgeText':t.badgeText,
+    '--chartBg':t.chartBg, '--chartArea':`rgba(${a},.16)`,
+    '--theadBg':t.theadBg, '--theadText':t.dim, '--scroll':t.scroll, '--kbdBg':t.kbdBg
+  };
+}
+
+let themeId = 'ocean';
+const themeNow = () => THEMES[themeId];
+function applyTheme(id){
+  if (!THEMES[id]) id = 'ocean';
+  themeId = id;
+  const css = themeCss(THEMES[id]), root = document.documentElement;
+  for (const k in css) root.style.setProperty(k, css[k]);
+  try { localStorage.setItem('wuli-lab-theme', id); } catch (e) { /* file:// 下可能被禁用 */ }
+}
+function loadSavedTheme(){
+  try {
+    const v = localStorage.getItem('wuli-lab-theme');
+    if (v && THEMES[v]) return v;
+  } catch (e) { /* 忽略 */ }
+  return 'ocean';
+}
+
+/* ---------- 快捷取元素 ---------- */
+const $ = id => document.getElementById(id);
+const canvas = $('gl'), chart = $('chart');
+
+/* ==========================================================================
+   1. WebGL 基础设施（顶点缓冲只创建一次，每帧复用 —— 修掉显存泄漏）
+   ========================================================================== */
+const gl = canvas.getContext('webgl', {antialias:true, alpha:false});
+if (!gl) { alert('当前浏览器不支持 WebGL，请换用 Chrome / Edge / Firefox。'); throw new Error('WebGL unavailable'); }
+
+const VS = 'attribute vec3 p;attribute vec3 c;uniform mat4 mvp;varying vec3 v;void main(){gl_Position=mvp*vec4(p,1.0);v=c;}';
+const FS = 'precision mediump float;varying vec3 v;void main(){gl_FragColor=vec4(v,1.0);}';
+function compile(type, src){
+  const s = gl.createShader(type);
+  gl.shaderSource(s, src); gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+  return s;
+}
+const prog = gl.createProgram();
+gl.attachShader(prog, compile(gl.VERTEX_SHADER, VS));
+gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FS));
+gl.linkProgram(prog); gl.useProgram(prog);
+const locP = gl.getAttribLocation(prog, 'p');
+const locC = gl.getAttribLocation(prog, 'c');
+const locM = gl.getUniformLocation(prog, 'mvp');
+
+const VBO = gl.createBuffer();          // ← 全程唯一的一个顶点缓冲
+const STRIDE = 24;                      // 3 float 位置 + 3 float 颜色
+
+function matMul(a, b){
+  const o = new Float32Array(16);
+  for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++)
+    o[c*4+r] = a[r]*b[c*4] + a[4+r]*b[c*4+1] + a[8+r]*b[c*4+2] + a[12+r]*b[c*4+3];
+  return o;
+}
+function persp(fovy, asp, n, f){
+  const t = 1 / Math.tan(fovy / 2), o = new Float32Array(16);
+  o[0] = t/asp; o[5] = t; o[10] = (f+n)/(n-f); o[11] = -1; o[14] = 2*f*n/(n-f);
+  return o;
+}
+const sub = (a,b) => a.map((v,i) => v - b[i]);
+const dot = (a,b) => a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+const cross = (a,b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
+const norm = a => { const l = Math.hypot(a[0],a[1],a[2]) || 1; return [a[0]/l, a[1]/l, a[2]/l]; };
+function look(eye, tar){
+  /* 视图矩阵：行 = 相机基向量；WebGL 用列主序存储，故索引 = 列*4 + 行 */
+  const z = norm(sub(eye, tar)), x = norm(cross([0,1,0], z)), y = cross(z, x);
+  const o = new Float32Array(16);
+  o[0]=x[0]; o[4]=x[1]; o[8]=x[2];  o[12]=-dot(x,eye);
+  o[1]=y[0]; o[5]=y[1]; o[9]=y[2];  o[13]=-dot(y,eye);
+  o[2]=z[0]; o[6]=z[1]; o[10]=z[2]; o[14]=-dot(z,eye);
+  o[15]=1;
+  return o;
+}
+
+/* ---------- 烘焙式光照 + 几何构造 ---------- */
+const V = [];                                    // 每帧重建的顶点数组
+const LIGHT = norm([0.42, 0.82, 0.40]);
+const shade = n => 0.30 + 0.70 * Math.abs(dot(n, LIGHT));   // 双面光照，不怕绕序
+
+function vtx(p, col, b){ V.push(p[0], p[1], p[2], col[0]*b, col[1]*b, col[2]*b); }
+
+/** 三角形；ns 为可选的三个顶点法线（用于球面/柱面平滑着色） */
+function tri(a, b, c, col, ns){
+  let n = null;
+  if (!ns){
+    const u = sub(b, a), v = sub(c, a);
+    const l = Math.hypot(...cross(u, v)) || 1;
+    n = cross(u, v).map(t => t / l);
+  }
+  vtx(a, col, shade(ns ? ns[0] : n));
+  vtx(b, col, shade(ns ? ns[1] : n));
+  vtx(c, col, shade(ns ? ns[2] : n));
+}
+function quad(a, b, c, d, col, ns){
+  if (ns){ tri(a,b,c,col,[ns[0],ns[1],ns[2]]); tri(a,c,d,col,[ns[0],ns[2],ns[3]]); }
+  else   { tri(a,b,c,col); tri(a,c,d,col); }
+}
+function cube(x, y, z, sx, sy, sz, col){
+  const q = [
+    [x-sx,y-sy,z-sz],[x+sx,y-sy,z-sz],[x+sx,y+sy,z-sz],[x-sx,y+sy,z-sz],
+    [x-sx,y-sy,z+sz],[x+sx,y-sy,z+sz],[x+sx,y+sy,z+sz],[x-sx,y+sy,z+sz]];
+  const faces = [[4,5,6,7],[1,0,3,2],[1,2,6,5],[0,4,7,3],[3,7,6,2],[0,1,5,4]];
+  for (const f of faces) quad(q[f[0]], q[f[1]], q[f[2]], q[f[3]], col);
+}
+function sphere(cx, cy, cz, r, col){
+  const NU = 26, NV = 16;
+  const pt = (j, i) => {
+    const p = Math.PI * j / NV, t = 2 * Math.PI * i / NU;
+    return [cx + r*Math.sin(p)*Math.cos(t), cy + r*Math.cos(p), cz + r*Math.sin(p)*Math.sin(t)];
+  };
+  const nr = p => { const l = Math.hypot(p[0]-cx, p[1]-cy, p[2]-cz) || 1;
+                    return [(p[0]-cx)/l, (p[1]-cy)/l, (p[2]-cz)/l]; };
+  for (let j = 0; j < NV; j++) for (let i = 0; i < NU; i++){
+    const A = pt(j,i), B = pt(j+1,i), C = pt(j+1,i+1), D = pt(j,i+1);
+    tri(A, B, C, col, [nr(A), nr(B), nr(C)]);
+    tri(A, C, D, col, [nr(A), nr(C), nr(D)]);
+  }
+}
+/** 竖直圆柱（用于弹簧圈、立柱） */
+function cyl(x, y, z, r, h, col){
+  const N = 20, y0 = y - h/2, y1 = y + h/2;
+  for (let i = 0; i < N; i++){
+    const a = 2*Math.PI*i/N, b = 2*Math.PI*(i+1)/N;
+    const ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(b), sb = Math.sin(b);
+    const A = [x+r*ca, y0, z+r*sa], B = [x+r*cb, y0, z+r*sb],
+          C = [x+r*cb, y1, z+r*sb], D = [x+r*ca, y1, z+r*sa];
+    const nA = [ca,0,sa], nB = [cb,0,sb];
+    tri(A, B, C, col, [nA, nB, nB]);
+    tri(A, C, D, col, [nA, nB, nA]);
+  }
+}
+/** 水平圆面（阴影、按钮盘） */
+function disc(x, y, z, r, col){
+  const N = 26, n = [0,1,0];
+  for (let i = 0; i < N; i++){
+    const a = 2*Math.PI*i/N, b = 2*Math.PI*(i+1)/N;
+    tri([x,y,z], [x+r*Math.cos(a),y,z+r*Math.sin(a)], [x+r*Math.cos(b),y,z+r*Math.sin(b)], col, [n,n,n]);
+  }
+}
+
+/* ==========================================================================
+   2. 相机：可拖拽旋转 / 滚轮缩放
+   ========================================================================== */
+const cam = {yaw:0.56, pitch:0.78, dist:16.5};
+function camEye(){
+  return [Math.cos(cam.pitch)*Math.sin(cam.yaw)*cam.dist,
+          Math.sin(cam.pitch)*cam.dist,
+          Math.cos(cam.pitch)*Math.cos(cam.yaw)*cam.dist];
+}
+let drag = null;
+canvas.addEventListener('pointerdown', e => { drag = {x:e.clientX, y:e.clientY}; canvas.setPointerCapture(e.pointerId); });
+canvas.addEventListener('pointermove', e => {
+  if (!drag) return;
+  cam.yaw   -= (e.clientX - drag.x) * 0.006;
+  cam.pitch  = Math.max(0.08, Math.min(1.42, cam.pitch + (e.clientY - drag.y) * 0.005));
+  drag = {x:e.clientX, y:e.clientY};
+});
+addEventListener('pointerup', () => { drag = null; });
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  cam.dist = Math.max(9, Math.min(38, cam.dist * (1 + Math.sign(e.deltaY) * 0.08)));
+}, {passive:false});
+
+/* ==========================================================================
+   3. 状态与参数
+   ========================================================================== */
+const cur = {};                                  // 各滑块的当前值（跨场景保留）
+for (const k in PARAMS) cur[k] = PARAMS[k].def;
+let sceneId = 'line';
+
+const S = {                                      // 连续状态（模拟量）
+  t:0, s:0.35, v:0, y:0, vy:0, sB:4.6, vB:0, stuck:false,
+  dist:0, s0:0.35, hits:0, coll:0, a:0, goal:false,
+  started:false, stillT:0, recorded:false, samples:[], lastSample:-1
+};
+let Pc = {};                                     // 派生参数缓存（避免每步读 DOM）
+
+const surfIdx = () => +$('surface').value;
+function effMu(){ return Math.min(cur.mu/10 * SURF[surfIdx()].mu, 1.6); }
+function radiusA(){ return 0.30 * (+$('size').value); }
+function radiusB(){ return Math.min(0.62, radiusA() * Math.cbrt(cur.massB / Math.max(cur.mass,.1))); }
+function theta(){ return (sceneId === 'ramp' ? RAMP_DEG : cur.angle) * Math.PI / 180; }
+/** 斜面/坡道在米制下的上端与下端横坐标 */
+function slopeA(){ return sceneId === 'ramp' ? RAMP_A : 0.35; }
+function slopeB(){ return sceneId === 'ramp' ? RAMP_B : SLOPE_LEN + 0.35; }
+
+function syncParams(){
+  Pc = {
+    scene: sceneId,
+    g: (+$('gravity').value) * 9.8,
+    m: cur.mass, mB: cur.massB,
+    F: cur.force, T: PUSH_T,
+    mu: effMu(),
+    e: cur.bounce / 10,
+    rest: cur.rest,
+    size: +$('size').value
+  };
+}
+
+/* ==========================================================================
+   4. 控制台 UI
+   ========================================================================== */
+const sceneSel = $('scene');
+for (const id in SCENES){
+  const o = document.createElement('option');
+  o.value = id; o.textContent = SCENES[id].name; sceneSel.appendChild(o);
+}
+const themeSel = $('theme');
+for (const id in THEMES){
+  const o = document.createElement('option');
+  o.value = id; o.textContent = THEMES[id].name; themeSel.appendChild(o);
+}
+themeSel.value = loadSavedTheme();
+themeSel.onchange = () => { applyTheme(themeSel.value); drawChart(); };
+function paramLabel(key){
+  if (key === 'bounce' && sceneId === 'fall') return '落地弹性 e';
+  return PARAMS[key].label;
+}
+function paramText(key){
+  const sp = PARAMS[key], v = cur[key];
+  if (key === 'mu')     return effMu().toFixed(2) + '  (' + SURF[surfIdx()].label + ')';
+  if (key === 'bounce') return (v/10).toFixed(2);
+  return v.toFixed(sp.dec) + (sp.unit ? ' ' + sp.unit : '');
+}
+function buildParams(){
+  const host = $('params');
+  host.textContent = '';
+  for (const key of SCENES[sceneId].params){
+    const sp = PARAMS[key];
+    const row = document.createElement('div');
+    row.className = 'row';
+    if (sp.type === 'select'){
+      row.innerHTML = '<label><span>' + paramLabel(key) + '</span></label>';
+      const sel = document.createElement('select');
+      for (const [val, text] of sp.options){
+        const o = document.createElement('option');
+        o.value = val; o.textContent = text; sel.appendChild(o);
+      }
+      sel.value = cur[key];
+      sel.onchange = () => { cur[key] = sel.value; syncParams(); resetRun(false); };
+      row.appendChild(sel);
+    } else {
+      row.innerHTML =
+        '<label><span>' + paramLabel(key) + '</span><strong id="pv_' + key + '">' + paramText(key) + '</strong></label>' +
+        '<input id="pi_' + key + '" type="range" min="' + sp.min + '" max="' + sp.max +
+        '" step="' + sp.step + '" value="' + cur[key] + '">';
+      const inp = row.querySelector('input');
+      inp.oninput = () => {
+        cur[key] = +inp.value;
+        $('pv_' + key).textContent = paramText(key);
+        syncParams();
+        if (key === 'angle' || key === 'height' || key === 'massB' || key === 'mass') resetRun(false);
+      };
+      host.appendChild(row);
+      continue;
+    }
+    host.appendChild(row);
+  }
+  // 摩擦因数的显示会随地面材料变化，需要刷新
+  if ($('pv_mu')) $('pv_mu').textContent = paramText('mu');
+}
+
+function updateButtons(){
+  const release = (sceneId === 'ramp' || sceneId === 'incline' || sceneId === 'fall');
+  $('push').textContent = release ? '▶ 释放小球' : '🚀 推一下';
+  $('pushHard').style.display = release ? 'none' : '';
+  $('forceInfo').textContent = release
+    ? '本场景由重力驱动，小球会在按下「释放」后开始运动。'
+    : '推一下 = 用 F 的力持续推 ' + PUSH_T + ' s，冲量 J = F×Δt = ' +
+      (cur.force * PUSH_T).toFixed(2) + ' N·s，小球获得速度 v = J/m = ' +
+      (cur.force * PUSH_T / cur.mass).toFixed(2) + ' m/s。';
+}
+
+function applyScene(){
+  const sc = SCENES[sceneId];
+  $('sceneBadge').textContent = sc.name;
+  $('taskTitle').textContent = sc.task;
+  $('hint').textContent = sc.hint;
+  $('oneLine').textContent = sc.one;
+  buildParams();
+  updateButtons();
+  syncParams();
+  resetRun(false);
+  if ($('why').classList.contains('show')) renderWhy();   // 小课堂开着就跟着换内容
+}
+
+sceneSel.onchange = () => { sceneId = sceneSel.value; syncParams(); applyScene(); };
+for (const id of ['gravity','size']) $(id).oninput = () => {
+  $('gVal').textContent  = ((+$('gravity').value) * 9.8).toFixed(1) + ' m/s²';
+  $('sizeVal').textContent = (+$('size').value).toFixed(2);
+  syncParams();
+  if (id === 'size' && sceneId === 'momentum') resetRun(false);
+};
+$('surface').onchange = () => { syncParams(); buildParams(); };
+
+/* ==========================================================================
+   5. 运行控制
+   ========================================================================== */
+function toast(msg){
+  const el = $('toast'), now = performance.now();
+  if (msg === toast.last && now - toast.at < 1200) return;   // 去重：避免撞墙刷屏
+  toast.last = msg; toast.at = now;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => el.classList.remove('show'), 1300);
+}
+
+function resetRun(keepRecords){
+  const sc = sceneId;
+  S.t = 0; S.v = 0; S.vy = 0; S.vB = 0; S.a = 0; S.hits = 0; S.coll = 0;
+  S.dist = 0; S.goal = false; S.started = false; S.stillT = 0; S.recorded = false;
+  S.samples = []; S.lastSample = -1; S.stuck = false; S.y = 0;
+  if (sc === 'fall'){
+    S.s = 1.2; S.y = cur.height;
+  } else if (sc === 'ramp'){
+    S.s = slopeB() - cur.height / Math.tan(theta());   // 从指定高度处释放
+    S.y = cur.height;
+  } else if (sc === 'incline'){
+    S.s = slopeA();                                    // 从斜面顶端释放
+    S.y = (slopeB() - S.s) * Math.tan(theta());
+  } else {
+    S.s = 0.35; S.y = 0;
+  }
+  S.s0 = S.s;
+  S.sB = 4.6;
+  S.recStart = null;
+  $('rState').textContent = '准备中';
+}
+
+function doPush(hard){
+  if (!S.started){
+    S.recStart = {v0:(cur.force * PUSH_T / cur.mass) * (hard ? 2 : 1)};
+  }
+  const release = (sceneId === 'ramp' || sceneId === 'incline' || sceneId === 'fall');
+  if (release){
+    S.started = true;
+    $('rState').textContent = '运动中';
+    toast('▶ 释放！');
+    return;
+  }
+  let J = cur.force * PUSH_T * (hard ? 2 : 1);
+  if (sceneId === 'momentum' && S.stuck){ toast('两球已粘在一起，先重置'); return; }
+  S.v += J / cur.mass;
+  S.started = true;
+  S.stillT = 0;
+  $('rState').textContent = '运动中';
+  toast(hard ? '💥 猛推！看看球能跑多远' : '🚀 推了一下，冲量 ' + J.toFixed(1) + ' N·s');
+}
+$('push').onclick     = () => doPush(false);
+$('pushHard').onclick = () => doPush(true);
+$('reset').onclick    = () => { resetRun(); toast('↺ 实验已重置'); };
+addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  if (e.code === 'Space'){ e.preventDefault(); doPush(false); }
+  else if (e.key === 'r' || e.key === 'R'){ resetRun(); toast('↺ 实验已重置'); }
+  else if (e.key === 'c' || e.key === 'C'){ toggleRecords(); }
+  else if (e.key === 'w' || e.key === 'W'){ toggleWhy(); }
+  else if (e.key === 'Escape'){ toggleRecords(false); toggleWhy(false); }
+});
+
+/* ==========================================================================
+   6. 物理积分（定步长，与帧率无关）
+   ========================================================================== */
+const H = 1 / 480;          // 固定物理步长
+let acc = 0;
+
+function integrate(h){
+  const g = Pc.g, mu = Pc.mu, e = Pc.e, sc = Pc.scene;
+  S.t += h;
+
+  if (sc === 'fall'){
+    /* ---- 自由落体 ---- */
+    S.a = -g;
+    S.vy += S.a * h;
+    S.y  += S.vy * h;
+    const r = radiusA();
+    if (S.y <= 0){
+      S.y = 0;
+      if (S.vy < 0){
+        S.vy = -S.vy * e;
+        if (S.vy < 0.30) S.vy = 0;
+        S.hits++;
+        if (S.vy > 0) toast('💥 落地反弹，回弹高度只剩 ' + (e*e*100).toFixed(0) + '%');
+      }
+    }
+    S.dist = Math.abs(S.y - cur.height);
+
+  } else if (sc === 'ramp' || sc === 'incline'){
+    /* ---- 斜面：沿坡面方向积分，重力沿坡分量 g·sinθ 驱动 ---- */
+    const th = theta(), sinT = Math.sin(th), cosT = Math.cos(th);
+    const dir = Math.abs(S.v) > 0.02 ? Math.sign(S.v) : (sinT > mu * cosT ? 1 : 0);
+    if (dir === 0){
+      S.a = 0; S.v = 0;                        // μ ≥ tanθ：静摩擦把球锁在斜面上
+    } else {
+      S.a = g * sinT - dir * mu * g * cosT;
+      S.v += S.a * h;
+      S.s += S.v * cosT * h;                   // 横坐标变化 = 坡面位移 × cosθ
+      S.y  = Math.max(0, (slopeB() - S.s) * Math.tan(th));
+      S.dist += Math.abs(S.v * h);             // 路程沿坡面累加
+    }
+
+  } else {
+    /* ---- 水平面：库仑摩擦，末速不会因摩擦反向 ---- */
+    let a = 0;
+    if (Math.abs(S.v) > 1e-6) a = -Math.sign(S.v) * mu * g;
+    S.a = a;
+    const dv = a * h;
+    S.v = Math.abs(S.v) <= Math.abs(dv) ? 0 : S.v + dv;
+    S.s += S.v * h;
+    S.dist += Math.abs(S.v * h);
+
+    if (sc === 'momentum' && !S.stuck){
+      let aB = 0;
+      if (Math.abs(S.vB) > 1e-6) aB = -Math.sign(S.vB) * mu * g;
+      const dvB = aB * h;
+      S.vB = Math.abs(S.vB) <= Math.abs(dvB) ? 0 : S.vB + dvB;
+      S.sB += S.vB * h;
+    } else if (sc === 'momentum' && S.stuck){
+      /* 粘在一起：整体按一个质量运动，B 始终贴在 A 的右侧 */
+      if (Math.abs(S.v) > 1e-6){ const dv = -Math.sign(S.v)*mu*g*h; S.v = Math.abs(S.v)<=Math.abs(dv)?0:S.v+dv; }
+      S.vB = S.v;
+      S.sB = S.s + radiusA() + radiusB() + 0.001;
+    }
+  }
+
+  /* ---- 边界：挡板 / 台面左端 ---- */
+  const rA = radiusA();
+  if (sc !== 'fall'){
+    const rB = radiusB();
+    const limit = WALL_S - rA - (S.stuck ? 2 * rB : 0);   // 粘在一起时按整串长度算
+    if (S.s > limit){
+      S.s = limit;
+      if (S.v > 0){
+        S.v = -S.v * e;
+        S.hits++;
+        if (Math.abs(S.v) < 0.25) S.v = 0;
+        toast(Pc.scene === 'spring' ? '🌀 弹簧墙把球弹回来了' :
+              Pc.scene === 'momentum' ? '💥 A 球撞上挡板' : '💥 撞击挡板！');
+      }
+    }
+    if (S.s < rA + 0.02){
+      S.s = rA + 0.02;
+      if (S.v < 0){ S.v = -S.v * 0.35; if (Math.abs(S.v) < 0.25) S.v = 0; toast('🧱 小球退到实验台左端'); }
+    }
+    /* ---- B 球撞挡板 ---- */
+    if (sc === 'momentum' && !S.stuck){
+      const limB = WALL_S - rB;
+      if (S.sB > limB && S.vB > 0){
+        S.sB = limB;
+        S.vB = -S.vB * e;
+        S.hits++;
+        if (Math.abs(S.vB) < 0.25) S.vB = 0;
+        toast('💥 B 球撞上挡板');
+      }
+      if (S.sB < S.s + rA + rB){ S.sB = S.s + rA + rB; }   // 不允许互相穿透
+    }
+    /* ---- 两球碰撞（动量守恒场景） ---- */
+    if (sc === 'momentum' && !S.stuck){
+      if (S.s + rA >= S.sB - rB && S.v - S.vB > 0){
+        const mA = Pc.m, mB = Pc.mB, u1 = S.v, u2 = S.vB;
+        S.coll++;
+        if (Pc.rest === 'inelastic'){
+          const vv = (mA*u1 + mB*u2) / (mA + mB);
+          S.v = vv; S.vB = vv; S.stuck = true;
+          toast('🧲 完全非弹性碰撞：两球粘在一起以 ' + vv.toFixed(2) + ' m/s 前进');
+        } else {
+          S.v  = ((mA-mB)*u1 + 2*mB*u2) / (mA+mB);
+          S.vB = ((mB-mA)*u2 + 2*mA*u1) / (mA+mB);
+          toast('⚪ 弹性碰撞：A 变成 ' + S.v.toFixed(2) + ' m/s，B 变成 ' + S.vB.toFixed(2) + ' m/s');
+        }
+        const overlap = (S.sB - rB) - (S.s + rA);
+        if (overlap < 0){ S.s += overlap / 2; S.sB -= overlap / 2; }
+      }
+    }
+    /* ---- 终点判定 ---- */
+    if (SCENES[sc].goalZone && !S.goal && S.s >= GOAL_S){
+      S.goal = true;
+      if (S.goal && SCENES[sc].goalZone)
+        $('hint').textContent = '🎉 成功！现在改变摩擦因数或地面材料再做一次，比较通过终点时的速度。';
+      toast('🎉 实验成功！');
+      endRun('到达终点');
+    }
+  }
+
+  /* ---- 采样 & 静止判定 ---- */
+  if (S.t - S.lastSample >= 0.02){
+    S.lastSample = S.t;
+    S.samples.push({t:S.t, v:(sc === 'fall' ? S.vy : S.v)});
+    if (S.samples.length > 1500) S.samples.shift();
+  }
+  const rest = sc === 'momentum' ? (Math.abs(S.v) < 0.03 && Math.abs(S.vB) < 0.03)
+             : sc === 'fall'     ? (Math.abs(S.vy) < 0.03 && S.y < 0.001)
+             : Math.abs(S.v) < 0.03;
+  S.stillT = rest ? S.stillT + h : 0;
+  if (S.started && !S.recorded && S.stillT > 0.45 && S.t > 0.4) endRun('静止');
+}
+
+function stepPhysics(dt){
+  acc += dt;
+  let n = 0;
+  while (acc >= H && n < 600){ integrate(H); acc -= H; n++; }
+  if (n >= 600) acc = 0;
+}
+
+/* ==========================================================================
+   7. 数据记录（修掉「只能看、不能比较」的问题）
+   ========================================================================== */
+const records = [];
+let selRow = -1;
+
+function endRun(reason){
+  if (S.recorded) return;
+  S.recorded = true;
+  const sc = sceneId;
+  const v0 = S.recStart ? S.recStart.v0 : 0;
+  const vEnd = sc === 'momentum' ? S.vB : (sc === 'fall' ? S.vy : S.v);
+  records.push({
+    scene: SCENES[sc].name, reason,
+    snap: Object.assign({scene:sc}, cur,
+      {gravity:+$('gravity').value, size:+$('size').value, surface:+$('surface').value}),
+    t: S.t,
+    mass: sc === 'momentum' ? (cur.mass + ' + ' + cur.massB) : cur.mass.toFixed(1),
+    mu: effMu().toFixed(2),
+    v0: v0.toFixed(2),
+    vEnd: vEnd.toFixed(2),
+    dist: sc === 'fall' ? cur.height.toFixed(2) : (S.s - S.s0).toFixed(2),
+    hits: S.hits + (S.coll ? '/' + S.coll : '')
+  });
+  renderRecords();
+  $('rState').textContent = reason;
+}
+
+function renderRecords(){
+  $('recCount').textContent = records.length + ' 条';
+  const table = records.length ? (() => {
+    let h = '<table><thead><tr><th>场景</th><th>质量 (kg)</th><th>μ</th><th>初速 (m/s)</th>' +
+            '<th>末速 (m/s)</th><th>位移 (m)</th><th>用时 (s)</th><th>碰撞(墙/球)</th><th>结束原因</th></tr></thead><tbody>';
+    records.forEach((r, i) => {
+      h += '<tr data-i="' + i + '"' + (i === selRow ? ' class="sel"' : '') + '><td>' + r.scene + '</td><td>' + r.mass +
+           '</td><td>' + r.mu + '</td><td>' + r.v0 + '</td><td>' + r.vEnd + '</td><td>' + r.dist +
+           '</td><td>' + r.t.toFixed(2) + '</td><td>' + r.hits + '</td><td>' + r.reason + '</td></tr>';
+    });
+    return h + '</tbody></table>';
+  })() : '<div class="empty">还没有记录。做一次实验，小球静止或到达终点时会自动记录一行。</div>';
+  const wrap = $('recWrap');
+  wrap.innerHTML = table;
+  wrap.querySelectorAll('tbody tr').forEach(tr => {
+    tr.onclick = () => {
+      selRow = +tr.dataset.i;
+      const snap = records[selRow].snap;
+      sceneId = snap.scene; sceneSel.value = snap.scene;
+      for (const k in PARAMS) if (k in snap) cur[k] = snap[k];
+      $('gravity').value = snap.gravity; $('size').value = snap.size; $('surface').value = snap.surface;
+      $('gVal').textContent = (snap.gravity*9.8).toFixed(1) + ' m/s²';
+      $('sizeVal').textContent = (+snap.size).toFixed(2);
+      applyScene();
+      renderRecords();
+      toggleRecords(false);
+      toast('已载入该次实验的参数，按「推一下」重做');
+    };
+  });
+}
+function toggleRecords(force){
+  const el = $('records');
+  const show = force === undefined ? !el.classList.contains('show') : force;
+  el.classList.toggle('show', show);
+  if (show) renderRecords();
+}
+$('openRec').onclick  = () => toggleRecords();
+$('closeRec').onclick = () => toggleRecords(false);
+$('clearRec').onclick = () => { records.length = 0; selRow = -1; renderRecords(); };
+$('exportCsv').onclick = () => {
+  if (!records.length){ toast('还没有可导出的数据'); return; }
+  const head = ['场景','质量A(kg)','质量B(kg)','摩擦因数','初速(m/s)','末速(m/s)','位移(m)','用时(s)','墙碰撞','球碰撞','结束原因'];
+  const rows = records.map(r => {
+    const s = r.snap;
+    return [r.scene, s.mass, s.massB ?? '', r.mu, r.v0, r.vEnd, r.dist, r.t.toFixed(3), r.hits, s.rest || '', r.reason];
+  });
+  const csv = '\ufeff' + [head, ...rows].map(a => a.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+  const url = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+  const a = document.createElement('a');
+  a.href = url; a.download = '小小物理实验室_实验记录.csv';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  toast('已导出 ' + records.length + ' 条记录');
+};
+
+/* ==========================================================================
+   7.5 小课堂 —— 写给 10 岁小朋友的原理讲解
+   每节课固定五段：看到什么 → 为什么 → 反直觉的秘密 → 动手验证 → 生活联系，
+   结尾附本篇用到的名词小词典（用小朋友能懂的说法解释）。
+   ========================================================================== */
+function whyBlocksHtml(w){
+  const rows = [
+    ['🔍 你看到了什么', w.see, false],
+    ['💡 为什么会这样', w.why, false],
+    ['🤫 一个反直觉的秘密', w.secret, true],
+    ['🧪 动手试一试', w.test, false],
+    ['🌍 生活里也有', w.life, false]
+  ];
+  let h = '';
+  for (const [title, body, hi] of rows)
+    h += '<div class="blk' + (hi ? ' hi' : '') + '"><b>' + title + '</b><p>' + body + '</p></div>';
+  const ws = SCENES[sceneId].words || [];
+  if (ws.length){
+    h += '<div class="whyWords"><b>📖 名词小词典</b>';
+    for (const k of ws){
+      const w = WORDS[k];
+      if (w) h += '<div class="wd"><i>' + w[0] + '</i><span>' + w[1] + '</span></div>';
+    }
+    h += '</div>';
+  }
+  return h;
+}
+function renderWhy(){
+  const sc = SCENES[sceneId];
+  $('whyTitle').textContent = sc.name + ' · 小课堂';
+  $('whySub').textContent = sc.one.replace(/^💡\s*/, '');
+  const body = $('whyBody');
+  body.innerHTML = whyBlocksHtml(sc.why);
+  body.scrollTop = 0;
+}
+function toggleWhy(force){
+  const el = $('why');
+  const show = force === undefined ? !el.classList.contains('show') : force;
+  el.classList.toggle('show', show);
+  if (show) renderWhy();
+}
+$('openWhy').onclick  = () => toggleWhy(true);
+$('closeWhy').onclick = () => toggleWhy(false);
+$('whyNext').onclick  = () => {
+  const keys = Object.keys(SCENES);
+  sceneId = keys[(keys.indexOf(sceneId) + 1) % keys.length];
+  sceneSel.value = sceneId;
+  applyScene();
+  renderWhy();
+  toast('已切换到「' + SCENES[sceneId].name + '」');
+};
+
+/* ==========================================================================
+   8. HUD 与 v-t 曲线
+   ========================================================================== */
+function updateHUD(){
+  const sc = sceneId;
+  const m = Pc.m, g = Pc.g;
+  const v = sc === 'fall' ? S.vy : S.v;
+  const Ek = 0.5 * m * v * v + (sc === 'momentum' ? 0.5 * Pc.mB * S.vB * S.vB : 0);
+  const Ep = m * g * Math.max(0, S.y);
+  const p  = sc === 'momentum' ? m * S.v + Pc.mB * S.vB : m * v;
+  $('rSpeed').textContent = v.toFixed(2) + ' m/s';
+  $('rAcc').textContent   = S.a.toFixed(2) + ' m/s²';
+  $('rDist').textContent  = (sc === 'fall' ? S.dist : S.s - S.s0).toFixed(2) + ' m';
+  $('rTime').textContent  = S.t.toFixed(2) + ' s';
+  $('rMom').textContent   = p.toFixed(2) + ' kg·m/s';
+  $('rEk').textContent    = Ek.toFixed(2) + ' J';
+  $('rEp').textContent    = Ep.toFixed(2) + ' J';
+  $('rHits').textContent  = S.hits + (sc === 'momentum' ? ' / ' + S.coll : '');
+  if (!S.started) $('rState').textContent = '准备中';
+  else if (S.goal) $('rState').textContent = '任务完成';
+  else if (S.stillT > 0.45) $('rState').textContent = '静止';
+  else if (sc === 'incline' && Math.abs(S.v) < 1e-6 && Math.tan(theta()) <= Pc.mu) $('rState').textContent = '静摩擦锁死';
+  else $('rState').textContent = '运动中';
+}
+
+let chartClock = 0;
+function drawChart(){
+  const dpr = Math.min(devicePixelRatio, 2);
+  const w = chart.clientWidth, h = chart.clientHeight;
+  if (!w || !h) return;
+  if (chart.width !== Math.round(w*dpr)){ chart.width = Math.round(w*dpr); chart.height = Math.round(h*dpr); }
+  const c = chart.getContext('2d');
+  const t = themeNow(), areaCol = 'rgba(' + t.accentRgb.join(',') + ',.16)';
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.clearRect(0, 0, w, h);
+  c.strokeStyle = t.chartGrid; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(0, h/2); c.lineTo(w, h/2); c.stroke();
+  const pts = S.samples;
+  if (pts.length > 1){
+    const tmax = Math.max(0.6, pts[pts.length-1].t);
+    let vmax = 0.5;
+    for (const q of pts) vmax = Math.max(vmax, Math.abs(q.v));
+    vmax *= 1.15;
+    // 面积（位移的直观提示）
+    c.fillStyle = areaCol;
+    c.beginPath(); c.moveTo(0, h/2);
+    for (const q of pts) c.lineTo(q.t/tmax*w, h/2 - q.v/vmax*(h/2-5));
+    c.lineTo(pts[pts.length-1].t/tmax*w, h/2); c.closePath(); c.fill();
+    c.strokeStyle = t.accent; c.lineWidth = 2; c.beginPath();
+    pts.forEach((q, i) => {
+      const px = q.t/tmax*w, py = h/2 - q.v/vmax*(h/2-5);
+      i ? c.lineTo(px, py) : c.moveTo(px, py);
+    });
+    c.stroke();
+    c.fillStyle = t.dim; c.font = '10px system-ui';
+    c.fillText('v-t 曲线  峰值 ' + vmax.toFixed(1) + ' m/s', 5, 11);
+  } else {
+    c.fillStyle = t.dim; c.font = '10px system-ui';
+    c.fillText('v-t 曲线（开始实验后绘制）', 5, 11);
+  }
+}
+
+/* ==========================================================================
+   9. 渲染
+   ========================================================================== */
+function render(){
+  V.length = 0;
+  const TH = themeNow().scene;
+  const cl = TH.clear;
+  gl.clearColor(cl[0], cl[1], cl[2], 1);
+  gl.enable(gl.DEPTH_TEST);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  const floorCol = TH.surfaces[surfIdx()];
+  const sc = sceneId;
+  const rA = radiusA();
+
+  /* 台体与台面：台体顶面故意比台面低 1cm，避免共面导致的 z-fighting */
+  cube(0, TABLE_TOP - .31, 0, 7.2, .30, 2.4, TH.tableBody);
+  cube(0, TABLE_TOP - .03, 0, 7.0, .03, 2.18, floorCol);
+  cube(0, TABLE_TOP + .06, -2.12, 7.15, .09, .09, TH.rail);
+  cube(0, TABLE_TOP + .06,  2.12, 7.15, .09, .09, TH.rail);
+
+  /* 刻度尺：每 1 m 一个长刻度，每 0.25 m 一个短刻度 */
+  if ($('grid').checked){
+    for (let k = 0; k <= 28; k++){
+      const s = k / 4, major = k % 4 === 0;
+      cube(X(s), TABLE_TOP + .03, 1.72, major ? .028 : .014, major ? .12 : .06, .028,
+           major ? TH.rulerMajor : TH.rulerMinor);
+    }
+  }
+
+  /* 终点区 + 旗帜（只在本场景有终点时绘制） */
+  if (SCENES[sc].goalZone){
+    const cx = (X(GOAL_S) + X(6.6)) / 2, hw = (X(6.6) - X(GOAL_S)) / 2;
+    cube(cx, TABLE_TOP + .02, -0.55, hw, .025, .55, TH.goalPad);
+    cube(cx, TABLE_TOP + .30, -0.55, .05, .28, .05, TH.goalPole);
+    cube(cx, TABLE_TOP + .54, -0.55, .40, .20, .03, TH.goalFlag);
+  }
+
+  /* 斜面 / 坡道几何 */
+  if (sc === 'ramp' || sc === 'incline'){
+    const th = theta();
+    const sA = slopeA();
+    const sB = slopeB();
+    const xA = X(sA), xB = X(sB), hw = 2.05;
+    const hTop = (sB - sA) * Math.tan(th) * UPM;
+    const yTop = TABLE_TOP + hTop;
+    const P1 = [xA, yTop, -hw], P2 = [xA, yTop, hw];
+    const P3 = [xB, TABLE_TOP, -hw], P4 = [xB, TABLE_TOP, hw];
+    const P5 = [xA, TABLE_TOP, -hw], P6 = [xA, TABLE_TOP, hw];
+    quad(P1, P3, P4, P2, sc === 'ramp' ? TH.ramp : TH.rampIncline);   // 斜面
+    quad(P1, P2, P6, P5, TH.rampBack);                                 // 竖直背面
+    tri(P1, P3, P5, TH.rampSide);                                      // 侧三角
+    tri(P2, P6, P4, TH.rampSide);
+    /* 沿坡面铺两条高亮边线（必须跟着坡度走，否则会悬空） */
+    const strip = z0 => quad([xA, yTop + .02, z0], [xB, TABLE_TOP + .02, z0],
+                             [xB, TABLE_TOP + .02, z0 + .10], [xA, yTop + .02, z0 + .10], TH.rampEdge);
+    strip(-hw + .02);
+    strip(hw - .12);
+  }
+
+  /* 挡板（弹簧墙场景画成紫色并加弹簧圈） */
+  const wallCol = sc === 'spring' ? TH.springWall : TH.wall;
+  cube(X(WALL_S), TABLE_TOP + .85, 0, .28, .85, 1.65, wallCol);
+  if (sc === 'spring'){
+    for (let i = 0; i < 6; i++)
+      cyl(X(WALL_S) - .42 - i*.24, TABLE_TOP + .45, 0, .07, 1.10, TH.coil);
+  }
+  if (sc === 'fall'){
+    /* 高度标尺，帮助读出落差 */
+    cube(X(1.2), TABLE_TOP + (cur.height*UPM)/2, 1.9, .03, (cur.height*UPM)/2, .03, TH.rulerBar);
+    cube(X(1.2), TABLE_TOP + cur.height*UPM,      1.9, .18, .03, .03, TH.rulerBar);
+  }
+
+  /* 小球 A */
+  const ballY = TABLE_TOP + rA * UPM + S.y * UPM;
+  const wx = X(S.s);
+  disc(wx, TABLE_TOP + .012, 0, rA * UPM * 1.20, TH.shadow);              // 阴影
+  cube(X(S.s0), TABLE_TOP + .035, -1.95, .02, .05, .02, TH.startMark);    // 起点标记
+  sphere(wx, ballY, 0, rA * UPM, TH.ballA);
+  sphere(wx - rA*UPM*.30, ballY + rA*UPM*.36, -rA*UPM*.72, rA*UPM*.22, TH.ballASpec);
+
+  /* 小球 B（动量守恒场景） */
+  if (sc === 'momentum'){
+    const rB = radiusB(), bY = TABLE_TOP + rB * UPM;
+    disc(X(S.sB), TABLE_TOP + .012, 0, rB * UPM * 1.20, TH.shadow);
+    sphere(X(S.sB), bY, 0, rB * UPM, TH.ballB);
+    sphere(X(S.sB) - rB*UPM*.30, bY + rB*UPM*.36, -rB*UPM*.72, rB*UPM*.22, TH.ballBSpec);
+  }
+
+  /* 速度 / 受力箭头 */
+  if ($('vector').checked){
+    const arrow = (x, y, len, dir, col) => {
+      if (Math.abs(len) < .05) return;
+      cube(x + dir*len/2, y, 0, Math.abs(len)/2, .055, .055, col);
+      cube(x + dir*len,   y, 0, .13, .17, .17, col);
+    };
+    if (sc === 'fall'){
+      /* 自由落体的速度是竖直方向，必须画竖直箭头 */
+      const len = Math.min(2.2, Math.abs(S.vy) * .22);
+      if (len > .05){
+        const dir = S.vy < 0 ? -1 : 1;
+        const y0 = ballY + dir * (rA * UPM + .18);
+        cube(wx, y0 + dir * len / 2, 0, .055, len / 2, .055, TH.arrow);
+        cube(wx, y0 + dir * len,     0, .16, .13, .16,     TH.arrow);
+      }
+    } else {
+      arrow(wx, ballY + rA*UPM + .28, Math.min(2.4, Math.abs(S.v)*.24), S.v >= 0 ? 1 : -1, TH.arrow);
+    }
+    if (sc === 'momentum') arrow(X(S.sB), TABLE_TOP + radiusB()*UPM*2 + .28, Math.min(2.4, Math.abs(S.vB)*.24), S.vB >= 0 ? 1 : -1, TH.arrowB);
+  }
+
+  const eye = camEye();
+  /* 近远裁剪面比值越小，深度精度越高（0.1/200 会严重 z-fighting） */
+  const P = persp(Math.PI/3.2, canvas.width/canvas.height, 1.0, 80);
+  const C = look(eye, [0, 0.6, 0]);
+
+  const arr = new Float32Array(V);
+  gl.bindBuffer(gl.ARRAY_BUFFER, VBO);                     // 复用同一个 buffer
+  gl.bufferData(gl.ARRAY_BUFFER, arr, gl.DYNAMIC_DRAW);
+  gl.enableVertexAttribArray(locP); gl.vertexAttribPointer(locP, 3, gl.FLOAT, false, STRIDE, 0);
+  gl.enableVertexAttribArray(locC); gl.vertexAttribPointer(locC, 3, gl.FLOAT, false, STRIDE, 12);
+  gl.uniformMatrix4fv(locM, false, matMul(P, C));
+  gl.drawArrays(gl.TRIANGLES, 0, arr.length / 6);
+}
+
+/* ==========================================================================
+   10. 主循环
+   ========================================================================== */
+function resize(){
+  const d = Math.min(devicePixelRatio, 2);
+  canvas.width = Math.round(innerWidth * d);
+  canvas.height = Math.round(innerHeight * d);
+  gl.viewport(0, 0, canvas.width, canvas.height);
+}
+addEventListener('resize', resize);
+resize();
+
+let last = performance.now();
+function frame(now){
+  const raw = Math.min((now - last) / 1000, 0.05);
+  last = now;
+  const dt = raw * ($('slow').checked ? 0.3 : 1);         // 慢动作只放慢时间，物理保持正确
+  if (S.started) stepPhysics(dt);
+  else S.t = 0;
+  updateHUD();
+  render();
+  chartClock += raw;
+  if (chartClock > 0.06){ chartClock = 0; drawChart(); }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- 启动 ---------- */
+applyTheme(loadSavedTheme());        // 必须在第一次 render 之前，render 依赖主题取色
+$('gVal').textContent = ((+$('gravity').value) * 9.8).toFixed(1) + ' m/s²';
+$('sizeVal').textContent = (+$('size').value).toFixed(2);
+applyScene();
+requestAnimationFrame(frame);
+/* 首帧画完后再打开主题过渡，这样加载时不会出现配色渐变 */
+requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('anim')));
+</script>
+</body>
+</html>
