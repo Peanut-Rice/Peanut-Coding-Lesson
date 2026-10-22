@@ -348,6 +348,11 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:600;margin:0;letter-spacing:1px
 .hw .no{font-family:var(--serif);color:var(--gold);font-size:13px;letter-spacing:2px}
 .hw h4{font-size:15.5px;margin:6px 0 6px}
 .hw p{font-size:13px;line-height:1.8;color:var(--ink-2);margin:0}
+.offline-note{
+  margin-top:26px;padding:14px 18px;border:1px dashed var(--line);border-radius:12px;
+  background:rgba(63,107,99,.06);font-size:13.5px;line-height:1.9;color:var(--ink-2)
+}
+.offline-note b{color:var(--jade)}
 .links{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 .linkchip{
   height:36px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:#fffdf7;
@@ -543,7 +548,7 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:600;margin:0;letter-spacing:1px
             </div>
             <p class="small" style="margin-top:18px;max-width:46ch">
               课的设计灵感来自开源项目「江山时序」——一幅能拖动时间、点城读史的交互舆图。
-              本课件可以完全离线使用，最后一页有直达原站点的链接。
+              本课件完全离线：没有外部链接，也不加载任何网络资源。
             </p>
             <p class="small" style="margin-top:8px">
               👩‍🏫 家长 / 老师：点右上角「家长 / 老师版」，里面有 40 分钟教案、逐句台词和打印版。
@@ -847,14 +852,9 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:600;margin:0;letter-spacing:1px
           </div>
         </div>
 
-        <h4 style="margin:26px 0 2px;font-size:15px;letter-spacing:1px">想去真的地图上玩？</h4>
-        <p class="small" style="margin:0 0 4px">下面这些链接会打开原项目「江山时序」（需要联网）：</p>
-        <div class="links">
-          <a class="linkchip" href="https://deanchen.me/jiangshan-map/?year=741&place=长安" target="_blank" rel="noopener">🏯 点开长安，读它的千年故事</a>
-          <a class="linkchip" href="https://deanchen.me/jiangshan-map/?person=sushi" target="_blank" rel="noopener">🚶 苏东坡一生的行迹</a>
-          <a class="linkchip" href="https://deanchen.me/jiangshan-map/?year=-121&quiz=locate" target="_blank" rel="noopener">🎯 舆图寻址挑战（能当几品官）</a>
-          <a class="linkchip" href="https://deanchen.me/jiangshan-map/" target="_blank" rel="noopener">🗺️ 打开整幅地图</a>
-          <a class="linkchip" href="https://github.com/DeanChensj/jiangshan-map" target="_blank" rel="noopener">⭐ 看看它是怎么做出来的</a>
+        <div class="offline-note">
+          <b>✈️ 这堂课是完全离线的。</b>
+          地图、数据、板书全在这一个文件里：不加载任何网络资源，也没有外部链接——断网、飞行模式、拷进 U 盘，都能照常上课。
         </div>
 
         <p class="small" style="margin-top:26px;line-height:1.9">
@@ -901,7 +901,7 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:600;margin:0;letter-spacing:1px
   </div>
   <table>
     <tr><th style="width:23%">适用对象</th><td>8–12 岁（以 10 岁为基准设计；8–9 岁见「差异化」）</td></tr>
-    <tr><th>时长</th><td>40 分钟：开场 + 四关 + 「两千年长卷」+ 收尾（可裁到 30 分钟：省掉第四关与长卷；可延到 55 分钟：加「原项目实操」）</td></tr>
+    <tr><th>时长</th><td>40 分钟：开场 + 四关 + 「两千年长卷」+ 收尾（可裁到 30 分钟：省掉第四关与长卷；可延到 55 分钟：加「课堂讨论 + 海报讲评」）</td></tr>
     <tr><th>组织形式</th><td>一对一亲子共学，或 4–6 人小班；一台电脑/平板投屏效果最好</td></tr>
     <tr><th>核心问题</th><td>「一张地图，怎么装下两千四百年？」</td></tr>
     <tr><th>大概念</th><td>历史可以用三个问题拆开：<b>何时、何地、何人</b></td></tr>
@@ -1022,7 +1022,7 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:600;margin:0;letter-spacing:1px
     <li>打开本文件（离线即可），投屏或用一台电脑；建议全屏（F11）。</li>
     <li>准备一张纸、一支笔：用来记孩子的问题（下课前不回答，留到课后一起查）。</li>
     <li>可选：一张中国地图挂图，或地球仪，用来对照本课件的示意图。</li>
-    <li>如需联网延伸，最后一页有原项目「江山时序」的直达链接。</li>
+    <li>课件不加载任何外部资源、也不含外部链接：断网也能完整上课。</li>
     <li>可选：上课前在第五关点「打印长卷（A3）」，印一张挂在墙上；课后孩子会自己去看。</li>
   </ul>
 
@@ -1068,93 +1068,75 @@ const DYNASTIES=[
  {key:"zhanguo",name:"战国",from:-403,to:-221,tint:"#7c5338",tag:"split",tagText:"好几个国家",
   span:"前 403 — 前 221",dur:"182 年",seat:"咸阳（秦）· 洛阳（周）",seatNow:"今陕西咸阳 · 河南洛阳",
   line:"七个大国抢天下（齐、楚、燕、赵、魏、韩、秦），周天子只在旁边看着。最后是西边的秦国赢了。",
-  who:"地图上还有：周、越、宋、中山、巴、蜀……",
-  url:"https://deanchen.me/jiangshan-map/?year=-403"},
+  who:"地图上还有：周、越、宋、中山、巴、蜀……"},
  {key:"qin",name:"秦",from:-221,to:-202,tint:"#5a554f",tag:"unity",tagText:"大一统",
   span:"前 221 — 前 207",dur:"15 年",seat:"咸阳",seatNow:"今陕西咸阳",
   line:"第一次把天下合成一个国家：统一文字、统一车轮的宽度、统一尺子和秤，还修了长城。",
-  who:"秦朝很短。它灭亡以后，又打了好几年仗，汉朝才建立。",
-  url:"https://deanchen.me/jiangshan-map/?year=-221"},
+  who:"秦朝很短。它灭亡以后，又打了好几年仗，汉朝才建立。"},
  {key:"xihan",name:"西汉",from:-202,to:25,tint:"#b5452f",tag:"unity",tagText:"大一统",
   span:"前 202 — 25",dur:"227 年",seat:"长安",seatNow:"今陕西西安",
   line:"都城在长安。张骞一路向西走到中亚，丝绸就是这样运出去的——这条路后来叫「丝绸之路」。",
-  who:"中间还有王莽建立的「新朝」十几年，也画在这一段里。",
-  url:"https://deanchen.me/jiangshan-map/?year=-121"},
+  who:"中间还有王莽建立的「新朝」十几年，也画在这一段里。"},
  {key:"donghan",name:"东汉",from:25,to:220,tint:"#a4432c",tag:"unity",tagText:"大一统",
   span:"25 — 220",dur:"195 年",seat:"洛阳",seatNow:"今河南洛阳",
   line:"都城搬到洛阳，天下太平了很久。到了末年，天下分成三块——就是三国。",
-  who:"黄巾起义、群雄割据，都发生在这段末尾。",
-  url:"https://deanchen.me/jiangshan-map/?year=208"},
+  who:"黄巾起义、群雄割据，都发生在这段末尾。"},
  {key:"sanguo",name:"三国",from:220,to:280,tint:"#4a6fa5",tag:"split",tagText:"好几个国家",
   span:"220 — 280",dur:"60 年",seat:"洛阳（魏）· 成都（蜀）· 建业（吴）",seatNow:"今河南洛阳 · 四川成都 · 江苏南京",
   line:"魏、蜀、吴三个国家打来打去。《三国演义》讲的就是这个时候。",
-  who:"曹操、刘备、孙权，各自一个地盘。",
-  url:"https://deanchen.me/jiangshan-map/?year=208&place=赤壁"},
+  who:"曹操、刘备、孙权，各自一个地盘。"},
  {key:"xijin",name:"西晋",from:280,to:316,tint:"#a0683f",tag:"unity",tagText:"大一统",
   span:"280 — 316",dur:"36 年",seat:"洛阳",seatNow:"今河南洛阳",
   line:"又一次统一，可是只维持了几十年，很快就乱了起来。",
-  who:"「八王之乱」之后，北方的许多民族纷纷建立自己的国家。",
-  url:"https://deanchen.me/jiangshan-map/?year=280"},
+  who:"「八王之乱」之后，北方的许多民族纷纷建立自己的国家。"},
  {key:"dongjin",name:"东晋十六国",from:317,to:420,tint:"#4f8a78",tag:"split",tagText:"好几个国家",
   span:"317 — 420",dur:"103 年",seat:"建康（东晋）",seatNow:"今江苏南京",
   line:"南方是一个晋朝，北方十几个小国轮流上场。王羲之写《兰亭集序》，就在这个时候。",
-  who:"地图北边那些小国，前后有十六个以上。",
-  url:"https://deanchen.me/jiangshan-map/?year=353"},
+  who:"地图北边那些小国，前后有十六个以上。"},
  {key:"nanbei",name:"南北朝",from:420,to:581,tint:"#6b5b95",tag:"split",tagText:"好几个国家",
   span:"420 — 581",dur:"161 年",seat:"平城→洛阳 · 建康",seatNow:"今山西大同→河南洛阳 · 江苏南京",
   line:"南方、北方各自有朝代。云冈石窟、龙门石窟，就是这时候一个洞一个洞凿出来的。",
-  who:"北朝：北魏、东魏、西魏、北齐、北周；南朝：宋、齐、梁、陈。",
-  url:"https://deanchen.me/jiangshan-map/?year=494"},
+  who:"北朝：北魏、东魏、西魏、北齐、北周；南朝：宋、齐、梁、陈。"},
  {key:"sui",name:"隋",from:581,to:618,tint:"#8a6d3b",tag:"unity",tagText:"大一统",
   span:"581 — 618",dur:"37 年",seat:"大兴",seatNow:"今陕西西安",
   line:"又统一了。挖通大运河，把南方的粮食一船一船运到北方。",
-  who:"隋朝也很短，但它留下的运河，后来用了一千多年。",
-  url:"https://deanchen.me/jiangshan-map/?year=605"},
+  who:"隋朝也很短，但它留下的运河，后来用了一千多年。"},
  {key:"tang",name:"唐",from:618,to:907,tint:"#c6952b",tag:"unity",tagText:"大一统",
   span:"618 — 907",dur:"289 年",seat:"长安",seatNow:"今陕西西安",
   line:"长安是当时世界上最大的城市之一。李白、杜甫、王维都在这时候写诗——你背的唐诗，一半来自这里。",
-  who:"西边设了「安西四镇」，一直管到中亚。",
-  url:"https://deanchen.me/jiangshan-map/?year=741&place=长安"},
+  who:"西边设了「安西四镇」，一直管到中亚。"},
  {key:"wudai",name:"五代十国",from:907,to:960,tint:"#a8763a",tag:"split",tagText:"好几个国家",
   span:"907 — 960",dur:"53 年",seat:"开封",seatNow:"今河南开封",
   line:"五十多年里，中原换了五个朝代，南方还有十个国家。",
-  who:"「五代」是后梁、后唐、后晋、后汉、后周。",
-  url:"https://deanchen.me/jiangshan-map/?year=907"},
+  who:"「五代」是后梁、后唐、后晋、后汉、后周。"},
  {key:"beisong",name:"北宋",from:960,to:1127,tint:"#5f8a4e",tag:"partial",tagText:"半个中国",
   span:"960 — 1127",dur:"167 年",seat:"东京开封府",seatNow:"今河南开封",
   line:"开封特别热闹，《清明上河图》画的就是这里。可是北边还有辽和西夏，燕云十六州一直没拿回来。",
-  who:"所以它算「半个统一」：中间一块，边上还有别人。",
-  url:"https://deanchen.me/jiangshan-map/?year=1102&place=开封"},
+  who:"所以它算「半个统一」：中间一块，边上还有别人。"},
  {key:"nansong",name:"南宋",from:1127,to:1279,tint:"#3f8f6a",tag:"split",tagText:"好几个国家",
   span:"1127 — 1279",dur:"152 年",seat:"临安",seatNow:"今浙江杭州",
   line:"都城搬到杭州，长江以北归了金朝。辛弃疾、陆游一辈子都在想着打回去。",
-  who:"北边是金，后来又有蒙古，最后蒙古灭了南宋。",
-  url:"https://deanchen.me/jiangshan-map/?year=1205&place=京口"},
+  who:"北边是金，后来又有蒙古，最后蒙古灭了南宋。"},
  {key:"yuan",name:"元",from:1279,to:1368,tint:"#4b6587",tag:"unity",tagText:"大一统",
   span:"1279 — 1368",dur:"89 年",seat:"大都",seatNow:"今北京",
   line:"蒙古人建立的大帝国，都城叫「大都」，就在今天的北京。西藏从这时起归中央管理。",
-  who:"这是这张地图上疆域最大的时代之一。",
-  url:"https://deanchen.me/jiangshan-map/?year=1288"},
+  who:"这是这张地图上疆域最大的时代之一。"},
  {key:"ming",name:"明",from:1368,to:1644,tint:"#b23a3a",tag:"unity",tagText:"大一统",
   span:"1368 — 1644",dur:"276 年",seat:"应天府 → 顺天府",seatNow:"今江苏南京 → 北京",
   line:"从南京起家，后来把都城搬到北京，修了紫禁城。郑和带着船队从太仓出海，去了很远的地方。",
-  who:"长城今天看到的很多段落，也是明朝修的。",
-  url:"https://deanchen.me/jiangshan-map/?year=1415&place=应天府"},
+  who:"长城今天看到的很多段落，也是明朝修的。"},
  {key:"qing",name:"清",from:1644,to:1912,tint:"#d4a017",tag:"unity",tagText:"大一统",
   span:"1644 — 1912",dur:"268 年",seat:"京师",seatNow:"今北京",
   line:"最后一个皇帝的时代。前期的地图特别大，后期却一块一块丢掉了。",
-  who:"1684 年设台湾府；1881 年才把伊犁收回来。",
-  url:"https://deanchen.me/jiangshan-map/?year=1881"},
+  who:"1684 年设台湾府；1881 年才把伊犁收回来。"},
  {key:"roc",name:"中华民国",from:1912,to:1949,tint:"#4f6d8f",tag:"modern",tagText:"近现代",
   span:"1912 — 1949",dur:"37 年",seat:"南京 · 北京 · 重庆",seatNow:"今江苏南京 · 北京 · 重庆",
   line:"皇帝没有了。后来打了十四年抗日战争，1945 年台湾回到祖国。",
-  who:"这一段的地图，从「秋海棠」慢慢变成了「雄鸡」。",
-  url:"https://deanchen.me/jiangshan-map/?year=1945"},
+  who:"这一段的地图，从「秋海棠」慢慢变成了「雄鸡」。"},
  {key:"prc",name:"中华人民共和国",from:1949,to:2027,tint:"#c8322b",tag:"modern",tagText:"今天",
   span:"1949 — 今",dur:"七十多年",seat:"北京",seatNow:"今北京",
   line:"1949 年开国。今天的地图，就是我们现在生活的这个样子。",
-  who:"你住的地方，就在这张图上。",
-  url:"https://deanchen.me/jiangshan-map/?year=2020"}
+  who:"你住的地方，就在这张图上。"}
 ];
 
 /* 边疆大事 */
@@ -1174,7 +1156,6 @@ const CITIES={
  xian:{name:"西安",old:"长安",coord:[108.94,34.34],prov:"陕西省",
   tag:"关中四塞 · 汉唐帝都",
   geo:"北边是渭河，南边是秦岭，四面都有山口和关口守着。进可以攻，退可以守——所以有十几个朝代把都城安在这里。",
-  url:"https://deanchen.me/jiangshan-map/?year=741&place=长安",
   names:[
    {era:"西周",name:"丰镐",year:"约前 1046 年",why:"周文王、周武王在沣河两岸建了两座都城，合起来叫「丰镐」。"},
    {era:"西汉",name:"长安",year:"前 202 年",why:"刘邦在这里建城，取名「长安」，希望「长治久安」。"},
@@ -1188,7 +1169,6 @@ const CITIES={
  nanjing:{name:"南京",old:"建康",coord:[118.80,32.06],prov:"江苏省",
   tag:"钟山龙蟠 · 六朝古都",
   geo:"长江从城北流过，东边是钟山，西边是石头城。古人说这里是「钟山龙蟠，石城虎踞」——像龙盘着、像虎蹲着。",
-  url:"https://deanchen.me/jiangshan-map/?year=1415&place=应天府",
   names:[
    {era:"战国",name:"金陵邑",year:"前 333 年",why:"楚国在这里设了一个「邑」，叫金陵。"},
    {era:"秦",name:"秣陵",year:"前 210 年",why:"秦始皇改叫「秣陵」，「秣」是喂马的意思。"},
@@ -1203,7 +1183,6 @@ const CITIES={
  kaifeng:{name:"开封",old:"大梁",coord:[114.31,34.80],prov:"河南省",
   tag:"八荒争凑 · 汴水都会",
   geo:"在一片大平原上，靠着汴河——大运河的一段。南方的粮船都从这里过，所以它特别热闹。",
-  url:"https://deanchen.me/jiangshan-map/?year=1102&place=开封",
   names:[
    {era:"战国",name:"大梁",year:"战国中期",why:"魏国把都城搬到这里，叫「大梁」。"},
    {era:"秦",name:"浚仪",year:"秦",why:"秦朝设「浚仪县」。大梁城被水淹过，慢慢荒了。"},
@@ -1218,7 +1197,6 @@ const CITIES={
  beijing:{name:"北京",old:"蓟",coord:[116.40,39.90],prov:"—",
   tag:"幽燕锁钥 · 五朝帝都",
   geo:"背靠燕山，西边是太行山，往北出居庸关就是草原。谁守住这里，谁就守住了中原的北大门。",
-  url:"https://deanchen.me/jiangshan-map/?year=1415&place=顺天府",
   names:[
    {era:"西周",name:"蓟",year:"约前 1000 年",why:"燕国的都城叫「蓟」。"},
    {era:"唐",name:"幽州",year:"唐",why:"唐朝这里是「幽州」，安禄山就是从这一带起兵的。"},
@@ -1449,9 +1427,9 @@ function renderDynCard(d) {
     <p class="small" style="margin:10px 0 0">${d.who}</p>
     <div class="foot">
       <span class="small">第 ${i + 1} / 18 个时代</span>
-      <a class="mini-link" href="${d.url}" target="_blank" rel="noopener">🖼 在原地图上看这一年 →</a>
+      <span class="small">拖动上方的条，看下一朝 →</span>
     </div>
-    <p class="small" style="margin:10px 0 0">🖼 旁边这张图，取的是 <b>${(TERR_BY_KEY[d.key] || {}).year !== undefined ? fmtYear(TERR_BY_KEY[d.key].year) + ' 年' : '—'}</b>（这一朝的代表年）。同一朝里拖动，图不会变——想逐年看，点右下角的链接去原地图。</p>
+    <p class="small" style="margin:10px 0 0">🖼 旁边这张图，取的是 <b>${(TERR_BY_KEY[d.key] || {}).year !== undefined ? fmtYear(TERR_BY_KEY[d.key].year) + ' 年' : '—'}</b>（这一朝的代表年）。同一朝里拖动时间，图只会换成下一朝——每一朝只画了代表的那一年。</p>
     <div class="map-key">
       <span><i style="background:${d.tint}"></i>这一朝管的</span>
       <span><i style="background:${d.tint};opacity:.62;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)"></i>都护府 / 羁縻</span>
@@ -1563,7 +1541,7 @@ function renderCity() {
     <p class="small" style="margin-top:12px">名字不是随便改的：换朝代要改、避皇帝的名讳要改、行政区划变了也要改。所以一座城的名字，就是它的年轮。</p>
     <div class="foot" style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;gap:10px">
       <span class="small">📍 ${c.prov}</span>
-      <a class="mini-link" href="${c.url}" target="_blank" rel="noopener">🖼 在原地图上点开它 →</a>
+      <span class="small">名字就是一环一环的年份</span>
     </div>`;
 
   $('#ladder').innerHTML = c.names.map((n, i) => {
@@ -1801,7 +1779,6 @@ function renderQuizResult() {
       <div class="s" style="margin-top:10px;color:var(--ink-3)">总分 ${quiz.score} / ${full}</div>
       <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap">
         <button class="chip" id="qAgain">再玩一次 ↺</button>
-        <a class="chip" href="https://deanchen.me/jiangshan-map/?year=-121&quiz=locate" target="_blank" rel="noopener" style="text-decoration:none">去原项目挑战「舆图寻址」→</a>
       </div>
     </div>
     <div class="review">
