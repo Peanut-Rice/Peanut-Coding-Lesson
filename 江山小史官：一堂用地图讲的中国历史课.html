@@ -1366,13 +1366,14 @@ function baseMap(svg, opts = {}) {
 /* ============================================================
    0/1 — 时间机器
    ============================================================ */
-const T0 = -403, T1 = 2027, TSPAN = T1 - T0;
+const NOW_YEAR = new Date().getFullYear();          // 时间条的右端 = 今年
+const T0 = -403, T1 = NOW_YEAR, TSPAN = T1 - T0;
 const tl = { year: -403, playing: false, raf: 0 };
 
 function buildTimeline() {
   const bar = $('#tlBar');
   bar.innerHTML = DYNASTIES.map((d, i) =>
-    `<div class="seg" data-i="${i}" style="flex-grow:${d.to - d.from};background:${d.tint}" title="${d.name} · ${d.span}"><span>${d.name}</span></div>`
+    `<div class="seg" data-i="${i}" style="flex-grow:${Math.max(1, Math.min(d.to, T1) - d.from)};background:${d.tint}" title="${d.name} · ${d.span}"><span>${d.name}</span></div>`
   ).join('');
 
   // 百年刻度
@@ -2047,6 +2048,8 @@ function initPlan() {
    启动
    ============================================================ */
 function boot() {
+  const prcFrame = TERR.find(f => f.key === 'prc');
+  if (prcFrame) prcFrame.year = NOW_YEAR;     // 长卷最后一帧也跟着今年走
   initTimeline();
   renderCityTabs();
   renderCity();
