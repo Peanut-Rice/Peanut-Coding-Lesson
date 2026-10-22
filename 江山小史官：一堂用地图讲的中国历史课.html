@@ -716,10 +716,6 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:600;margin:0;letter-spacing:1px
             <h2>跟着苏东坡搬家：一个人，一条路线</h2>
             <p>苏东坡一辈子被贬了三次，越贬越远。点地图上的脚印，一站一站跟着他走——走到最后一站，读他那首总结自己一生的诗。</p>
           </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="chip" id="btnStopPrev">‹ 上一站</button>
-            <button class="chip" id="btnStopNext">下一站 ›</button>
-          </div>
         </div>
 
         <div class="sushi-layout">
@@ -1695,8 +1691,6 @@ function renderSushi() {
     $('#revealWhy').textContent = open ? '看一个参考答案' : '收起来';
   };
   drawSushiMap();
-  $('#btnStopPrev').disabled = sushi.i === 0;
-  $('#btnStopNext').disabled = last;
 }
 
 /* ============================================================
