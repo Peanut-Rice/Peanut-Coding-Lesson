@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Peanut 的编程乐园 · 首页</title>
-<meta name="description" content="为小朋友准备的编程学习乐园：Logo 绘画课、星光琴键打字练习、小小物理实验室。全部离线可用。">
+<meta name="description" content="为小朋友准备的学习乐园：Logo 绘画课、星光琴键打字练习、小小物理实验室、江山小史官历史课。全部离线可用。">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥜</text></svg>">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -89,7 +89,7 @@
   /* ---------- 卡片网格 ---------- */
   .grid{
     display:grid;gap:clamp(16px,2.4vw,24px);
-    grid-template-columns:repeat(auto-fit,minmax(285px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(278px,1fr));
     margin:clamp(34px,6vw,58px) 0 0;
   }
 
@@ -169,6 +169,21 @@
   .c-logo{--accent:var(--gold)}
   .c-type{--accent:var(--pink)}
   .c-phys{--accent:var(--sky)}
+  .c-hist{--accent:#f2705c}
+
+  /* 第四张：整行特色卡 */
+  .card.wide{grid-column:1/-1;flex-direction:row;align-items:center;gap:22px;padding:24px 26px}
+  .card.wide .ico{margin-bottom:0;width:66px;height:66px;font-size:32px;line-height:66px;border-radius:18px}
+  .card.wide .body{flex:1;min-width:0}
+  .card.wide h2{min-height:0}
+  .card.wide h2 .en{margin-top:4px}
+  .card.wide p{margin:8px 0 12px;max-width:62ch}
+  .card.wide .tags{margin-bottom:0}
+  .card.wide .go{margin-top:0;white-space:nowrap;font-size:15.5px}
+  @media (max-width:760px){
+    .card.wide{flex-direction:column;align-items:flex-start;gap:16px}
+    .card.wide .go{margin-top:4px}
+  }
 
   /* ---------- 底部提示 ---------- */
   .tips{
@@ -181,6 +196,8 @@
     grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
   }
   .tip{display:flex;gap:11px;align-items:flex-start;font-size:13.5px;color:var(--txt-2)}
+  .tip a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(251,191,36,.35)}
+  .tip a:hover{border-bottom-color:var(--gold)}
   .tip i{font-style:normal;font-size:17px;line-height:1.4}
 
   footer{
@@ -211,8 +228,8 @@
     <div class="badge rise d1"><span class="dot"></span> 单文件 · 离线可用 · 打开就能玩</div>
     <h1 class="rise d2">🥜 Peanut 的编程乐园</h1>
     <p class="lead rise d3">
-      三个为小朋友准备的小程序：用海龟画出图形、跟着童话练打字、在 3D 实验室里做物理实验。
-      <b>点一张卡片就开始吧！</b>
+      四个为小朋友准备的小程序：用海龟画出图形、跟着童话练打字、在 3D 实验室里做物理实验，
+      再上一堂用地图讲的中国历史课。<b>点一张卡片就开始吧！</b>
     </p>
   </header>
 
@@ -238,7 +255,7 @@
       <span class="go">开始弹奏 <span class="arrow">→</span></span>
     </a>
 
-    <a class="card c-phys rise d5" href="小小物理实验室.html">
+    <a class="card c-phys rise d4" href="小小物理实验室.html">
       <div class="ico">🧪</div>
       <h2>小小物理实验室<span class="en">Physics Lab 3D</span></h2>
       <p>六个 3D 实验场景：摩擦力、弹簧反弹、坡道能量、斜面加速度、自由落体、动量守恒。先「猜一猜」，再「做一做」，还能导出实验数据。 </p>
@@ -248,12 +265,25 @@
       <span class="go">开始实验 <span class="arrow">→</span></span>
     </a>
 
+    <a class="card c-hist wide rise d5" href="江山小史官：一堂用地图讲的中国历史课.html">
+      <div class="ico">🗺️</div>
+      <div class="body">
+        <h2>江山小史官<span class="en">History on the Map</span></h2>
+        <p>一堂 40 分钟的中国历史课：拖动时间条看十八朝的疆域图，给古城当侦探、跟着苏东坡搬家；最后把十八张疆域图连起来播一遍，看两千四百年的分分合合。</p>
+        <div class="tags">
+          <span>十八朝疆域图</span><span>两千年长卷</span><span>教师手册</span><span>A3 打印海报</span>
+        </div>
+      </div>
+      <span class="go">开始上课 <span class="arrow">→</span></span>
+    </a>
+
   </main>
 
   <section class="tips rise d5">
     <div class="tip"><i>💻</i><div>用 Chrome 或 Edge 打开，效果最好；手机上也能用。</div></div>
-    <div class="tip"><i>📶</i><div>三个页面都是单个 HTML 文件，不联网也能运行。</div></div>
-    <div class="tip"><i>🧩</i><div>建议顺序：先画图 → 再练打字 → 最后做实验。</div></div>
+    <div class="tip"><i>📶</i><div>每个页面都是单个 HTML 文件，不联网也能运行。</div></div>
+    <div class="tip"><i>🧩</i><div>建议顺序：先画图 → 再练打字 → 做实验 → 上一堂历史课。</div></div>
+    <div class="tip"><i>📄</i><div>历史课配套：<a href="教师手册·江山小史官.pdf">教师手册</a> · <a href="疆域长卷·十八朝（A3海报）.pdf">A3 长卷海报</a>（可打印）</div></div>
   </section>
 
   <footer>

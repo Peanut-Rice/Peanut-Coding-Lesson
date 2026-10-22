@@ -32,6 +32,16 @@ A set of child-friendly coding learning tools.
 - Real-time v-t chart, experiment log table, and CSV export of results
 - A "guess → try → think" explanation flow, plus a glossary of physics terms
 
+### 4. 🗺️ Little Historian · A Map-Based Chinese History Class
+**File:** `江山小史官：一堂用地图讲的中国历史课.html`
+
+- A single-file, offline 40-minute history lesson for ages 8–12, built around three questions: when, where, who
+- Four interactive stations: a draggable timeline of 18 eras **with a real territory map for each dynasty**, a "city name detective" game (Chang'an → Xi'an, Jiankang → Nanjing, Daliang → Kaifeng, Ji → Beijing), Su Shi's exile route with poems and cumulative distance, and a locate-the-ancient-place map quiz scored by distance
+- A fifth station, **"Two Thousand Years"**, plays the 18 territory maps as a 13-second timelapse with a ghost outline of the previous frame
+- **Printable A3 poster**: all 18 maps on one sheet, with a three-line reading guide
+- Includes a printable teacher's guide: 40-minute run sheet, line-by-line script, anticipated questions, differentiation, and an assessment rubric
+- Inspired by the open-source [Jiangshan Atlas](https://github.com/DeanChensj/jiangshan-map) (GPL-3.0); some data derived from it
+
 ## 🚀 Quick Start
 
 1. Clone or download this repository
@@ -49,6 +59,11 @@ A set of child-friendly coding learning tools.
 - Open `星光琴键：童话魔法乐章.html`
 - Follow on-screen prompts to practice typing
 - Complete challenges to receive feedback
+
+### History Class
+- Open `江山小史官：一堂用地图讲的中国历史课.html`
+- Walk through the stations with the "next" button; open the teacher's guide from the top-right button
+- In the fourth station, click anywhere on the map — the closer you are, the higher the score
 
 ### Physics Lab
 - Open `小小物理实验室.html`
