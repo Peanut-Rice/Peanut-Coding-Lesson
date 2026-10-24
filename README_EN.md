@@ -1,12 +1,12 @@
 # Peanut's Coding Lesson 🎓
 
-A coding-learning project designed for children, containing fun programming tools and interactive learning programs.
+A coding-learning project designed for children, containing fun programming tools, interactive learning programs and a 3D art gallery.
 
 [中文版](README.md)
 
 ## 📚 Project Contents
 
-A set of child-friendly coding learning tools.
+A set of child-friendly coding learning projects.
 
 ### 1. 📐 Logo Drawing Course
 **File:** `Peanut's coding lesson.html`
@@ -42,6 +42,18 @@ A set of child-friendly coding learning tools.
 - Includes a printable teacher's guide: 40-minute run sheet, line-by-line script, anticipated questions, differentiation, and an assessment rubric
 - Inspired by the open-source [Jiangshan Atlas](https://github.com/DeanChensj/jiangshan-map) (GPL-3.0); some data derived from it
 
+### 5. 🧸 Labubu 3D Art Toy · The Soft Monster
+**File:** `拉布布3D：柔软怪物.html`
+
+![Labubu 3D art toy](assets/labubu-preview.jpg)
+
+- A fully procedural, real-time 3D art toy: the head, ears, fangs, paws, tail, necklace and gilded rose are all built in code, with no imported model
+- Layered materials: flocked fur shells with fibre normals, glassy amber eyes, pearl teeth, brass and rose-velvet petals
+- Single-file and offline, with three gallery lighting studies: Atelier, Dusk and Noir
+- Viewing tools: 3/4, Profile, Face and Back camera studies; click a Surface study row to fly to the fur, eyes or rose
+- Turntable play/pause, fullscreen, clean PNG export without the UI, and keyboard orbit/zoom shortcuts
+- A creative-coding / 3D graphics showcase for ages 8+; **unofficial fan art**. Labubu is a character by Kasing Lung / Pop Mart; this project is not affiliated with the rights holders.
+
 ## 🚀 Quick Start
 
 1. Clone or download this repository
@@ -71,12 +83,19 @@ A set of child-friendly coding learning tools.
 - Hit "push / release" and watch the ball, the live v-t chart, and the experiment log
 - Follow the task and "why" prompts to verify the conclusions yourself
 
+### Labubu 3D Gallery
+- Open `拉布布3D：柔软怪物.html`
+- Drag to orbit and scroll to zoom; use the top bar for 3/4, Profile, Face and Back views
+- Click a row in Surface study to fly to the flock, the glass eyes or the gilded rose
+- Press `T` for the turntable, `S` to save a clean PNG still, and `C` to hide the interface
+
 ## 🎨 Features
 
 - ✨ Friendly user interface
 - 🎨 Multiple theme skins
 - 📱 Responsive design for multiple devices
 - 🌐 Chinese language interface
+- 🧸 3D creation: procedural geometry, PBR materials, lighting studies and still export
 - 🔄 Gradual learning curve
 
 ## 📝 Planned Features
@@ -102,6 +121,8 @@ This project was created for Peanut's coding education, teaching basic programmi
 ## 📄 License
 
 MIT License — free to use and modify.
+
+The Labubu 3D page embeds Three.js (MIT) and the Cormorant Garamond / Jost typefaces (SIL OFL 1.1). See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for the full notices.
 
 ## 👨‍👧 Contributing
 

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Peanut 的编程乐园 · 首页</title>
-<meta name="description" content="为小朋友准备的学习乐园：Logo 绘画课、星光琴键打字练习、小小物理实验室、江山小史官历史课。全部离线可用。">
+<meta name="description" content="为小朋友准备的学习乐园：Logo 绘画课、星光琴键打字练习、小小物理实验室、拉布布 3D 收藏品、江山小史官历史课。全部离线可用。">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥜</text></svg>">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -169,6 +169,7 @@
   .c-logo{--accent:var(--gold)}
   .c-type{--accent:var(--pink)}
   .c-phys{--accent:var(--sky)}
+  .c-labubu{--accent:#e0a48f}
   .c-hist{--accent:#f2705c}
 
   /* 第四张：整行特色卡 */
@@ -211,7 +212,7 @@
   /* ---------- 入场动画 ---------- */
   .rise{opacity:0;transform:translateY(16px);animation:rise .7s cubic-bezier(.22,1,.36,1) forwards}
   .d1{animation-delay:.05s}.d2{animation-delay:.14s}.d3{animation-delay:.23s}
-  .d4{animation-delay:.32s}.d5{animation-delay:.41s}
+  .d4{animation-delay:.32s}.d5{animation-delay:.41s}.d6{animation-delay:.50s}
   @keyframes rise{to{opacity:1;transform:none}}
 
   @media (prefers-reduced-motion:reduce){
@@ -228,8 +229,8 @@
     <div class="badge rise d1"><span class="dot"></span> 单文件 · 离线可用 · 打开就能玩</div>
     <h1 class="rise d2">🥜 Peanut 的编程乐园</h1>
     <p class="lead rise d3">
-      四个为小朋友准备的小程序：用海龟画出图形、跟着童话练打字、在 3D 实验室里做物理实验，
-      再上一堂用地图讲的中国历史课。<b>点一张卡片就开始吧！</b>
+      五个为小朋友准备的小作品：用海龟画出图形、跟着童话练打字、在 3D 实验室里做物理实验，
+      去 3D 展台看一个用代码雕成的艺术玩具，再上一堂用地图讲的中国历史课。<b>点一张卡片就开始吧！</b>
     </p>
   </header>
 
@@ -265,7 +266,19 @@
       <span class="go">开始实验 <span class="arrow">→</span></span>
     </a>
 
-    <a class="card c-hist wide rise d5" href="江山小史官：一堂用地图讲的中国历史课.html">
+    <a class="card c-labubu wide rise d5" href="拉布布3D：柔软怪物.html">
+      <div class="ico">🧸</div>
+      <div class="body">
+        <h2>拉布布 3D 收藏品<span class="en">The Soft Monster · 3D Art Toy</span></h2>
+        <p>一个完全由代码雕出来的实时 3D 艺术玩具：绒毛壳层、琥珀虹膜、黄铜玫瑰和三套画廊灯光。拖拽转一转，点一点材质，还能保存一张干净的静帧。</p>
+        <div class="tags">
+          <span>程序化建模</span><span>PBR 材质</span><span>三套灯光</span><span>导出 PNG</span>
+        </div>
+      </div>
+      <span class="go">进入展台 <span class="arrow">→</span></span>
+    </a>
+
+    <a class="card c-hist wide rise d6" href="江山小史官：一堂用地图讲的中国历史课.html">
       <div class="ico">🗺️</div>
       <div class="body">
         <h2>江山小史官<span class="en">History on the Map</span></h2>
@@ -282,7 +295,8 @@
   <section class="tips rise d5">
     <div class="tip"><i>💻</i><div>用 Chrome 或 Edge 打开，效果最好；手机上也能用。</div></div>
     <div class="tip"><i>📶</i><div>每个页面都是单个 HTML 文件，不联网也能运行。</div></div>
-    <div class="tip"><i>🧩</i><div>建议顺序：先画图 → 再练打字 → 做实验 → 上一堂历史课。</div></div>
+    <div class="tip"><i>🧩</i><div>建议顺序：先画图 → 再练打字 → 做实验 → 逛 3D 展台 → 上一堂历史课。</div></div>
+    <div class="tip"><i>🖱️</i><div>3D 展台：拖拽旋转、滚轮缩放；顶部切换 3/4、侧面、正面、背面，按 <code>T</code> 转盘、<code>S</code> 保存静帧。</div></div>
     <div class="tip"><i>📄</i><div>历史课配套：<a href="教师手册·江山小史官.pdf">教师手册</a> · <a href="疆域长卷·十八朝（A3海报）.pdf">A3 长卷海报</a>（可打印）</div></div>
   </section>
 
