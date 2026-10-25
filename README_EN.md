@@ -52,7 +52,19 @@ A set of child-friendly coding learning projects.
 - Single-file and offline, with three gallery lighting studies: Atelier, Dusk and Noir
 - Viewing tools: 3/4, Profile, Face and Back camera studies; click a Surface study row to fly to the fur, eyes or rose
 - Turntable play/pause, fullscreen, clean PNG export without the UI, and keyboard orbit/zoom shortcuts
+- **Little Discoverer (new)**: four Chinese-language discovery missions with progress, fact cards and a stamp, introducing viewpoint, lighting, materials and composition through play
 - A creative-coding / 3D graphics showcase for ages 8+; **unofficial fan art**. Labubu is a character by Kasing Lung / Pop Mart; this project is not affiliated with the rights holders.
+
+![Little Discoverer mode](assets/labubu-discoverer.jpg)
+
+#### For a 10-year-old: a 15–20 minute play
+
+1. **Free play (2 min)**: rotate, zoom, and find the ears, fangs, rose and tail.
+2. **Four discoveries (about 12 min)**: open "Little Discoverer", switch to Profile, change the light, look closely at the eyes, and save a composition of your own.
+3. **Talk about it**: What changes between the front and the side? How do the fur and shadows change with the light? Why are the eyes shiny? Which view would you keep?
+
+The child practises **spatial viewpoint and occlusion, light and colour, surface reflection, and composition**, plus the intuition that a 3D model is assembled from geometry, materials, lights and camera parameters—not simply drawn.  
+It is not a syntax lesson; it is a playful entry point to 3D graphics, best used as a parent–child activity or a classroom warm-up, for no more than about 20 minutes.
 
 ## 🚀 Quick Start
 
@@ -87,6 +99,7 @@ A set of child-friendly coding learning projects.
 - Open `拉布布3D：柔软怪物.html`
 - Drag to orbit and scroll to zoom; use the top bar for 3/4, Profile, Face and Back views
 - Click a row in Surface study to fly to the flock, the glass eyes or the gilded rose
+- Open "Little Discoverer" for four Chinese-language missions; tap "先看看模型" to step back, inspect the change, then return
 - Press `T` for the turntable, `S` to save a clean PNG still, and `C` to hide the interface
 
 ## 🎨 Features
@@ -96,6 +109,7 @@ A set of child-friendly coding learning projects.
 - 📱 Responsive design for multiple devices
 - 🌐 Chinese language interface
 - 🧸 3D creation: procedural geometry, PBR materials, lighting studies and still export
+- 🔎 Learning through play: four Chinese discovery missions on viewpoint, lighting, materials and composition
 - 🔄 Gradual learning curve
 
 ## 📝 Planned Features
