@@ -3,36 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#fff8f4">
+<meta name="theme-color" content="#f5f0e7">
 <title>Peanut 的编程乐园 · 首页</title>
-<meta name="description" content="为小朋友准备的学习乐园：Logo 绘画课、星光琴键打字练习、小小物理实验室、拉布布 3D 收藏品、江山小史官历史课。全部离线可用。">
+<meta name="description" content="为小朋友准备的小馆：Logo 绘画课、星光琴键打字练习、小小物理实验室、拉布布 3D 收藏品、江山小史官历史课。全部离线可用。">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥜</text></svg>">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
 
   :root{
     color-scheme:light;
-    --bg:#fff8f4;
-    --bg-2:#fdf1f7;
-    --bg-3:#f5f0ff;
-    --card:rgba(255,255,255,.78);
-    --card-hi:rgba(255,255,255,.96);
-    --line:rgba(104,65,85,.12);
-    --line-hi:rgba(104,65,85,.28);
-    --txt:#472d3b;
-    --txt-2:#7a5a69;
-    --txt-3:#7e6472;
-    --gold:#d99a3e;
-    --gold-ink:#8d5c12;
-    --sky:#7ec8dd;
-    --pink:#e58baa;
-    --mint:#84cdb9;
-    --rose:#d9779a;
-    --rose-ink:#a23e60;
-    --lav:#a98bd6;
-    --lav-ink:#6c4d9a;
-    --radius:22px;
-    --shadow:0 22px 50px -26px rgba(99,57,80,.35);
+    --paper:#f5f0e7;
+    --ink:#221c18;
+    --ink-2:#4b433d;
+    --muted:#6f655c;
+    --hair:rgba(34,28,24,.13);
+    --hair-soft:rgba(34,28,24,.075);
+    --gold:#a07c44;
+    --gold-ink:#8a6a37;
+    --radius:18px;
+    --shadow:0 1px 2px rgba(34,28,24,.05), 0 26px 50px -34px rgba(34,28,24,.30);
+    --shadow-hi:0 2px 6px rgba(34,28,24,.06), 0 34px 66px -34px rgba(34,28,24,.38);
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
   }
 
   html{scroll-behavior:smooth}
@@ -40,235 +31,366 @@
   body{
     min-height:100vh;
     background:
-      radial-gradient(900px 560px at 8% -8%, rgba(255,191,208,.62), transparent 62%),
-      radial-gradient(780px 520px at 94% 2%, rgba(202,184,240,.55), transparent 60%),
-      radial-gradient(720px 520px at 50% 110%, rgba(183,231,214,.48), transparent 64%),
-      linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 52%, var(--bg-3) 100%);
-    background-attachment:fixed;
-    color:var(--txt);
+      radial-gradient(1100px 620px at 12% -10%, rgba(214,180,124,.22), transparent 60%),
+      radial-gradient(900px 540px at 92% 5%, rgba(196,150,160,.16), transparent 62%),
+      radial-gradient(760px 520px at 50% 112%, rgba(168,186,168,.14), transparent 64%),
+      linear-gradient(180deg,#f8f3eb 0%, #f4eee4 46%, #f7f2ea 100%);
+    background-attachment:scroll;
+    color:var(--ink);
     font-family:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    font-size:15px;
     line-height:1.65;
     -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
   }
 
-  ::selection{background:#f8c9d8;color:var(--txt)}
+  ::selection{background:rgba(160,124,68,.22);color:var(--ink)}
 
-  /* 淡淡的星点背景 */
-  body::before{
-    content:"";
-    position:fixed;inset:0;pointer-events:none;z-index:0;
-    background-image:
-      radial-gradient(circle at 20% 22%, rgba(217,119,154,.30) 0 1.6px, transparent 2.2px),
-      radial-gradient(circle at 72% 14%, rgba(169,139,214,.28) 0 1.4px, transparent 2px),
-      radial-gradient(circle at 40% 72%, rgba(126,200,221,.26) 0 1.3px, transparent 2px),
-      radial-gradient(circle at 86% 62%, rgba(217,119,154,.22) 0 1.6px, transparent 2.2px),
-      radial-gradient(circle at 8% 82%, rgba(169,139,214,.24) 0 1.2px, transparent 1.8px),
-      radial-gradient(circle at 60% 40%, rgba(126,200,221,.20) 0 1.4px, transparent 2px);
-    opacity:.9;
+  /* ---------- 纸面颗粒 ---------- */
+  .grain{
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    opacity:.05;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  .wrap{position:relative;z-index:1;width:min(1140px,100%);margin:0 auto;padding:clamp(28px,6vw,84px) clamp(18px,5vw,40px) 56px}
+  .wrap{position:relative;z-index:1;width:min(1120px,100%);margin:0 auto;padding:clamp(20px,4vw,44px) clamp(18px,5vw,40px) 48px}
 
-  /* ---------- 顶部 ---------- */
-  header{text-align:center;max-width:760px;margin:0 auto}
+  a{color:inherit}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:2px}
 
-  .badge{
+  /* ---------- 顶部刊头 ---------- */
+  .masthead{
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;
+    padding-bottom:14px;border-bottom:1px solid var(--hair);
+    font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);
+  }
+  .masthead .brand{
     display:inline-flex;align-items:center;gap:9px;
-    padding:7px 16px;border-radius:999px;
-    background:rgba(255,255,255,.72);
-    border:1px solid var(--line);
-    color:var(--txt-2);font-size:13px;letter-spacing:.4px;
-    box-shadow:0 8px 22px -18px rgba(99,57,80,.35);
-    backdrop-filter:blur(10px);
+    font-family:var(--serif);font-style:italic;font-size:14px;letter-spacing:.02em;
+    text-transform:none;color:var(--ink-2);
   }
-  .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 4px rgba(132,205,185,.18)}
+  .masthead .brand .pea{font-style:normal;font-size:13px}
+  .masthead .brand b{font-weight:400;color:var(--ink)}
+
+  /* ---------- 前言 ---------- */
+  header{max-width:780px;margin:0 auto;text-align:center;padding:clamp(48px,8vw,84px) 0 0}
+
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:14px;
+    font-family:var(--serif);font-size:11px;letter-spacing:.3em;
+    text-transform:uppercase;color:var(--gold-ink);
+  }
+  .eyebrow::before,.eyebrow::after{
+    content:"";width:clamp(22px,6vw,54px);height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold));
+  }
+  .eyebrow::after{background:linear-gradient(90deg,var(--gold),transparent)}
 
   h1{
-    margin:22px 0 14px;
-    font-size:clamp(34px,6.4vw,58px);
-    line-height:1.15;
-    letter-spacing:-.5px;
-    font-weight:800;
-    color:var(--txt);
+    margin:24px 0 18px;
+    font-size:clamp(34px,6.2vw,60px);
+    line-height:1.14;
+    font-weight:600;
+    letter-spacing:.015em;
+    color:var(--ink);
+    text-wrap:balance;
   }
-  h1 .h1-emoji{
-    display:inline-block;
-    margin-right:.12em;
-    -webkit-text-fill-color:initial;
-    color:initial;
-    filter:drop-shadow(0 4px 8px rgba(99,57,80,.18));
-  }
-  h1 .h1-title{
-    background:linear-gradient(100deg,#472d3b 6%,#b64f73 52%,var(--lav-ink) 96%);
-    -webkit-background-clip:text;background-clip:text;
-    color:transparent;
+  h1 .brand-serif{
+    font-family:var(--serif);font-style:italic;font-weight:400;
+    letter-spacing:-.005em;padding-right:.04em;
   }
 
-  .lead{color:var(--txt-2);font-size:clamp(15px,2.1vw,18px)}
-  .lead b{color:var(--txt);font-weight:700}
-
-  /* ---------- 卡片网格 ---------- */
-  .grid{
-    display:grid;gap:clamp(16px,2.4vw,24px);
-    grid-template-columns:repeat(auto-fit,minmax(278px,1fr));
-    margin:clamp(34px,6vw,58px) 0 0;
+  .lead{
+    max-width:min(620px,100%);margin:0 auto;
+    color:var(--ink-2);font-size:clamp(14.5px,1.75vw,16.5px);line-height:1.9;
+    text-wrap:pretty;
   }
+  .lead br.lead-br{display:none}
+  .lead .nb{white-space:nowrap}
+  .lead b{font-weight:600;color:var(--ink);white-space:nowrap}
+
+  .meta{
+    list-style:none;display:flex;flex-wrap:wrap;justify-content:center;
+    margin:28px 0 0;font-size:10.5px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--muted);
+  }
+  .meta li{position:relative;padding:0 15px}
+  .meta li+li::before{
+    content:"";position:absolute;left:0;top:50%;width:1px;height:10px;
+    transform:translateY(-50%);background:var(--hair);
+  }
+
+  /* ---------- 分节标题 ---------- */
+  .section-head{display:flex;align-items:center;gap:14px;margin:clamp(46px,7vw,74px) 0 20px}
+  .section-head .lbl{
+    font-family:var(--serif);font-size:10.5px;letter-spacing:.3em;
+    text-transform:uppercase;color:var(--gold-ink);
+  }
+  .section-head .cn{font-size:11.5px;letter-spacing:.14em;color:var(--muted);white-space:nowrap}
+  .section-head .line{flex:1;height:1px;background:var(--hair);min-width:24px}
+
+  /* ---------- 作品网格 ---------- */
+  .grid{display:grid;gap:clamp(14px,1.9vw,20px);grid-template-columns:repeat(3,minmax(0,1fr))}
 
   .card{
     position:relative;display:flex;flex-direction:column;
     padding:26px 24px 22px;
     border-radius:var(--radius);
-    background:var(--card);
-    border:1px solid var(--line);
-    box-shadow:var(--shadow),0 2px 8px rgba(99,57,80,.04);
-    backdrop-filter:blur(14px);
+    background:linear-gradient(180deg,rgba(255,253,249,.94),rgba(255,252,246,.74));
+    border:1px solid var(--hair-soft);
+    box-shadow:var(--shadow);
     text-decoration:none;color:inherit;
     overflow:hidden;
-    transition:transform .28s cubic-bezier(.22,1,.36,1), border-color .28s, background .28s, box-shadow .28s;
+    backdrop-filter:blur(6px);
+    transition:transform .4s cubic-bezier(.22,1,.36,1), box-shadow .4s, border-color .4s, background .4s;
   }
-  /* 顶部彩色高光条 */
-  .card::before{
-    content:"";position:absolute;left:0;right:0;top:0;height:3px;
-    background:var(--accent,var(--sky));
-    opacity:.95;
+  .card:hover{
+    transform:translateY(-3px);
+    box-shadow:var(--shadow-hi);
+    border-color:rgba(34,28,24,.18);
+    background:linear-gradient(180deg,rgba(255,254,251,.98),rgba(255,252,246,.88));
   }
-  /* 悬停光晕 */
+  .card:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+  /* 悬停时从左侧展开的一道细金线 */
   .card::after{
-    content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
-    background:radial-gradient(420px 220px at 50% 0%, var(--accent,var(--sky)), transparent 70%);
-    opacity:0;transition:opacity .3s;
+    content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
+    background:linear-gradient(90deg,var(--accent,var(--gold)),rgba(0,0,0,0));
+    transform:scaleX(0);transform-origin:left;opacity:.7;
+    transition:transform .55s cubic-bezier(.22,1,.36,1);
   }
-  .card:hover,.card:focus-visible{
-    transform:translateY(-6px);
-    border-color:var(--line-hi);
-    background:var(--card-hi);
-    box-shadow:0 30px 60px -30px rgba(99,57,80,.48),0 3px 12px rgba(99,57,80,.06);
-    outline:none;
+  .card:hover::after,.card:focus-visible::after{transform:scaleX(1)}
+
+  .num{
+    position:absolute;top:22px;right:24px;
+    font-family:var(--serif);font-style:italic;font-size:12px;
+    letter-spacing:.16em;color:var(--muted);opacity:.75;
   }
-  .card:focus-visible{
-    box-shadow:0 0 0 4px rgba(217,119,154,.24),0 30px 60px -30px rgba(99,57,80,.48);
-  }
-  .card:hover::after,.card:focus-visible::after{opacity:.10}
 
   .ico{
     display:flex;align-items:center;justify-content:center;
     flex:0 0 auto;
-    width:56px;height:56px;border-radius:16px;
-    /* 固定 emoji 字号与行高，避免不同字体的彩色 emoji 撑破方块 */
-    font-size:27px;line-height:56px;
-    text-align:center;overflow:hidden;
-    background:var(--soft, #fff5fa);
-    border:1px solid rgba(104,65,85,.10);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.85);
-    margin-bottom:16px;
+    width:48px;height:48px;border-radius:12px;
+    margin-bottom:20px;
+    background:linear-gradient(155deg,#fffefb,#f6efe4);
+    border:1px solid var(--hair-soft);
+    box-shadow:inset 0 1px 0 #fff, 0 1px 2px rgba(34,28,24,.04);
+    color:var(--accent,var(--gold-ink));
+  }
+  .ico svg{
+    width:24px;height:24px;
+    fill:none;stroke:currentColor;stroke-width:1.55;
+    stroke-linecap:round;stroke-linejoin:round;
   }
 
-  .card h2{font-size:20px;font-weight:750;letter-spacing:.2px;min-height:56px;color:var(--txt)}
-  .card h2 .en{display:block;font-size:11.5px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent-ink,var(--accent,var(--sky)));margin-top:5px}
+  .card h2{font-size:20px;font-weight:600;letter-spacing:.015em;line-height:1.4;color:var(--ink)}
+  .card h2 .en{
+    display:block;margin-top:6px;
+    font-family:var(--serif);font-style:italic;font-weight:400;
+    font-size:13px;letter-spacing:.02em;color:var(--accent,var(--gold-ink));
+  }
 
-  .card p{color:var(--txt-2);font-size:14.5px;margin:12px 0 16px}
+  .card p{margin:12px 0 16px;color:var(--ink-2);font-size:13.8px;line-height:1.85}
 
   code{
-    font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
-    font-size:12.5px;color:var(--gold-ink);
-    background:#fff4dc;
-    border:1px solid #f0dfbf;
-    padding:1.5px 6px;border-radius:6px;white-space:nowrap;
+    font-family:ui-monospace,"SFMono-Regular",Consolas,monospace;
+    font-size:12px;color:var(--gold-ink);
+    background:rgba(160,124,68,.09);
+    border:1px solid rgba(160,124,68,.18);
+    padding:1px 5px;border-radius:4px;white-space:nowrap;
   }
 
-  .tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
   .tags span{
-    font-size:11.5px;color:var(--txt-2);
-    padding:3.5px 10px;border-radius:999px;
-    background:rgba(255,255,255,.66);
-    border:1px solid rgba(104,65,85,.10);
+    font-size:11px;letter-spacing:.06em;color:var(--muted);
+    padding:3px 8px;border:1px solid var(--hair-soft);border-radius:4px;
+    background:rgba(255,255,255,.45);
   }
 
   .go{
-    margin-top:auto;display:flex;align-items:center;gap:9px;
-    font-size:14.5px;font-weight:700;color:var(--accent-ink,var(--accent,var(--sky)));
+    margin-top:auto;display:inline-flex;align-items:center;gap:8px;
+    font-size:13px;font-weight:600;letter-spacing:.06em;
+    color:var(--accent,var(--gold-ink));
   }
-  .go .arrow{transition:transform .28s cubic-bezier(.22,1,.36,1)}
-  .card:hover .go .arrow,.card:focus-visible .go .arrow{transform:translateX(5px)}
+  .go .arrow{transition:transform .4s cubic-bezier(.22,1,.36,1)}
+  .card:hover .go .arrow,.card:focus-visible .go .arrow{transform:translateX(4px)}
 
-  /* 每张卡片一组「主色 / 文字色 / 浅底」 */
-  .c-logo{--accent:#e0a84b;--accent-ink:#8d5c12;--soft:#fff3d9}
-  .c-type{--accent:#dd7f9f;--accent-ink:#a23e60;--soft:#ffe8ef}
-  .c-phys{--accent:#7fc8de;--accent-ink:#2c708c;--soft:#e7f7fb}
-  .c-labubu{--accent:#c98da9;--accent-ink:#8a4a68;--soft:#fbeaf1}
-  .c-hist{--accent:#dd816b;--accent-ink:#984732;--soft:#ffebe2}
+  /* 每件作品一组「主色」
+     只用低饱和的宝石色，避免糖果感 */
+  .c-logo{--accent:#a3752f}
+  .c-type{--accent:#9c4f66}
+  .c-phys{--accent:#35707a}
+  .c-labubu{--accent:#8f5f78}
+  .c-hist{--accent:#9d5334}
 
-  /* 整行特色卡：用各自的浅色做一层很淡的底 */
+  /* ---------- 整行卡 ---------- */
   .card.wide{
-    grid-column:1/-1;flex-direction:row;align-items:center;gap:22px;padding:24px 26px;
-    background:linear-gradient(120deg,rgba(255,255,255,.94) 0%,var(--soft,#fff) 100%);
+    grid-column:1/-1;
+    flex-direction:row;align-items:center;gap:clamp(18px,2.6vw,28px);
+    padding:26px 30px;
   }
-  .card.wide .ico{margin-bottom:0;width:66px;height:66px;font-size:32px;line-height:66px;border-radius:18px}
-  .card.wide .body{flex:1;min-width:0}
-  .card.wide h2{min-height:0}
-  .card.wide h2 .en{margin-top:4px}
-  .card.wide p{margin:8px 0 12px;max-width:62ch}
+  .card.wide .ico{margin-bottom:0;width:56px;height:56px;border-radius:14px}
+  .card.wide .ico svg{width:26px;height:26px}
+  .card.wide .body{flex:1;min-width:0;display:flex;flex-direction:column}
+  .card.wide h2 .en{margin-top:5px}
+  .card.wide p{margin:8px 0 12px;max-width:64ch}
   .card.wide .tags{margin-bottom:0}
-  .card.wide .go{margin-top:0;white-space:nowrap;font-size:15.5px}
-  @media (max-width:760px){
-    .card.wide{flex-direction:column;align-items:flex-start;gap:16px}
-    .card.wide .go{margin-top:4px}
-  }
+  .card.wide .go{margin-top:0;white-space:nowrap}
 
-  /* ---------- 底部提示 ---------- */
-  .tips{
-    margin-top:clamp(34px,6vw,54px);
-    padding:22px 24px;
-    border-radius:var(--radius);
-    background:rgba(255,255,255,.55);
-    border:1px dashed rgba(104,65,85,.18);
-    box-shadow:0 18px 40px -34px rgba(99,57,80,.35);
-    display:grid;gap:14px;
-    grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  /* ---------- 主推作品：左文右图 ---------- */
+  .card.feature{
+    grid-column:1/-1;
+    display:grid;grid-template-columns:1.1fr .9fr;
+    align-items:center;gap:clamp(22px,3.4vw,42px);
+    padding:clamp(22px,2.6vw,30px);
+    background:linear-gradient(118deg,#fffdf8 0%,#f8f0e3 100%);
   }
-  .tip{display:flex;gap:11px;align-items:flex-start;font-size:13.5px;color:var(--txt-2)}
-  .tip a{color:var(--rose-ink);text-decoration:none;border-bottom:1px solid rgba(162,62,96,.28)}
-  .tip a:hover{border-bottom-color:var(--rose-ink)}
-  .tip i{font-style:normal;font-size:17px;line-height:1.4}
+  .card.feature .body{display:flex;flex-direction:column;min-width:0}
+  .card.feature .ico{width:56px;height:56px;margin-bottom:18px}
+  .card.feature .ico svg{width:26px;height:26px}
+  .card.feature .plate{
+    position:relative;
+    margin:0;border-radius:12px;overflow:hidden;
+    background:#17110f;
+    border:1px solid rgba(34,28,24,.16);
+    box-shadow:0 20px 42px -24px rgba(34,28,24,.55);
+  }
+  .card.feature .plate figcaption{
+    position:absolute;right:16px;bottom:13px;
+    font-family:var(--serif);font-style:italic;font-size:11px;
+    letter-spacing:.16em;text-transform:uppercase;
+    color:rgba(255,255,255,.82);
+    text-shadow:0 1px 8px rgba(0,0,0,.55);
+    pointer-events:none;
+  }
+  .card.feature .plate img{
+    display:block;width:100%;height:auto;aspect-ratio:10/7;object-fit:cover;
+    transition:transform .9s cubic-bezier(.22,1,.36,1);
+  }
+  .card.feature:hover .plate img{transform:scale(1.025)}
 
+  /* ---------- 使用提示 ---------- */
+  .notes{margin-top:clamp(46px,7vw,78px);padding-top:clamp(26px,4vw,38px);border-top:1px solid var(--hair)}
+  .notes .section-head{margin:0 0 24px}
+  .notes-grid{display:grid;gap:18px 44px;grid-template-columns:1fr 1fr}
+  .note{position:relative;padding-left:20px;font-size:13.5px;line-height:1.8;color:var(--ink-2)}
+  .note::before{
+    content:"";position:absolute;left:0;top:.85em;width:9px;height:1px;
+    background:var(--gold);opacity:.8;
+  }
+  .note b{color:var(--ink);font-weight:600}
+  .note:last-child{
+    grid-column:1/-1;padding-top:18px;
+    border-top:1px solid var(--hair-soft);
+  }
+  .note:last-child::before{top:calc(.85em + 18px)}
+  .note a{
+    color:var(--gold-ink);text-decoration:none;
+    border-bottom:1px solid rgba(160,124,68,.35);
+    transition:border-color .25s;
+  }
+  .note a:hover{border-bottom-color:var(--gold-ink)}
+  .note code{font-size:11.5px;padding:0 4px}
+
+  /* ---------- 页脚 ---------- */
   footer{
-    margin-top:34px;padding-top:22px;
-    border-top:1px solid var(--line);
-    display:flex;flex-wrap:wrap;gap:10px 18px;justify-content:space-between;
-    color:var(--txt-3);font-size:13px;
+    margin-top:clamp(40px,6vw,64px);padding-top:22px;
+    border-top:1px solid var(--hair);
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+    gap:10px 20px;
+    font-size:11px;letter-spacing:.12em;color:var(--muted);
   }
-  footer b{color:var(--txt-2);font-weight:600}
+  footer .f-brand{font-family:var(--serif);font-style:italic;font-size:13px;letter-spacing:.02em;color:var(--ink-2)}
+  footer .f-brand span{font-style:normal;font-size:11px;letter-spacing:.12em;color:var(--muted);margin-left:10px}
 
-  /* ---------- 入场动画 ---------- */
-  .rise{opacity:0;transform:translateY(16px);animation:rise .7s cubic-bezier(.22,1,.36,1) forwards}
-  .d1{animation-delay:.05s}.d2{animation-delay:.14s}.d3{animation-delay:.23s}
-  .d4{animation-delay:.32s}.d5{animation-delay:.41s}.d6{animation-delay:.50s}
+  /* ---------- 入场 ---------- */
+  .rise{opacity:0;transform:translateY(10px);animation:rise .65s cubic-bezier(.22,1,.36,1) forwards}
+  .d1{animation-delay:.04s}.d2{animation-delay:.12s}.d3{animation-delay:.2s}
+  .d4{animation-delay:.28s}.d5{animation-delay:.36s}.d6{animation-delay:.44s}
   @keyframes rise{to{opacity:1;transform:none}}
+
+  /* ---------- 响应式 ---------- */
+  @media (max-width:899px){
+    .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid > .c-phys{grid-column:1/-1}
+    .grid > .c-phys p{max-width:58ch}
+  }
+  @media (max-width:619px){
+    .grid{grid-template-columns:minmax(0,1fr)}
+    .grid > .c-phys{grid-column:auto}
+  }
+  @media (max-width:720px){
+    .card.feature{grid-template-columns:1fr;gap:22px}
+    .card.feature .plate{order:2}
+  }
+  @media (min-width:720px){
+    .lead br.lead-br{display:block}
+  }
+  @media (max-width:480px){
+    .eyebrow{font-size:9.5px;letter-spacing:.16em;white-space:nowrap}
+    .eyebrow::before,.eyebrow::after{width:14px}
+    h1{font-size:clamp(30px,8.6vw,34px)}
+  }
+  @media (max-width:820px){
+    .card.wide{flex-direction:column;align-items:flex-start;gap:16px;padding:24px 24px 22px}
+    .card.wide .go{margin-top:2px}
+    .card.wide .ico{width:48px;height:48px}
+    .card.wide .ico svg{width:23px;height:23px}
+    .meta li{padding:0 11px}
+    .notes-grid{grid-template-columns:1fr}
+    .note:last-child{border-top:0;padding-top:0}
+    .note:last-child::before{top:.85em}
+  }
 
   @media (prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
     .rise{opacity:1;transform:none;animation:none}
-    .card,.go .arrow{transition:none}
+    .card,.go .arrow,.card::after,.card.feature .plate img{transition:none}
+    .card:hover{transform:none}
+  }
+
+  @media print{
+    .grain{display:none}
+    .card{box-shadow:none;background:#fff}
   }
 </style>
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
+
 <div class="wrap">
 
+  <div class="masthead rise d1">
+    <span class="brand"><span class="pea" aria-hidden="true">🥜</span> <b>Peanut's</b> Atelier</span>
+    <span>Vol. 01 · 五件作品</span>
+  </div>
+
   <header>
-    <div class="badge rise d1"><span class="dot"></span> 单文件 · 离线可用 · 打开就能玩</div>
-    <h1 class="rise d2"><span class="h1-emoji" aria-hidden="true">🥜</span><span class="h1-title">Peanut 的编程乐园</span></h1>
+    <span class="eyebrow rise d2">A small atelier for curious kids</span>
+    <h1 class="rise d2"><span class="brand-serif">Peanut</span> 的编程乐园</h1>
     <p class="lead rise d3">
-      五个为小朋友准备的小作品：用海龟画出图形、跟着童话练打字、在 3D 实验室里做物理实验，
-      去 3D 展台看一个用代码雕成的艺术玩具，再上一堂用地图讲的中国历史课。<b>点一张卡片就开始吧！</b>
+      五件为小朋友做的小作品：画图、打字、做实验、逛 3D 展台、上一堂历史课。<br class="lead-br"><span class="nb">全部离线可用，</span><b>挑一件，开始吧。</b>
     </p>
+    <ul class="meta rise d3">
+      <li>五件作品</li>
+      <li>单文件</li>
+      <li>完全离线</li>
+      <li>MIT</li>
+    </ul>
   </header>
+
+  <div class="section-head rise d3">
+    <span class="lbl">Collection</span>
+    <span class="cn">收藏 · 五件小作品</span>
+    <span class="line"></span>
+  </div>
 
   <main class="grid">
 
-    <a class="card c-logo rise d3" href="Peanut's coding lesson.html">
-      <div class="ico">📐</div>
-      <h2>Logo 绘画课<span class="en">Turtle Graphics</span></h2>
+    <a class="card c-logo rise d4" href="Peanut's coding lesson.html">
+      <span class="num" aria-hidden="true">01</span>
+      <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.2 19.4 7.5v9L12 20.8 4.6 16.5v-9z"/><circle cx="12" cy="12" r="3.4"/></svg></span>
+      <h2>Logo 绘画课<em class="en">Turtle Graphics</em></h2>
       <p>输入 <code>forward 100</code>、<code>right 90</code> 这样的简单命令，小海龟就会在画布上爬出一条条线，画出正方形、星星和花朵。</p>
       <div class="tags">
         <span>海龟绘图</span><span>命令式编程</span><span>6 种主题皮肤</span>
@@ -277,8 +399,9 @@
     </a>
 
     <a class="card c-type rise d4" href="星光琴键：童话魔法乐章.html">
-      <div class="ico">🎹</div>
-      <h2>星光琴键<span class="en">Typing &amp; Music</span></h2>
+      <span class="num" aria-hidden="true">02</span>
+      <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9.2 17.6V6.9l7.6-1.5v9.4"/><circle cx="6.9" cy="17.8" r="2.4"/><circle cx="14.5" cy="14.9" r="2.4"/></svg></span>
+      <h2>星光琴键<em class="en">Typing &amp; Music</em></h2>
       <p>把打字练习变成一场童话冒险：按下琴键会亮起星光、响起音符，故事会跟着你的手速一点点展开。</p>
       <div class="tags">
         <span>打字练习</span><span>音乐与故事</span><span>渐进难度</span>
@@ -287,31 +410,37 @@
     </a>
 
     <a class="card c-phys rise d4" href="小小物理实验室.html">
-      <div class="ico">🧪</div>
-      <h2>小小物理实验室<span class="en">Physics Lab 3D</span></h2>
-      <p>六个 3D 实验场景：摩擦力、弹簧反弹、坡道能量、斜面加速度、自由落体、动量守恒。先「猜一猜」，再「做一做」，还能导出实验数据。 </p>
+      <span class="num" aria-hidden="true">03</span>
+      <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9.6 3.6h4.8"/><path d="M10.6 3.6v5.1l-4.4 8.2a2.4 2.4 0 0 0 2.1 3.5h7.4a2.4 2.4 0 0 0 2.1-3.5l-4.4-8.2V3.6"/><path d="M8 14.2h8"/></svg></span>
+      <h2>小小物理实验室<em class="en">Physics Lab 3D</em></h2>
+      <p>六个 3D 实验场景：摩擦力、弹簧反弹、坡道能量、斜面加速度、自由落体、动量守恒。先「猜一猜」，再「做一做」，还能导出实验数据。</p>
       <div class="tags">
         <span>WebGL 3D</span><span>实时 v-t 曲线</span><span>导出 CSV</span>
       </div>
       <span class="go">开始实验 <span class="arrow">→</span></span>
     </a>
 
-    <a class="card c-labubu wide rise d5" href="拉布布3D：柔软怪物.html">
-      <div class="ico">🧸</div>
+    <a class="card c-labubu feature rise d5" href="拉布布3D：柔软怪物.html">
       <div class="body">
-        <h2>拉布布 3D 收藏品<span class="en">The Soft Monster · 3D Art Toy</span></h2>
+        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="13.2" r="6"/><circle cx="6.9" cy="7.4" r="2.3"/><circle cx="17.1" cy="7.4" r="2.3"/><path d="M9.9 12.4h.01M14.1 12.4h.01"/><path d="M10.4 15.2c.9.9 2.3.9 3.2 0"/></svg></span>
+        <h2>拉布布 3D 收藏品<em class="en">The Soft Monster · 3D Art Toy</em></h2>
         <p>一个完全由代码雕出来的实时 3D 艺术玩具：绒毛壳层、琥珀虹膜、黄铜玫瑰和三套画廊灯光。内置 4 个中文「小小发现家」任务，边玩边认识视角、灯光、材质和构图。</p>
         <div class="tags">
           <span>程序化建模</span><span>PBR 材质</span><span>小小发现家</span><span>导出 PNG</span>
         </div>
+        <span class="go">进入展台 <span class="arrow">→</span></span>
       </div>
-      <span class="go">进入展台 <span class="arrow">→</span></span>
+      <figure class="plate">
+        <img src="assets/labubu-preview.jpg" alt="拉布布 3D 展台：深色画廊中的拉布布，手里拿着一朵黄铜玫瑰" width="1000" height="700" loading="lazy" decoding="async">
+        <figcaption>N° 04 · Atelier</figcaption>
+      </figure>
     </a>
 
     <a class="card c-hist wide rise d6" href="江山小史官：一堂用地图讲的中国历史课.html">
-      <div class="ico">🗺️</div>
+      <span class="num" aria-hidden="true">05</span>
+      <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 4.6 3.6 6.7v12.7L9 17.3l6 2.1 5.4-2.1V4.6L15 6.7z"/><path d="M9 4.6v12.7M15 6.7v12.7"/></svg></span>
       <div class="body">
-        <h2>江山小史官<span class="en">History on the Map</span></h2>
+        <h2>江山小史官<em class="en">History on the Map</em></h2>
         <p>一堂 40 分钟的中国历史课：拖动时间条看十八朝的疆域图，给古城当侦探、跟着苏东坡搬家；最后把十八张疆域图连起来播一遍，看两千四百年的分分合合。</p>
         <div class="tags">
           <span>十八朝疆域图</span><span>两千年长卷</span><span>教师手册</span><span>A3 打印海报</span>
@@ -322,17 +451,24 @@
 
   </main>
 
-  <section class="tips rise d5">
-    <div class="tip"><i>💻</i><div>用 Chrome 或 Edge 打开，效果最好；手机上也能用。</div></div>
-    <div class="tip"><i>📶</i><div>每个页面都是单个 HTML 文件，不联网也能运行。</div></div>
-    <div class="tip"><i>🧩</i><div>建议顺序：先画图 → 再练打字 → 做实验 → 逛 3D 展台 → 上一堂历史课。</div></div>
-    <div class="tip"><i>🖱️</i><div>3D 展台：拖拽旋转、滚轮缩放；顶部切换 3/4、侧面、正面、背面，按 <code>T</code> 转盘、<code>S</code> 保存静帧。</div></div>
-    <div class="tip"><i>📄</i><div>历史课配套：<a href="教师手册·江山小史官.pdf">教师手册</a> · <a href="疆域长卷·十八朝（A3海报）.pdf">A3 长卷海报</a>（可打印）</div></div>
+  <section class="notes rise d6">
+    <div class="section-head">
+      <span class="lbl">Notes</span>
+      <span class="cn">使用提示</span>
+      <span class="line"></span>
+    </div>
+    <div class="notes-grid">
+      <p class="note"><b>浏览器</b> 用 Chrome 或 Edge 打开效果最好，手机上也能用。</p>
+      <p class="note"><b>离线</b> 每个页面都是单个 HTML 文件，断网也能玩。</p>
+      <p class="note"><b>顺序</b> 建议：先画图 → 再练打字 → 做实验 → 逛 3D 展台 → 上一堂历史课。</p>
+      <p class="note"><b>3D 展台</b> 拖拽旋转、滚轮缩放；按 <code>T</code> 转盘、按 <code>S</code> 保存静帧。</p>
+      <p class="note"><b>历史课配套</b> <a href="教师手册·江山小史官.pdf">教师手册</a> · <a href="疆域长卷·十八朝（A3海报）.pdf">A3 长卷海报</a>，都可以打印。</p>
+    </div>
   </section>
 
   <footer>
-    <span><b>Peanut 的编程乐园</b> · 为小朋友的编程启蒙而做</span>
-    <span>MIT License · 欢迎提交建议与改进 🎉</span>
+    <span class="f-brand">Peanut's Atelier<span>为小小的好奇心而做</span></span>
+    <span>MIT License · 欢迎提交建议与改进</span>
   </footer>
 
 </div>
