@@ -18,7 +18,7 @@
   --theadBg:#0e2439;--theadText:#a9bed2;--scroll:#27455f;--kbdBg:#16324a;
 }
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--txt);
+html,body{margin:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none;background:var(--bg);color:var(--txt);
   font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;-webkit-user-select:none;user-select:none}
 #gl{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
 #gl:active{cursor:grabbing}
@@ -118,6 +118,125 @@ kbd{background:var(--kbdBg);border-radius:5px;padding:1px 6px;font-family:inheri
   #why{width:calc(100% - 20px);max-height:88vh;padding:16px}
   .blk p,.blk b{font-size:13px}
 }
+
+/* ===================== 手机 / 触屏 ===================== */
+#quickbar{display:none}
+.sheet-close{display:none}
+.touch-hint{display:none}
+
+@media (max-width:900px), (max-height:500px){
+  html,body{height:100%}
+  body{height:100dvh;overflow:hidden}
+  /* 收起的抽屉移出屏幕时不要撑大页面 */
+  #ui{overflow:hidden}
+
+  /* 顶部：标题 + 数据条 */
+  #title{left:8px;top:8px;right:auto;padding:7px 11px;border-radius:12px;max-width:calc(100% - 16px)}
+  #title b{font-size:13.5px}
+  #title small{display:block;font-size:10px;line-height:1.35;margin-top:2px;color:var(--dim)}
+  .desk-hint{display:none}
+  .touch-hint{display:inline}
+  .badge{font-size:10px;padding:2px 6px;margin-left:4px}
+
+  #hud{
+    display:flex;left:8px;right:8px;top:66px;width:auto;padding:6px 4px;
+    border-radius:12px;gap:0;overflow:hidden;
+  }
+  #hud .stat{
+    flex:1 1 0;min-width:0;flex-direction:column;gap:1px;
+    padding:0 2px;border:0;font-size:9px;text-align:center;justify-content:center;
+  }
+  #hud .stat span{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #hud .stat b{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* 只保留 速度/加速度/位移/用时/状态，图表在手机上隐藏 */
+  #hud .stat:nth-of-type(n+5):not(:nth-of-type(9)){display:none}
+  #chart{display:none}
+
+  /* 任务卡片 */
+  #mission{
+    left:8px;right:8px;bottom:68px;width:auto;max-height:32vh;overflow:auto;
+    padding:9px 11px;border-radius:14px;z-index:5;
+  }
+  #mission .big{font-size:13px;line-height:1.45}
+  #mission .hint{font-size:11px;line-height:1.5;margin-top:4px}
+  #mission .oneline{font-size:11.5px;line-height:1.55;padding:6px 8px;margin-top:6px}
+  #mission .whyRow{margin-top:6px}
+  .whyBtn{padding:6px 11px;font-size:12px;min-height:34px}
+
+  /* 底部快捷操作条：推/重置/参数（抽屉打开时也保持可点） */
+  #quickbar{
+    display:flex;left:8px;right:8px;bottom:8px;gap:6px;padding:6px;
+    border-radius:14px;z-index:45;
+  }
+  #quickbar button{flex:1;margin:0;padding:10px 4px;min-height:44px;font-size:13.5px;border-radius:10px}
+
+  /* 控制台改成底部抽屉 */
+  #controls{
+    left:6px;right:6px;top:auto;bottom:64px;width:auto;max-height:74dvh;
+    padding:12px 14px 16px;border-radius:18px;z-index:40;
+    transform:translateY(calc(100% + 16px));
+    transition:transform .28s ease;
+    pointer-events:none;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+  }
+  #controls.open{transform:none;pointer-events:auto}
+  #controls h3{display:flex;align-items:center;justify-content:space-between;font-size:16px;margin-bottom:8px}
+  .sheet-close{
+    display:flex;align-items:center;justify-content:center;
+    width:34px;height:34px;margin:0;padding:0;border-radius:50%;
+    background:var(--ghost);color:var(--txt);font-size:14px;font-weight:700;
+  }
+
+  #controls .row{margin:8px 0}
+  #controls .row>label{font-size:12.5px;margin-bottom:4px}
+  select{font-size:16px;padding:8px 9px}
+  input[type=range]{height:30px}
+  .check{font-size:13px;padding:5px 0;margin:2px 0}
+  .check input{width:18px;height:18px}
+  #controls .buttons{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+  #controls .buttons button{margin:0;flex:1 1 auto;padding:10px 8px;min-height:42px;font-size:13px}
+  #controls .hint{font-size:12px;line-height:1.55}
+  #controls .key{display:none}
+
+  #records{max-height:88dvh;padding:14px;border-radius:16px}
+  #records, #why{position:absolute;z-index:60}
+  #records .buttons button{margin:3px 4px 0 0}
+  #why{max-height:90dvh;padding:14px}
+  .blk p,.blk b{font-size:13px}
+
+  #toast{top:116px;bottom:auto;max-width:calc(100% - 24px);white-space:normal;text-align:center;font-size:12.5px;z-index:70}
+}
+
+@media (max-width:520px){
+  #mission .hint{display:none}
+  #mission{max-height:26vh}
+}
+
+@media (max-width:380px){
+  #hud .stat span{font-size:8px}
+  #hud .stat b{font-size:10px}
+  #mission .big{font-size:12px}
+  #mission .oneline{font-size:11px}
+  #quickbar button{font-size:12.5px}
+}
+
+@media (max-height:500px) and (orientation:landscape){
+  /* 横屏高度紧张：任务卡压成一条，但保留「为什么呀」入口 */
+  #mission{
+    display:flex;align-items:center;gap:10px;
+    left:8px;right:8px;bottom:68px;width:auto;padding:6px 10px;
+    max-height:none;overflow:visible;
+  }
+  #mission .big{font-size:12px;margin:0;flex:1 1 auto}
+  #mission .hint,#mission .oneline{display:none}
+  #mission .whyRow{margin:0;flex:0 0 auto}
+  .whyBtn{min-height:32px;padding:5px 10px;font-size:11.5px}
+  #hud{top:8px;right:8px;left:auto;width:min(420px,58vw)}
+  #title{max-width:38vw}
+  #quickbar{left:8px;right:8px}
+  #controls{max-height:92dvh}
+}
 </style>
 </head>
 <body>
@@ -126,7 +245,7 @@ kbd{background:var(--kbdBg);border-radius:5px;padding:1px 6px;font-family:inheri
 <div id="ui">
   <div id="title" class="panel">
     <b>🧪 小小物理实验室 <span class="badge" id="sceneBadge">直线实验</span></b>
-    <small>拖动鼠标可旋转视角 · 滚轮缩放 · 所有物理量均为真实单位</small>
+    <small><span class="desk-hint">拖动可旋转视角 · 滚轮 / 双指缩放 · 所有物理量均为真实单位</span><span class="touch-hint">单指拖动旋转 · 双指缩放</span></small>
   </div>
 
   <div id="hud" class="panel">
@@ -143,7 +262,7 @@ kbd{background:var(--kbdBg);border-radius:5px;padding:1px 6px;font-family:inheri
   </div>
 
   <div id="controls" class="panel">
-    <h3>🎛️ 实验控制台</h3>
+    <h3>🎛️ 实验控制台 <button id="sheetClose" class="sheet-close" aria-label="收起控制台">✕</button></h3>
 
     <div class="row">
       <label><span>配色主题</span></label>
@@ -224,6 +343,13 @@ kbd{background:var(--kbdBg);border-radius:5px;padding:1px 6px;font-family:inheri
   </div>
 
   <div id="toast"></div>
+
+  <!-- 手机端常驻快捷操作 -->
+  <div id="quickbar" class="panel">
+    <button class="primary" id="quickPush">🚀 推一下</button>
+    <button class="gold" id="quickReset">↺ 重置</button>
+    <button class="ghost" id="quickPanel">⚙️ 参数</button>
+  </div>
 </div>
 
 <script>
@@ -630,23 +756,75 @@ function disc(x, y, z, r, col){
    2. 相机：可拖拽旋转 / 滚轮缩放
    ========================================================================== */
 const cam = {yaw:0.56, pitch:0.78, dist:16.5};
+let userZoomed = false;                      // 用户手动缩放后不再自动取景
+const FOV_Y = Math.PI / 3.2;
 function camEye(){
   return [Math.cos(cam.pitch)*Math.sin(cam.yaw)*cam.dist,
           Math.sin(cam.pitch)*cam.dist,
           Math.cos(cam.pitch)*Math.cos(cam.yaw)*cam.dist];
 }
+/** 竖屏手机里实验台很宽，默认机位会把它裁掉：按屏幕比例自动后退取景 */
+function fitCamera(){
+  const aspect = Math.max(innerWidth / Math.max(innerHeight, 1), 0.35);
+  const halfW = 7.6;                                   // 实验台半宽 7.2 + 留白
+  const need = halfW / (Math.tan(FOV_Y / 2) * aspect);
+  cam.dist = Math.max(16.5, Math.min(40, need));
+}
+const clampDist = d => Math.max(7, Math.min(40, d));
+
 let drag = null;
-canvas.addEventListener('pointerdown', e => { drag = {x:e.clientX, y:e.clientY}; canvas.setPointerCapture(e.pointerId); });
+const pointers = new Map();
+let pinchStartDist = 0, pinchStartCam = 0;
+
+canvas.addEventListener('pointerdown', e => {
+  pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+  try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+  if (pointers.size === 1) {
+    drag = {x:e.clientX, y:e.clientY};
+  } else if (pointers.size === 2) {
+    drag = null;
+    const p = [...pointers.values()];
+    pinchStartDist = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) || 1;
+    pinchStartCam = cam.dist;
+  }
+});
 canvas.addEventListener('pointermove', e => {
+  if (!pointers.has(e.pointerId)) return;
+  pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+
+  if (pointers.size >= 2) {                             // 双指缩放
+    const p = [...pointers.values()];
+    const d = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) || 1;
+    if (pinchStartDist > 0) {
+      cam.dist = clampDist(pinchStartCam * pinchStartDist / d);
+      userZoomed = true;
+    }
+    return;
+  }
   if (!drag) return;
   cam.yaw   -= (e.clientX - drag.x) * 0.006;
   cam.pitch  = Math.max(0.08, Math.min(1.42, cam.pitch + (e.clientY - drag.y) * 0.005));
   drag = {x:e.clientX, y:e.clientY};
 });
-addEventListener('pointerup', () => { drag = null; });
+function endPointer(e){
+  pointers.delete(e.pointerId);
+  if (pointers.size === 1) {
+    const p = [...pointers.values()][0];
+    drag = {x:p.x, y:p.y};
+    pinchStartDist = 0;
+  } else if (pointers.size === 0) {
+    drag = null;
+    pinchStartDist = 0;
+  }
+}
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', endPointer);
+addEventListener('pointerup', endPointer);
+addEventListener('pointercancel', endPointer);
 canvas.addEventListener('wheel', e => {
   e.preventDefault();
-  cam.dist = Math.max(9, Math.min(38, cam.dist * (1 + Math.sign(e.deltaY) * 0.08)));
+  cam.dist = clampDist(cam.dist * (1 + Math.sign(e.deltaY) * 0.08));
+  userZoomed = true;
 }, {passive:false});
 
 /* ==========================================================================
@@ -751,6 +929,7 @@ function buildParams(){
 function updateButtons(){
   const release = (sceneId === 'ramp' || sceneId === 'incline' || sceneId === 'fall');
   $('push').textContent = release ? '▶ 释放小球' : '🚀 推一下';
+  $('quickPush').textContent = release ? '▶ 释放' : '🚀 推一下';
   $('pushHard').style.display = release ? 'none' : '';
   $('forceInfo').textContent = release
     ? '本场景由重力驱动，小球会在按下「释放」后开始运动。'
@@ -835,9 +1014,21 @@ function doPush(hard){
   $('rState').textContent = '运动中';
   toast(hard ? '💥 猛推！看看球能跑多远' : '🚀 推了一下，冲量 ' + J.toFixed(1) + ' N·s');
 }
-$('push').onclick     = () => doPush(false);
-$('pushHard').onclick = () => doPush(true);
+$('push').onclick     = () => { doPush(false); if (innerWidth <= 900) setSheetOpen(false); };
+$('pushHard').onclick = () => { doPush(true); if (innerWidth <= 900) setSheetOpen(false); };
 $('reset').onclick    = () => { resetRun(); toast('↺ 实验已重置'); };
+
+/* 手机端快捷操作条 / 控制台抽屉 */
+function setSheetOpen(open){
+  const el = $('controls');
+  el.classList.toggle('open', open);
+  $('quickPanel').textContent = open ? '✕ 收起' : '⚙️ 参数';
+}
+$('quickPush').onclick  = () => { doPush(false); setSheetOpen(false); };
+$('quickReset').onclick = () => { resetRun(); toast('↺ 实验已重置'); };
+$('quickPanel').onclick = () => setSheetOpen(!$('controls').classList.contains('open'));
+$('sheetClose').onclick = () => setSheetOpen(false);
+
 addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
   if (e.code === 'Space'){ e.preventDefault(); doPush(false); }
@@ -1300,8 +1491,8 @@ function render(){
   }
 
   const eye = camEye();
-  /* 近远裁剪面比值越小，深度精度越高（0.1/200 会严重 z-fighting） */
-  const P = persp(Math.PI/3.2, canvas.width/canvas.height, 1.0, 80);
+  /* 近远裁剪面比值越小，深度精度越高（0.1/120 远平面给竖屏远景留出余量） */
+  const P = persp(FOV_Y, canvas.width/canvas.height, 1.0, 120);
   const C = look(eye, [0, 0.6, 0]);
 
   const arr = new Float32Array(V);
@@ -1321,6 +1512,7 @@ function resize(){
   canvas.width = Math.round(innerWidth * d);
   canvas.height = Math.round(innerHeight * d);
   gl.viewport(0, 0, canvas.width, canvas.height);
+  if (!userZoomed) fitCamera();
 }
 addEventListener('resize', resize);
 resize();

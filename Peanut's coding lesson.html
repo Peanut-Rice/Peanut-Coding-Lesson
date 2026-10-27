@@ -53,7 +53,7 @@
 body{
   font-family:"Microsoft YaHei","PingFang SC",sans-serif;
   background:var(--bg);color:var(--text);
-  height:100vh;display:flex;flex-direction:column;overflow:hidden;
+  height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;overscroll-behavior:none;
 }
 
 /* Topbar - two rows */
@@ -323,10 +323,87 @@ canvas{display:block;flex-shrink:0}
 
 @media(max-width:900px){
   .main{flex-direction:column}
-  .left-panel{width:100%;min-width:0;max-height:42%}
-  .right-panel{min-height:58%}
-  .topbar-row1,.topbar-row2{gap:6px}
-  .challenge-btn{font-size:11px;padding:3px 7px}
+  .left-panel{width:100%;min-width:0;min-height:0;flex:1 1 40%;max-height:40%}
+  .right-panel{flex:1 1 60%;min-height:0}
+
+  /* 积木调色板横向滚动，不换行挤掉程序区 */
+  .block-palette{flex-wrap:nowrap;overflow-x:auto;padding:6px;gap:5px;scrollbar-width:none}
+  .block-palette::-webkit-scrollbar{display:none}
+  .block-btn{flex:0 0 auto;font-size:12.5px;padding:7px 11px;border-radius:10px}
+
+  /* 提示卡片改成浮层：展开时不会把「运行」按钮挤出面板 */
+  .left-panel{position:relative}
+  .hint-panel{
+    position:absolute;left:8px;right:8px;bottom:64px;margin:0;z-index:6;
+    max-height:calc(100% - 74px);overflow-y:auto;
+    border-radius:12px;box-shadow:0 12px 32px #00000055;
+    -webkit-overflow-scrolling:touch;
+  }
+  .hint-panel.show{padding:10px 12px;max-height:calc(100% - 74px)}
+  .hint-panel.collapsed{max-height:0;padding:0 12px;border-width:0;box-shadow:none}
+  .hint-panel.show .hint-body{max-height:none}
+
+  /* 顶栏在手机上不再换行堆高：两行横向滑动，省下的高度全给画布 */
+  .topbar-row1,.topbar-row2{
+    flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+    padding:5px 10px;
+  }
+  .topbar-row1::-webkit-scrollbar,.topbar-row2::-webkit-scrollbar{display:none}
+  .topbar-row2{padding:3px 10px 5px}
+  .topbar-spacer{display:none}
+  .speed-group{margin-left:6px;flex:0 0 auto}
+  .logo{font-size:15px;flex:0 0 auto}
+  .challenge-btn{font-size:11.5px;padding:5px 9px;flex:0 0 auto}
+  .challenge-btns{flex-wrap:nowrap;gap:5px}
+  .info-btn{font-size:11.5px;padding:5px 9px;flex:0 0 auto}
+  .robot-select{font-size:16px;padding:3px 4px;flex:0 0 auto}
+  #startPosSelect{font-size:16px !important;padding:3px 4px !important;flex:0 0 auto}
+  .theme-select{font-size:16px;padding:3px 4px;flex:0 0 auto}
+
+  /* 把常用设置排在前面，说明类按钮滑到右侧 */
+  .topbar-row1 .logo{order:0}
+  .logo-sub{display:none}
+  .topbar-row1 #startPosSelect{order:1}
+  .topbar-row1 .robot-select{order:2}
+  .topbar-row1 .theme-select{order:3}
+  .topbar-row1 .speed-group{order:4}
+  .topbar-row1 .info-btn{order:5}
+
+  /* 挑战按钮在手机上省掉“挑战N：”前缀，七个按钮一屏放得下 */
+  .ch-num{display:none}
+  .challenge-btn{font-size:11px;padding:5px 7px}
+
+  /* 运行条在窄屏也保持一行，状态文字省略而不是换行 */
+  .run-bar{padding:6px 10px;gap:5px;flex-wrap:nowrap}
+  .btn-run{min-width:82px;padding:8px 14px;font-size:15px}
+  .btn-reset{padding:8px 10px;font-size:13px}
+  .status-area{gap:5px;min-width:0;flex:1;justify-content:flex-end}
+  .progress-bar{width:56px;flex:0 0 auto}
+  .status-msg{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .help-bar{padding:4px 10px;gap:8px;font-size:10.5px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .help-bar > span{white-space:nowrap}
+  .help-bar > span:first-child,.help-bar > span:nth-child(2),.help-bar > span:nth-child(3),.help-bar > span:last-child{display:none}
+  #helpCmds{white-space:nowrap}
+}
+/* 横屏手机：左右分栏比上下分栏更好用 */
+@media(max-width:900px) and (orientation:landscape){
+  .main{flex-direction:row}
+  .left-panel{width:46%;flex:0 0 46%;max-height:none;min-width:0}
+  .right-panel{min-height:0;flex:1 1 0%}
+  .help-bar{display:none}
+}
+@media(max-width:700px){
+  .modal-box{padding:18px 16px;border-radius:16px;width:94%;max-height:88vh}
+  .modal-box h2{font-size:24px;margin-bottom:12px}
+  .modal-box h3{font-size:17px;margin:16px 0 8px}
+  .modal-box p{font-size:14.5px;line-height:1.75}
+  .modal-box .highlight-box{font-size:14px;padding:12px 14px;border-left-width:4px}
+  .modal-box .big-emoji{font-size:40px;margin:8px 0}
+  .modal-close{font-size:18px;padding:12px 34px;margin-top:18px}
+  .confirm-box{padding:22px 18px}
+  .confirm-box p{font-size:16px}
 }
 @media(max-width:600px){
   .left-panel{min-width:0}
@@ -339,7 +416,7 @@ canvas{display:block;flex-shrink:0}
 <!-- MAIN APP -->
 <div class="topbar">
   <div class="topbar-row1">
-    <span class="logo">&#x1F422; 编程启蒙课-三年三班</span>
+    <span class="logo">&#x1F422; 编程启蒙课<span class="logo-sub">-三年三班</span></span>
     <span class="topbar-spacer"></span>
     <button class="info-btn" id="btnIntro" aria-label="查看原理入门">&#x1F4D6; 原理入门</button>
     <button class="info-btn" id="btnLanguage" aria-label="查看计算机语言">&#x1F5E3; 计算机语言</button>
@@ -380,11 +457,11 @@ canvas{display:block;flex-shrink:0}
   </div>
   <div class="topbar-row2">
     <div class="challenge-btns">
-      <button class="challenge-btn ch-square" data-challenge="square" aria-label="挑战1：正方形">&#x1F537; 挑战1：正方形</button>
-      <button class="challenge-btn ch-rectangle" data-challenge="rectangle" aria-label="挑战2：长方形">&#x1F4D0; 挑战2：长方形</button>
-      <button class="challenge-btn ch-lshape" data-challenge="lshape" aria-label="挑战3：折线形">&#x26A1; 挑战3：折线形</button>
-      <button class="challenge-btn ch-stairs" data-challenge="stairs" aria-label="挑战4：楼梯">&#x1F3E0; 挑战4：楼梯</button>
-      <button class="challenge-btn ch-tian" data-challenge="tian" aria-label="挑战5：田字">&#x1F534; 挑战5：田字</button>
+      <button class="challenge-btn ch-square" data-challenge="square" aria-label="挑战1：正方形">&#x1F537; <span class="ch-num">挑战1：</span>正方形</button>
+      <button class="challenge-btn ch-rectangle" data-challenge="rectangle" aria-label="挑战2：长方形">&#x1F4D0; <span class="ch-num">挑战2：</span>长方形</button>
+      <button class="challenge-btn ch-lshape" data-challenge="lshape" aria-label="挑战3：折线形">&#x26A1; <span class="ch-num">挑战3：</span>折线形</button>
+      <button class="challenge-btn ch-stairs" data-challenge="stairs" aria-label="挑战4：楼梯">&#x1F3E0; <span class="ch-num">挑战4：</span>楼梯</button>
+      <button class="challenge-btn ch-tian" data-challenge="tian" aria-label="挑战5：田字">&#x1F534; <span class="ch-num">挑战5：</span>田字</button>
       <button class="challenge-btn ch-fun" data-challenge="fun" aria-label="趣味案例">&#x2728; 趣味案例</button>
       <button class="challenge-btn ch-free active" data-challenge="free" aria-label="自由模式">&#x1F3A8; 自由模式</button>
     </div>
@@ -717,7 +794,8 @@ function resizeCanvas() {
   const r = stageWrapper.getBoundingClientRect();
   const mw = r.width, mh = r.height;
   CELL_SIZE = Math.floor(Math.min(mw / GRID_COLS, mh / GRID_ROWS));
-  if (CELL_SIZE < 10) CELL_SIZE = 10;
+  // 小屏手机（≤320px）允许缩到 9px，让 30×30 的画布完整显示，不用来回拖动
+  if (CELL_SIZE < 9) CELL_SIZE = 9;
   const w = CELL_SIZE * GRID_COLS;
   const h = CELL_SIZE * GRID_ROWS;
   const dpr = window.devicePixelRatio || 1;
@@ -1818,6 +1896,7 @@ let funExampleIdx = 0;
 function setChallenge(name) {
   currentChallenge = name;
   document.querySelectorAll('.challenge-btn').forEach(b => b.classList.toggle('active', b.dataset.challenge === name));
+  scrollActiveChallengeIntoView();
   // All modes use the same canvas size
   GRID_COLS = GRID_COLS_INIT;
   GRID_ROWS = GRID_ROWS_INIT;
@@ -1844,6 +1923,18 @@ function setChallenge(name) {
     }
   }
   draw();
+}
+
+/** 手机上挑战按钮横向滚动：把当前选中的按钮滚到可见区域 */
+function scrollActiveChallengeIntoView() {
+  const activeBtn = document.querySelector('.challenge-btn.active');
+  if (!activeBtn) return;
+  const scroller = activeBtn.parentElement && activeBtn.parentElement.parentElement;
+  if (!scroller || scroller.scrollWidth <= scroller.clientWidth + 4) return;
+  const r = activeBtn.getBoundingClientRect();
+  const sr = scroller.getBoundingClientRect();
+  const delta = (r.left - sr.left) - (sr.width - r.width) / 2;
+  scroller.scrollLeft = Math.max(0, scroller.scrollLeft + delta);
 }
 
 /** Cycle through fun examples */
