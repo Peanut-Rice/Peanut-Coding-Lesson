@@ -106,14 +106,6 @@ h3{font-family:var(--serif);font-size:19px;letter-spacing:.06em;margin:0 0 8px}
 .route li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;background:var(--gold);border-radius:50%}
 .route li em{font-style:normal;color:var(--ink-3);font-family:var(--mono);font-size:10px;margin-left:4px}
 
-/* 本地版状态 */
-.bv-status{display:flex;align-items:center;gap:7px;margin-top:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--ink-3)}
-.bv-status i{width:6px;height:6px;border-radius:50%;background:var(--gold);flex:none}
-.bv-status.local{color:var(--teal)}
-.bv-status.local i{background:var(--teal);box-shadow:0 0 0 3px rgba(44,106,99,.14)}
-.bv-status.warn{color:var(--red)}
-.bv-status.warn i{background:var(--red)}
-
 /* 按钮 */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:2px;font-size:14px;letter-spacing:.06em;transition:transform .15s,background .2s,color .2s;text-decoration:none}
 .btn:hover{background:var(--red);border-color:var(--red);color:#fff;transform:translateY(-1px)}
@@ -476,8 +468,7 @@ textarea::placeholder,input::placeholder{color:var(--ink-3)}
           <button class="btn" data-goto="1">开始第一站 →</button>
           <button class="btn ghost" id="openBodyVista">打开 BodyVista ↗</button>
         </div>
-        <p class="bv-status" id="bvStatus"><i></i><span>正在检查本地 3D 人体…</span></p>
-        <p class="note">BodyVista 是一个开源 3D 人体平台，第一次打开要等模型加载，建议课前先开好。本页的分层图、配对、心跳与肺泡动画、小测、学习单<b>离线也能用</b>。</p>
+        <p class="note"><b>需要联网。</b>BodyVista 是一个开源 3D 人体平台，第一次打开要等模型加载，建议课前先开好。本页的分层图、配对、心跳与肺泡动画、小测、学习单<b>离线也能用</b>。</p>
       </div>
       <aside class="cover-side">
         <div class="cover-meta">
@@ -953,7 +944,7 @@ textarea::placeholder,input::placeholder{color:var(--ink-3)}
       <tr><td>适用</td><td>小学 4–6 年级（9–12 岁）；亲子共学可下探到 8 岁</td></tr>
       <tr><td>时长</td><td>45 分钟（可裁成 30 分钟，见 §07）</td></tr>
       <tr><td>核心问题</td><td>身体里面有什么？它们在哪里、在干什么？</td></tr>
-      <tr><td>工具</td><td>BodyVista（浏览器 3D 人体，中文界面，可本地离线）+ 本页</td></tr>
+      <tr><td>工具</td><td>BodyVista（浏览器 3D 人体，中文界面）+ 本页</td></tr>
       <tr><td>前置</td><td>不需要解剖基础。知道"器官""系统"两个词即可。</td></tr>
       <tr><td>产出</td><td>一张学习单 + 一句"一句话解剖" + 一个还想问的问题</td></tr>
     </table>
@@ -1010,7 +1001,7 @@ textarea::placeholder,input::placeholder{color:var(--ink-3)}
     <p><b>30 分钟版：</b>第一站（8′）+ 第二站配对（6′）+ 第三站（8′）+ 第五站（8′）。跳过寻宝单与挑战，把出门条当作唯一的书面产出。</p>
     <p><b>低年级（8–9 岁）：</b>只做第一、三、五站；配对减到 4 对；寻宝单由教师读题，学生指位置。目标改成"能说出三个结构在哪里"。</p>
     <p><b>高年级（11–12 岁）：</b>加"剖切"任务：从横断面找到肝和胃的相对位置；加"测量"任务：量股骨占全身高度的百分比；挑战选"解剖寻找"。</p>
-    <p><b>无网 / 设备不足：</b>本页的分层图、配对、心跳与肺泡动画、六道小测、学习单全部离线可用。项目里若带了本地版 BodyVista，双击「启动离线课程」（需 Node.js），浏览器会打开本地首页，课程页里的「打开 BodyVista」自动走本地，完全不用联网。没有本地版时，用手机热点或提前缓存在线版；再不行就用本页图讲，把"去模型里看"改成"在我身上指位置"。</p>
+    <p><b>无网 / 设备不足：</b>本页的分层图、配对、心跳与肺泡动画、六道小测、学习单全部离线可用。教师用手机热点或提前缓存 BodyVista；实在没有，就用本页图讲，把"去模型里看"改成"在我身上指位置"。</p>
     <p><b>大班：</b>两人一台设备，一人操作一人记录，每站交换；用"举手投票"替代个别提问。</p>
 
     <h3><span>08</span>评价量表</h3>
@@ -1030,6 +1021,7 @@ textarea::placeholder,input::placeholder{color:var(--ink-3)}
       <li>不要模仿屏幕上的"解剖""剖切"动作到真人或动物身上。</li>
       <li>强调个体差异：身高、体型、器官位置都略有不同，模型只是"一个版本"。</li>
       <li>使用 BodyVista 请保留出处与许可说明；模型版权归原项目与原始数据方。</li>
+      <li>BodyVista 的解剖模型属于第三方资源（Z-Anatomy / BodyParts3D 等），本项目不打包、不二次分发；请在线使用，或由教师按上游许可自行部署。</li>
     </ul>
 
     <h3><span>10</span>一页速查</h3>
@@ -1645,43 +1637,9 @@ textarea::placeholder,input::placeholder{color:var(--ink-3)}
   }
   $$('[data-print]').forEach(b => b.addEventListener('click', () => printDoc(b.dataset.print)));
 
-  const BV_ONLINE = 'https://freedomintelligence.github.io/BodyVista/';
-  let bvTarget = BV_ONLINE;
-
-  function setBvStatus(kind, text) {
-    const el = $('#bvStatus');
-    if (!el) return;
-    el.className = 'bv-status' + (kind ? ' ' + kind : '');
-    el.querySelector('span').textContent = text;
-  }
-
-  async function detectLocalBodyVista() {
-    if (location.protocol === 'file:') {
-      setBvStatus('warn', '本地 3D 人体需要双击项目根目录的「启动离线课程」后打开');
-      return;
-    }
-    try {
-      const res = await fetch('bodyvista/index.html', { method: 'HEAD', cache: 'no-store' });
-      if (res.ok) {
-        bvTarget = 'bodyvista/';
-        setBvStatus('local', '本地版已就绪 · 断网也能打开 3D 人体');
-      } else {
-        setBvStatus('', '当前使用在线版 · 需要联网');
-      }
-    } catch (e) {
-      setBvStatus('', '当前使用在线版 · 需要联网');
-    }
-  }
-
   $('#openBodyVista').addEventListener('click', () => {
-    if (location.protocol === 'file:') {
-      setBvStatus('warn', '请先双击「启动离线课程」，从本地地址打开本页后再点这里');
-      $('#bvStatus').scrollIntoView({ block: 'center', behavior: 'smooth' });
-      return;
-    }
-    window.open(bvTarget, 'bodyvista', 'noopener');
+    window.open('https://freedomintelligence.github.io/BodyVista/', 'bodyvista', 'noopener');
   });
-  detectLocalBodyVista();
 
   /* ---------------- 展开答案 ---------------- */
   $$('[data-reveal]').forEach(b => b.addEventListener('click', () => {

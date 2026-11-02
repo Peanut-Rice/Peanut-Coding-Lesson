@@ -78,28 +78,7 @@
 - 学习单可打印（含「画一画」），页面内的点亮记录、配对、寻宝、成绩与出门条保存在浏览器本地，不上传
 - 插图全部为内联 SVG（分层人体、心脏、肺泡），不依赖外部图片，也不内嵌 BodyVista 的模型素材；模型与内容版权归原项目及数据方
 - 已附打印件：`教师手册·身体探索局.pdf`、`学习单·身体探索局.pdf`
-- 项目里已拷贝 BodyVista 的本地构建（`bodyvista/`，约 419MB），配合启动器可以完全离线运行 3D 人体
-
-## 📴 离线运行（含 3D 人体）
-
-课程页本身是单文件、断网可用；3D 人体需要浏览器通过 HTTP 加载模型。本项目的**工作目录**里已经放好 BodyVista 的本地构建（`bodyvista/`，未纳入 git，克隆后需按下方说明生成）。
-
-1. 安装 [Node.js](https://nodejs.org/) 18 或更新版本（只需一次）。
-2. 双击 `启动离线课程.bat`（Windows）或 `启动离线课程.command`（macOS）。
-3. 浏览器会打开 `http://127.0.0.1:8765/`。从首页进入「身体探索局」，点「打开 BodyVista」——有 `bodyvista/` 时会自动走本地，**不再联网**；没有则回退到在线版。
-
-也可以手动启动：
-
-```bash
-node tools/serve.mjs .
-```
-
-关于 `bodyvista/`：
-
-- 它是 [BodyVista](https://github.com/FreedomIntelligence/BodyVista) 的 Vite 构建产物，约 **419MB**，上游版本 `82b2ea1`，原样拷贝、未改模型
-- **没有纳入 git**（`.gitignore` 已忽略），原因是体积太大，且解剖模型属于第三方资源，上游标注了 `NC exceptions; research only` 等限制，公开再分发前需要逐项核对授权
-- 需要重新生成时：克隆上游 → `npm ci && npm run build` → 把 `dist/` 拷成 `bodyvista/`；许可说明见 `bodyvista/README-OFFLINE.md` 与 `bodyvista/THIRD_PARTY_NOTICES.md`
-- 如果目录不存在，课程页会自动回退到在线版（需要联网），其余功能不受影响
+- 版权说明：本项目**不打包** BodyVista 的模型或页面，只链接其官方站点；课程插图与文字为原创，结构名称等事实性内容仅作教学引用。BodyVista 代码为 MIT，但解剖模型属于 Z-Anatomy / BodyParts3D 等第三方资源，上游标注了 `NC exceptions; research only` 等限制，公开再分发前需自行核对授权
 
 ## 🚀 快速开始
 
