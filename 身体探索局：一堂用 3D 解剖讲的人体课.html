@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f4eee2">
+<title>身体探索局 · 一堂用 3D 解剖讲的人体课</title>
+<meta name="description" content="面向 9–12 岁孩子的 45 分钟人体解剖课：用 BodyVista 的 3D 人体，从皮肤到内脏一层一层看，配合分层透视、系统配对、心跳与肺泡动画、小测与学习单。">
+<style>
+/* ============================================================
+   身体探索局 — 解剖图谱风单页课程
+   纸 / 墨 / 朱 / 青
+   ============================================================ */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --paper:#f4eee2;
+  --paper-2:#fbf7ed;
+  --paper-3:#efe6d4;
+  --ink:#221f1a;
+  --ink-2:#5b5346;
+  --ink-3:#6f6353;
+  --rule:#d9ceb9;
+  --rule-2:#c8b99c;
+  --red:#b23a25;
+  --red-2:#d8694f;
+  --red-soft:#f0d6cc;
+  --teal:#2c6a63;
+  --teal-soft:#d9e8e4;
+  --gold:#a07c3f;
+  --serif:"Songti SC","Noto Serif SC","Source Han Serif SC","Songti TC",SimSun,serif;
+  --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+  --mono:"SF Mono",ui-monospace,"Cascadia Mono",Consolas,"Courier New",monospace;
+  --shadow:5px 5px 0 rgba(34,31,26,.055);
+  --max:1160px;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  color:var(--ink);
+  background-color:var(--paper);
+  background-image:radial-gradient(rgba(34,31,26,.05) 1px,transparent 1px);
+  background-size:22px 22px;
+  -webkit-font-smoothing:antialiased;
+  line-height:1.7;
+  min-height:100vh;
+}
+button{font-family:inherit;color:inherit;cursor:pointer;background:none;border:none}
+a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(44,106,99,.35)}
+a:hover{color:var(--red);border-color:rgba(178,58,37,.4)}
+::selection{background:var(--red-soft);color:var(--ink)}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+
+/* ---------- 顶栏 ---------- */
+.topbar{position:sticky;top:0;z-index:60;background:rgba(244,238,226,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.topbar::after{content:"";display:block;height:3px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);opacity:.5}
+.topbar-in{max-width:var(--max);margin:0 auto;padding:10px 22px;display:flex;align-items:center;gap:18px}
+.brand{display:flex;align-items:baseline;gap:9px;white-space:nowrap}
+.brand b{font-family:var(--serif);font-size:19px;letter-spacing:.14em;font-weight:700}
+.brand span{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--ink-3);text-transform:uppercase}
+.steps{display:flex;gap:2px;margin-left:auto;align-items:center}
+.step{position:relative;display:flex;align-items:center;gap:6px;padding:6px 10px;color:var(--ink-3);font-size:12.5px;letter-spacing:.04em;border-radius:2px;transition:color .2s,background .2s}
+.step em{font-family:var(--mono);font-style:normal;font-size:10.5px;border:1px solid currentColor;border-radius:50%;width:17px;height:17px;display:grid;place-items:center;line-height:1;opacity:.8}
+.step:hover{color:var(--ink);background:rgba(34,31,26,.045)}
+.step.done{color:var(--teal)}
+.step.done em{background:var(--teal);color:var(--paper);border-color:var(--teal)}
+.step.on{color:var(--red);font-weight:600}
+.step.on::after{content:"";position:absolute;left:10px;right:10px;bottom:1px;height:2px;background:var(--red)}
+.top-actions{display:flex;gap:8px;align-items:center}
+.mini-btn{font-size:11.5px;letter-spacing:.06em;border:1px solid var(--rule-2);padding:5px 9px;border-radius:2px;color:var(--ink-2);transition:.2s;background:rgba(251,247,237,.6)}
+.mini-btn:hover{border-color:var(--ink);color:var(--ink);background:var(--paper-2)}
+
+/* ---------- 舞台 ---------- */
+.stage{max-width:var(--max);margin:0 auto;padding:34px 22px 130px}
+.station{display:none}
+.station.active{display:block;animation:rise .5s cubic-bezier(.2,.7,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--red);text-transform:uppercase;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--red)}
+h1.display{font-family:var(--serif);font-weight:700;font-size:clamp(44px,7.4vw,76px);line-height:1.02;letter-spacing:.03em;margin:4px 0 10px}
+h1.display small{display:block;font-size:clamp(16px,2vw,20px);letter-spacing:.34em;color:var(--ink-3);font-weight:400;margin-top:12px}
+h2{font-family:var(--serif);font-weight:700;font-size:clamp(26px,3.6vw,38px);line-height:1.22;letter-spacing:.02em;margin:2px 0 14px}
+h3{font-family:var(--serif);font-size:19px;letter-spacing:.06em;margin:0 0 8px}
+.lead{font-size:16.5px;line-height:1.95;color:var(--ink-2);max-width:58ch}
+.lead strong{color:var(--ink);font-weight:600}
+.hr{height:1px;background:var(--rule);margin:26px 0;position:relative}
+.hr::after{content:"";position:absolute;left:0;top:3px;width:64px;height:1px;background:var(--red)}
+
+/* 封面 */
+.cover{display:grid;grid-template-columns:1.35fr .65fr;gap:40px;align-items:end}
+.cover-side{border-left:1px solid var(--rule);padding-left:24px;padding-bottom:6px}
+.cover-meta{display:grid;gap:14px}
+.meta-item{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dotted var(--rule-2);padding-bottom:9px;font-size:12.5px;color:var(--ink-3);letter-spacing:.05em}
+.meta-item b{color:var(--ink);font-weight:600;font-family:var(--mono);font-size:12.5px}
+.cover-stats{display:flex;flex-wrap:wrap;gap:28px;margin:30px 0 26px}
+.stat b{display:block;font-family:var(--serif);font-size:34px;line-height:1.1;letter-spacing:.02em}
+.stat span{font-size:11.5px;letter-spacing:.14em;color:var(--ink-3)}
+.cover-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.note{font-size:12.5px;color:var(--ink-3);line-height:1.8;margin-top:18px;max-width:52ch}
+.note b{color:var(--ink-2)}
+
+/* 课程路线 */
+.route{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:26px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:13px 0;font-size:12px;color:var(--ink-2)}
+.route>b{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--red);font-weight:400;white-space:nowrap}
+.route ol{display:flex;gap:20px;list-style:none;flex-wrap:wrap;margin:0;padding:0}
+.route li{position:relative;padding-left:13px;letter-spacing:.03em}
+.route li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;background:var(--gold);border-radius:50%}
+.route li em{font-style:normal;color:var(--ink-3);font-family:var(--mono);font-size:10px;margin-left:4px}
+
+/* 按钮 */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:2px;font-size:14px;letter-spacing:.06em;transition:transform .15s,background .2s,color .2s;text-decoration:none}
+.btn:hover{background:var(--red);border-color:var(--red);color:#fff;transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule-2)}
+.btn.ghost:hover{background:var(--paper-2);border-color:var(--ink);color:var(--ink)}
+.btn.small{padding:7px 12px;font-size:12.5px}
+.btn:disabled{opacity:.38;cursor:not-allowed;transform:none}
+.btn:disabled:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+
+/* 通用卡片 */
+.grid-2{display:grid;grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr);gap:34px;align-items:start}
+.grid-2.fig{grid-template-columns:430px minmax(0,1fr)}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{background:var(--paper-2);border:1px solid var(--rule);border-radius:2px;padding:20px 20px 18px;box-shadow:var(--shadow)}
+.card h3{display:flex;align-items:center;gap:8px}
+.card h3 .num{font-family:var(--mono);font-size:10px;color:var(--red);border:1px solid var(--red);border-radius:50%;width:18px;height:18px;display:grid;place-items:center}
+.card p{font-size:14px;color:var(--ink-2);line-height:1.85}
+.card p+p{margin-top:9px}
+.card ul{list-style:none;display:grid;gap:8px;margin-top:6px}
+.card li{font-size:13.5px;line-height:1.75;color:var(--ink-2);padding-left:16px;position:relative}
+.card li::before{content:"";position:absolute;left:0;top:9px;width:6px;height:6px;border:1px solid var(--red);border-radius:50%}
+.card.tight{padding:16px}
+.card-tone{background:linear-gradient(180deg,rgba(217,232,228,.55),rgba(251,247,237,.9));border-color:#bcd3cd}
+.card-warm{background:linear-gradient(180deg,rgba(240,214,204,.45),rgba(251,247,237,.9));border-color:#e2c4b8}
+.kicker-sm{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--ink-3);text-transform:uppercase}
+
+/* 图版 */
+.plate{position:relative;background:
+  linear-gradient(180deg,rgba(255,255,255,.45),rgba(255,255,255,0)),
+  repeating-linear-gradient(0deg,transparent 0 23px,rgba(160,124,63,.07) 23px 24px),
+  repeating-linear-gradient(90deg,transparent 0 23px,rgba(160,124,63,.07) 23px 24px),
+  var(--paper-2);
+  border:1px solid var(--rule-2);padding:16px 16px 12px;box-shadow:6px 6px 0 rgba(34,31,26,.06)}
+.plate::before,.plate::after{content:"";position:absolute;width:10px;height:10px;border:1px solid var(--gold);opacity:.7}
+.plate::before{left:6px;top:6px;border-right:none;border-bottom:none}
+.plate::after{right:6px;bottom:6px;border-left:none;border-top:none}
+.plate figcaption{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--ink-3);display:flex;justify-content:space-between;gap:10px;margin-top:6px;border-top:1px solid var(--rule);padding-top:7px}
+.figure-svg{display:block;width:100%;height:auto;max-height:min(64vh,560px);margin:0 auto;overflow:visible}
+.plate.bench{display:flex;flex-direction:column;width:100%;max-width:368px;margin:0 auto}
+.bench-figure{display:flex;justify-content:center;align-items:center}
+.bench .figure-svg{height:clamp(320px,50vh,480px);width:auto;max-width:100%;max-height:none}
+.bench .depth-bar{margin-top:12px}
+.bench .struct-card{margin-top:10px;min-height:82px}
+.plate.bench figcaption{margin-top:10px}
+
+/* SVG 图层 */
+.layer{transition:opacity .45s ease}
+svg[data-depth="0"] .l-muscle,svg[data-depth="0"] .l-bone,svg[data-depth="0"] .l-organ{opacity:0}
+svg[data-depth="1"] .l-bone,svg[data-depth="1"] .l-organ{opacity:0}
+svg[data-depth="2"] .l-organ{opacity:0}
+svg[data-depth="3"] .l-skin{opacity:.06}
+svg[data-depth="2"] .l-muscle{opacity:.2}
+svg[data-depth="3"] .l-muscle{opacity:.1}
+svg[data-depth="3"] .l-bone{opacity:.22}
+svg[data-depth="all"] .l-skin{opacity:.05}
+svg[data-depth="all"] .l-muscle{opacity:.55}
+svg[data-depth="all"] .l-bone{opacity:.85}
+svg[data-depth="0"] .l-skin{opacity:1}
+svg[data-depth="1"] .l-skin{opacity:.34}
+svg[data-depth="2"] .l-skin{opacity:.13}
+.pin{cursor:pointer;opacity:0;transition:opacity .35s ease;pointer-events:none}
+.pin.on{opacity:1;pointer-events:auto}
+.pin .dot{fill:var(--paper-2);stroke:var(--red);stroke-width:1.6;transition:.2s}
+.pin .ring{fill:none;stroke:var(--red);stroke-width:1;opacity:.45;transform-box:fill-box;transform-origin:center;animation:pulse 2.8s ease-out infinite}
+.pin:hover .dot,.pin.found .dot{fill:var(--red);stroke:var(--red)}
+.pin:focus{outline:none}
+.pin:focus-visible .dot{stroke-width:3}
+.pin.found .ring{animation:none;opacity:0}
+@keyframes pulse{0%{transform:scale(.7);opacity:.55}70%{transform:scale(1.9);opacity:0}100%{opacity:0}}
+
+/* 分层尺 */
+.depth-bar{margin-top:14px}
+.depth-track{display:flex;gap:0;border:1px solid var(--rule-2);background:var(--paper);padding:4px}
+.depth-btn{flex:1;padding:8px 4px;font-size:12.5px;color:var(--ink-3);text-align:center;border-right:1px solid var(--rule);letter-spacing:.06em;transition:.2s;border-radius:1px}
+.depth-btn:last-child{border-right:none}
+.depth-btn:hover{background:rgba(34,31,26,.05);color:var(--ink)}
+.depth-btn.on{background:var(--ink);color:var(--paper)}
+.depth-hint{font-size:12px;color:var(--ink-3);margin-top:8px;min-height:20px}
+.depth-hint b{color:var(--red);font-weight:600}
+
+/* 结构卡 */
+.struct-card{margin-top:12px;border:1px solid var(--rule);background:var(--paper-2);padding:14px 16px;min-height:86px;display:flex;flex-direction:column;justify-content:center;gap:3px}
+.struct-card .sc-name{font-family:var(--serif);font-size:19px;letter-spacing:.08em}
+.struct-card .sc-meta{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--ink-3)}
+.struct-card .sc-note{font-size:13px;color:var(--ink-2);line-height:1.7}
+.struct-card.empty{color:var(--ink-3);font-size:13px;align-items:flex-start;justify-content:center}
+
+/* 任务清单 */
+.task{display:flex;gap:12px;padding:11px 0;border-bottom:1px dotted var(--rule-2)}
+.task:last-child{border-bottom:none}
+.task .idx{font-family:var(--mono);font-size:11px;color:var(--red);padding-top:2px;width:18px;flex:none}
+.task .tx{font-size:13.5px;line-height:1.8;color:var(--ink-2)}
+.task .tx b{color:var(--ink);font-weight:600}
+.task.done .tx{color:var(--ink-3)}
+.task.done .tx b{color:var(--teal)}
+
+/* 提示条 */
+.strip{border-left:3px solid var(--red);background:rgba(240,214,204,.32);padding:12px 16px;font-size:13px;line-height:1.8;color:var(--ink-2);margin-top:14px}
+.strip b{color:var(--ink)}
+.strip.teal{border-color:var(--teal);background:rgba(217,232,228,.5)}
+
+/* 配对 */
+.match-wrap{display:grid;grid-template-columns:1fr 1fr;gap:10px 26px;margin-top:6px}
+.match-col{display:grid;gap:8px}
+.match-item{border:1px solid var(--rule-2);background:var(--paper-2);padding:10px 12px;text-align:left;font-size:14px;letter-spacing:.04em;transition:.18s;display:flex;align-items:center;justify-content:space-between;gap:8px;border-radius:2px}
+.match-item:hover{border-color:var(--ink);transform:translateX(2px)}
+.match-item.sel{border-color:var(--red);background:rgba(240,214,204,.5);box-shadow:0 0 0 2px rgba(178,58,37,.12)}
+.match-item.matched{border-color:var(--teal);background:rgba(217,232,228,.65);color:var(--teal);cursor:default;transform:none}
+.match-item.matched::after{content:"✓";font-size:12px}
+.match-item.bad{animation:shake .32s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.match-col-title{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--ink-3);padding:0 2px 2px}
+.match-score{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.08em;margin-top:10px;display:flex;justify-content:space-between;align-items:center}
+.match-score b{color:var(--red);font-size:13px}
+
+/* 寻宝表 */
+.hunt-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px}
+.hunt-table th{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--ink-3);text-align:left;font-weight:400;padding:0 6px 8px;border-bottom:1px solid var(--rule)}
+.hunt-table td{padding:7px 6px;border-bottom:1px dotted var(--rule-2);vertical-align:middle}
+.hunt-table .name{font-family:var(--serif);font-size:16px;letter-spacing:.08em;white-space:nowrap}
+select{font-family:var(--sans);font-size:12.5px;color:var(--ink);background:var(--paper);border:1px solid var(--rule-2);padding:6px 6px;border-radius:2px;max-width:100%;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink-3) 50%),linear-gradient(135deg,var(--ink-3) 50%,transparent 50%);background-position:calc(100% - 12px) 52%,calc(100% - 8px) 52%;background-size:4px 4px,4px 4px;background-repeat:no-repeat;padding-right:22px}
+select:focus{outline:2px solid var(--teal);outline-offset:1px}
+.hunt-status{width:22px;text-align:center;font-size:14px}
+.hunt-status.ok{color:var(--teal)}
+.hunt-status.no{color:var(--red)}
+.hunt-note{font-size:11.5px;color:var(--ink-3);margin-top:8px;line-height:1.7}
+.hunt-note b{color:var(--teal)}
+
+/* 计时器 */
+.minute-tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--ink-3);border:1px solid var(--rule);padding:3px 8px;border-radius:2px;background:rgba(251,247,237,.7)}
+.minute-tag::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--red)}
+
+/* 心跳面板 */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--rule);margin-bottom:16px}
+.tab{padding:9px 16px;font-size:13.5px;color:var(--ink-3);border-bottom:2px solid transparent;letter-spacing:.06em}
+.tab.on{color:var(--red);border-color:var(--red);font-weight:600}
+.tab:hover{color:var(--ink)}
+.panel{display:none}
+.panel.on{display:block;animation:rise .3s both}
+.beat-stage{display:grid;grid-template-columns:250px 1fr;gap:20px;align-items:center}
+.beat-svg{width:100%;height:auto;max-width:250px}
+.beat-phase{font-family:var(--serif);font-size:21px;letter-spacing:.06em;min-height:30px}
+.beat-desc{font-size:13px;color:var(--ink-2);line-height:1.8;margin-top:4px;min-height:72px}
+.beat-controls{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+.phase-dots{display:flex;gap:6px;margin-top:10px}
+.phase-dot{height:3px;flex:1;background:var(--rule);transition:.3s}
+.phase-dot.on{background:var(--red)}
+.heart-chamber{transform-box:fill-box;transform-origin:center;transition:transform .4s,fill .3s}
+.heart-chamber.beating{fill:#d8694f}
+.flow{stroke:var(--red);stroke-width:2;fill:none;stroke-dasharray:5 5;opacity:0;animation:flow 1s linear infinite}
+.flow.on{opacity:.85}
+@keyframes flow{to{stroke-dashoffset:-10}}
+
+/* 肺泡 */
+.alveoli-svg{width:100%;height:auto;max-width:420px;display:block;margin:0 auto}
+.o2{fill:var(--teal)}
+.co2{fill:var(--gold)}
+.particle{opacity:0}
+.panel.on .particle.o2{animation:o2move 3.2s linear infinite}
+.panel.on .particle.co2{animation:co2move 3.2s linear infinite}
+@keyframes o2move{0%{transform:translateY(0);opacity:0}15%{opacity:1}72%{opacity:1}100%{transform:translateY(50px);opacity:0}}
+@keyframes co2move{0%{transform:translateY(0);opacity:0}15%{opacity:1}72%{opacity:1}100%{transform:translateY(-58px);opacity:0}}
+.legend{display:flex;gap:16px;justify-content:center;font-size:11.5px;color:var(--ink-3);margin-top:4px;flex-wrap:wrap}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+
+/* 问答/测验 */
+.qa{border-top:1px solid var(--rule);padding:14px 0}
+.qa:last-child{border-bottom:1px solid var(--rule)}
+.qa .q{font-size:14.5px;line-height:1.8;display:flex;gap:9px}
+.qa .q b{font-family:var(--mono);color:var(--red);font-size:12px;padding-top:3px}
+.reveal-btn{font-size:11.5px;letter-spacing:.08em;color:var(--teal);border-bottom:1px dashed rgba(44,106,99,.5);margin-top:8px;padding:0 0 2px}
+.reveal-btn:hover{color:var(--red);border-color:rgba(178,58,37,.5)}
+.answer{display:none;font-size:13.5px;line-height:1.85;color:var(--ink-2);margin-top:10px;padding-left:12px;border-left:2px solid var(--teal)}
+.answer.on{display:block;animation:rise .3s both}
+.answer b{color:var(--teal)}
+
+.quiz-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:8px}
+.quiz-progress{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ink-3)}
+.quiz-q{font-family:var(--serif);font-size:21px;line-height:1.5;letter-spacing:.03em;margin:10px 0 16px;min-height:64px}
+.options{display:grid;gap:9px}
+.option{text-align:left;border:1px solid var(--rule-2);background:var(--paper-2);padding:11px 14px;font-size:14px;display:flex;gap:11px;align-items:flex-start;transition:.18s;line-height:1.6}
+.option:hover:not(:disabled){border-color:var(--ink);transform:translateX(2px)}
+.option .letter{font-family:var(--mono);font-size:11px;border:1px solid currentColor;border-radius:50%;width:19px;height:19px;display:grid;place-items:center;flex:none;margin-top:1px}
+.option.correct{border-color:var(--teal);background:rgba(217,232,228,.7);color:var(--teal)}
+.option.wrong{border-color:var(--red);background:rgba(240,214,204,.6);color:var(--red)}
+.option:disabled{cursor:default}
+.option.dim{opacity:.5}
+.quiz-feedback{font-size:13px;line-height:1.8;color:var(--ink-2);margin-top:12px;min-height:44px;border-left:2px solid var(--red);padding-left:11px;display:none}
+.quiz-feedback.on{display:block}
+.quiz-feedback b{color:var(--ink)}
+.quiz-actions{display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:10px}
+
+/* 出门条 */
+.field{display:grid;gap:5px;margin-bottom:13px}
+.field label{font-size:12.5px;color:var(--ink-2);letter-spacing:.03em}
+.field label b{color:var(--red);font-family:var(--mono);font-size:11px;margin-right:5px}
+textarea,input[type="text"],input[type="number"]{width:100%;font-family:var(--sans);font-size:13.5px;line-height:1.7;color:var(--ink);background:rgba(255,255,255,.55);border:1px solid var(--rule-2);border-radius:2px;padding:9px 11px;resize:vertical}
+textarea:focus,input:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal)}
+textarea::placeholder,input::placeholder{color:var(--ink-3)}
+.sentence{font-family:var(--serif);font-size:17px;line-height:2;letter-spacing:.02em;margin-top:8px;padding:14px 16px;background:rgba(217,232,228,.35);border:1px dashed #bcd3cd;min-height:74px}
+.sentence .blank{color:var(--red);border-bottom:1px solid rgba(178,58,37,.4);padding:0 3px}
+
+/* 移动端选中提示 */
+.pin-toast{position:fixed;left:14px;right:14px;bottom:76px;z-index:65;background:rgba(34,31,26,.94);color:var(--paper);padding:11px 14px;border-radius:2px;font-size:13px;line-height:1.6;opacity:0;transform:translateY(10px);pointer-events:none;transition:.25s;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.pin-toast.on{opacity:1;transform:none}
+.pin-toast b{color:#f0c9a8;margin-right:6px;font-family:var(--serif);font-size:15px;letter-spacing:.06em}
+
+/* 印章 */
+.stamp{width:96px;height:96px;border:3px double var(--red);color:var(--red);display:grid;place-items:center;font-family:var(--serif);font-size:15px;letter-spacing:.18em;line-height:1.3;text-align:center;transform:rotate(-7deg);opacity:.9;border-radius:3px;padding:8px;mix-blend-mode:multiply}
+.stamp.small{width:74px;height:74px;font-size:12px;border-width:2px}
+.stamp.pop{animation:stampIn .5s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes stampIn{0%{transform:rotate(-16deg) scale(1.6);opacity:0}60%{opacity:1}100%{transform:rotate(-7deg) scale(1)}}
+
+/* 底部导航 */
+.pager{position:fixed;left:0;right:0;bottom:0;z-index:55;background:rgba(244,238,226,.95);backdrop-filter:blur(8px);border-top:1px solid var(--rule)}
+.pager-in{max-width:var(--max);margin:0 auto;padding:10px 22px;display:flex;align-items:center;gap:14px}
+.pager .hint{font-size:11.5px;color:var(--ink-3);letter-spacing:.05em;margin-right:auto;display:flex;align-items:center;gap:8px}
+.progress-line{position:fixed;top:0;left:0;height:2px;background:var(--red);z-index:70;transition:width .4s ease;width:0}
+
+/* 教师手册 / 学习单 */
+.overlay{position:fixed;inset:0;z-index:100;display:none;background:rgba(34,31,26,.45);backdrop-filter:blur(3px)}
+.overlay.on{display:block}
+.guide{position:absolute;inset:0;max-width:920px;margin:0 auto;background:var(--paper);overflow:auto;padding:34px 46px 60px;box-shadow:0 0 60px rgba(0,0,0,.3)}
+.guide-close{position:fixed;top:14px;right:16px;z-index:110;width:38px;height:38px;border:1px solid var(--rule-2);background:var(--paper-2);border-radius:50%;font-size:18px;line-height:1;display:grid;place-items:center}
+.guide-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:22px}
+.guide h2{font-size:30px;margin:0}
+.guide h3{font-size:17px;margin:24px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--rule)}
+.guide h3 span{font-family:var(--mono);font-size:10px;color:var(--red);letter-spacing:.16em;margin-right:8px}
+.guide p,.guide li{font-size:13px;line-height:1.9;color:var(--ink-2)}
+.guide ul,.guide ol{padding-left:20px;display:grid;gap:4px}
+.guide table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0 4px}
+.guide th{background:var(--paper-3);text-align:left;font-weight:600;padding:7px 8px;border:1px solid var(--rule-2);font-size:11.5px;letter-spacing:.04em}
+.guide td{padding:7px 8px;border:1px solid var(--rule);vertical-align:top;color:var(--ink-2);line-height:1.7}
+.guide .script{background:var(--paper-2);border-left:3px solid var(--gold);padding:10px 14px;margin:8px 0;font-size:12.5px;line-height:1.9}
+.guide .script b{color:var(--ink)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.small-note{font-size:11.5px!important;color:var(--ink-3)!important}
+.sheet{display:none}
+.print-only{display:none}
+
+/* 响应式 */
+@media (max-width:900px){
+  .cover{grid-template-columns:1fr;gap:24px;align-items:start}
+  .cover-side{border-left:none;border-top:1px solid var(--rule);padding-left:0;padding-top:18px}
+  .cover-meta{grid-template-columns:1fr 1fr}
+  .grid-2{grid-template-columns:1fr;gap:24px}
+  .grid-2.fig{grid-template-columns:1fr}
+  .grid-3{grid-template-columns:1fr}
+  .beat-stage{grid-template-columns:180px 1fr}
+  .steps .lbl{display:none}
+  .step{padding:6px 7px}
+  .top-actions .optional{display:none}
+  .guide{padding:26px 22px 50px}
+  .two-col{grid-template-columns:1fr}
+  .hunt-table{font-size:12px}
+  .hunt-table .name{font-size:14px}
+}
+@media (max-width:600px){
+  .stage{padding:22px 15px 120px}
+  .guide{padding:54px 18px 40px}
+  .guide-head{display:block;margin-bottom:16px}
+  .guide-head h2{font-size:25px}
+  .guide-head .btn{display:none}
+  .guide table{font-size:11px}
+  .guide th,.guide td{padding:5px 6px}
+  .guide-close{width:34px;height:34px;top:10px;right:10px;background:var(--paper-2)}
+  .topbar-in{padding:8px 15px;gap:10px}
+  .brand span{display:none}
+  .brand b{font-size:16px}
+  .cover-stats{gap:18px}
+  .stat b{font-size:26px}
+  .plate{padding:10px 10px 8px}
+  .figure-svg{max-height:52vh}
+  .bench .figure-svg{height:min(46vh,400px)}
+  .beat-stage{grid-template-columns:1fr;gap:8px}
+  .beat-svg{max-width:190px;margin:0 auto}
+  .match-wrap{gap:8px 12px}
+  .match-item{font-size:12.5px;padding:9px 10px}
+  .hunt-table th:nth-child(4){display:none}
+  .hunt-table td:nth-child(4){display:none}
+  .pager-in{padding:8px 15px}
+  .pager .hint{display:none}
+  .btn{padding:10px 14px;font-size:13px}
+  .quiz-q{font-size:18px}
+  .stamp{width:80px;height:80px;font-size:13px}
+}
+@media (max-height:850px) and (min-width:901px){
+  .bench .figure-svg{height:min(44vh,420px)}
+  .stage{padding-top:26px}
+  .lead{font-size:15.5px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  html{scroll-behavior:auto}
+}
+
+/* ============================================================
+   打印：教师手册 / 学习单
+   ============================================================ */
+@page{size:A4;margin:16mm 15mm 16mm 15mm}
+@media print{
+  body{background:#fff;color:#111;font-size:10.5pt;line-height:1.65}
+  .topbar,.pager,.progress-line,.stage,.overlay,.guide-close,.print-only,.no-print{display:none!important}
+  .print-only{display:block!important}
+  .guide{position:static;max-width:none;margin:0;padding:0;overflow:visible;box-shadow:none;background:#fff;display:none}
+  body.print-guide #guideOverlay{display:block!important;background:#fff;position:static;backdrop-filter:none}
+  body.print-guide #guideOverlay .guide{display:block}
+  body.print-sheet #sheetDoc{display:block!important}
+  .guide h2{font-size:20pt}
+  .guide h3{font-size:11.5pt;margin:9mm 0 2mm;page-break-after:avoid}
+  .guide p,.guide li,.guide td{font-size:9.5pt;line-height:1.6;color:#222}
+  .guide th{font-size:9pt;background:#eee!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .guide table{page-break-inside:auto}
+  .guide thead{display:table-header-group}
+  .guide tr{page-break-inside:avoid}
+  .guide .script{page-break-inside:avoid;background:#f7f7f7!important;-webkit-print-color-adjust:exact}
+  .guide-head{border-bottom:1.5pt solid #111}
+  .page-break{page-break-before:always}
+  a{color:#111;border:none}
+  .sheet-page{page-break-after:always}
+  .sheet-page:last-child{page-break-after:auto}
+}
+</style>
+</head>
+<body>
+<div class="progress-line" id="progressLine"></div>
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand"><b>身体探索局</b><span>Body Atlas Lab</span></div>
+    <nav class="steps" id="steps" aria-label="课程站点">
+      <button class="step" data-step="1"><em>1</em><span class="lbl">拆开看</span></button>
+      <button class="step" data-step="2"><em>2</em><span class="lbl">系统寻宝</span></button>
+      <button class="step" data-step="3"><em>3</em><span class="lbl">运转</span></button>
+      <button class="step" data-step="4"><em>4</em><span class="lbl">挑战</span></button>
+      <button class="step" data-step="5"><em>5</em><span class="lbl">收尾</span></button>
+    </nav>
+    <div class="top-actions">
+      <button class="mini-btn" id="openGuide">教师手册</button>
+      <button class="mini-btn optional" data-print="sheet">打印学习单</button>
+    </div>
+  </div>
+</header>
+
+<main class="stage">
+
+  <!-- ================= 封面 ================= -->
+  <section class="station active" id="s0" data-index="0">
+    <div class="cover">
+      <div>
+        <p class="eyebrow">人体课 · 45 分钟 · 9–12 岁</p>
+        <h1 class="display">身体探索局<small>把两千九百个结构，一层一层看明白</small></h1>
+        <p class="lead">你会打开一个能转动的 3D 人体，用<strong>隐藏、半透明、剖切</strong>这些真人做不到的动作，看清身体里的位置、层次，和它们正在干的活。</p>
+        <div class="cover-stats">
+          <div class="stat"><b>2,900</b><span>个结构</span></div>
+          <div class="stat"><b>12</b><span>个系统</span></div>
+          <div class="stat"><b>6</b><span>个微观现场</span></div>
+          <div class="stat"><b>206</b><span>块骨</span></div>
+        </div>
+        <div class="cover-cta">
+          <button class="btn" data-goto="1">开始第一站 →</button>
+          <button class="btn ghost" id="openBodyVista">打开 BodyVista ↗</button>
+        </div>
+        <p class="note"><b>需要联网。</b>BodyVista 是一个开源 3D 人体平台，第一次打开要等模型加载，建议课前先开好。本页的分层图、配对、心跳与肺泡动画、小测、学习单<b>离线也能用</b>。</p>
+      </div>
+      <aside class="cover-side">
+        <div class="cover-meta">
+          <div class="meta-item"><span>课程类型</span><b>科学 · 观察方法</b></div>
+          <div class="meta-item"><span>核心问题</span><b>里面有什么？</b></div>
+          <div class="meta-item"><span>要用到的</span><b>分层 / 位置 / 功能</b></div>
+          <div class="meta-item"><span>带走的</span><b>一张学习单</b></div>
+        </div>
+        <div style="margin-top:22px;display:flex;align-items:center;gap:14px">
+          <div class="seal stamp small">结构<br>侦察员</div>
+          <p style="font-size:12px;color:var(--ink-3);line-height:1.8">五站走完，<br>你会得到这枚印章。</p>
+        </div>
+      </aside>
+    </div>
+    <div class="hr"></div>
+    <div class="grid-3">
+      <div class="card tight">
+        <p class="kicker-sm">怎么用这一页</p>
+        <p style="margin-top:6px">页面负责提问、记录和复盘，BodyVista 负责"看见"。两边轮流看，不要只盯着一个。</p>
+      </div>
+      <div class="card tight">
+        <p class="kicker-sm">给两个人的分工</p>
+        <p style="margin-top:6px">一人操作模型（转、点、切），一人当记录员。每站结束交换一次。</p>
+      </div>
+      <div class="card tight">
+        <p class="kicker-sm">先记住一句话</p>
+        <p style="margin-top:6px">解剖不是背名字，是搞清楚<strong>谁在哪里、和谁挨着、在干什么</strong>。</p>
+      </div>
+    </div>
+
+    <div class="route" aria-label="课程路线">
+      <b>45′ 路线</b>
+      <ol>
+        <li>拆开看<em>8′</em></li>
+        <li>系统寻宝<em>10′</em></li>
+        <li>运转<em>9′</em></li>
+        <li>挑战<em>8′</em></li>
+        <li>收尾<em>5′</em></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= 第一站 ================= -->
+  <section class="station" id="s1" data-index="1">
+    <p class="eyebrow">第一站 · 8 分钟 · 分层</p>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap">
+      <div>
+        <h2>身体，是一层一层包起来的</h2>
+        <p class="lead">摸一摸自己的手臂：最外面是皮肤，下面是软软的肌肉，再往里才是硬硬的骨头。模型把这四层分开摆在你面前——先在这里练，再去模型里看真的。</p>
+      </div>
+      <span class="minute-tag">8 MIN</span>
+    </div>
+
+    <div class="grid-2 fig" style="margin-top:22px">
+      <div>
+        <figure class="plate bench">
+        <div class="bench-figure">
+          <svg id="bodySvg" class="figure-svg" viewBox="0 0 300 640" role="img" aria-label="人体分层示意图：皮肤、肌肉、骨骼、内脏"></svg>
+        </div>
+        <div class="depth-bar">
+          <div class="depth-track" role="group" aria-label="选择要看的层">
+            <button class="depth-btn on" data-depth="0">皮肤</button>
+            <button class="depth-btn" data-depth="1">肌肉</button>
+            <button class="depth-btn" data-depth="2">骨骼</button>
+            <button class="depth-btn" data-depth="3">内脏</button>
+            <button class="depth-btn" data-depth="all">全部</button>
+          </div>
+          <p class="depth-hint" id="depthHint">最外面这一层，是人体最大的器官——皮肤。</p>
+        </div>
+        <figcaption><span>图 1 · 分层示意（非真实比例）</span><span id="figLayerName">皮肤</span></figcaption>
+      </figure>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3><span class="num">1</span>先在图上找</h3>
+          <p>点亮 5 个结构。骨头的圆点在"骨骼"层，器官的圆点在"内脏"层。</p>
+          <div class="task" id="pinTask">
+            <span class="idx">◌</span>
+            <span class="tx">已点亮 <b id="pinCount">0</b> / 5 个结构</span>
+          </div>
+          <div class="struct-card empty" id="structCard" style="margin:10px 0 12px">点一点图上的小圆点，看看那是什么结构。</div>
+          <ul>
+            <li>皮肤是最大的器官，它包住整个身体。</li>
+            <li>肌肉贴着骨头长，骨头在里面撑住形状。</li>
+            <li>内脏不是堆在一起的，各有各的"小房间"。</li>
+          </ul>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <h3><span class="num">2</span>去模型里做四件事</h3>
+          <div class="task"><span class="idx">01</span><span class="tx">左侧「人体系统」里，把 <b>骨与关节</b> 点成 <b>实体</b>。</span></div>
+          <div class="task"><span class="idx">02</span><span class="tx">把其他系统都点成 <b>隐藏</b>，画面里只剩骨头。</span></div>
+          <div class="task"><span class="idx">03</span><span class="tx">拖动模型转一圈，找到 <b>锁骨、肋骨、骨盆、股骨</b>。</span></div>
+          <div class="task"><span class="idx">04</span><span class="tx">把 <b>肌肉系统</b> 点成 <b>半透明</b>，看肌肉怎样贴着骨头。</span></div>
+          <p style="margin-top:10px;font-size:12px;color:var(--ink-3)">四个档位是：隐藏 → 轮廓 → 半透明 → 实体。</p>
+        </div>
+
+        <div class="strip">
+          <b>想一想：</b>如果皮肤一直不透明，医生怎么知道里面发生了什么？<br>
+          <span style="color:var(--ink-3)">X 光、超声、CT、MRI……模型是另一种"透视"：它不怕挡，也不怕拆。</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+    <div class="grid-3">
+      <div class="card tight card-warm">
+        <p class="kicker-sm">事实 01</p>
+        <p style="margin-top:6px">成人有 <strong>206 块骨</strong>；婴儿大约有 300 块，后来有一些长在了一起。</p>
+      </div>
+      <div class="card tight">
+        <p class="kicker-sm">事实 02</p>
+        <p style="margin-top:6px">骨不是死的。它里面有血管、有神经，还会一边拆一边建。</p>
+      </div>
+      <div class="card tight">
+        <p class="kicker-sm">事实 03</p>
+        <p style="margin-top:6px">"层"是人为了方便理解划分的。真实的组织是连续的，挨在一起、长在一起。</p>
+      </div>
+    </div>
+    <p style="margin-top:18px"><button class="reveal-btn" data-reveal="r1a">看看这一站的答案</button></p>
+    <div class="answer" id="r1a"><b>顺序：</b>皮肤 → 肌肉 → 骨骼 → 内脏。越往里，越接近身体的"支架"和"发动机"。模型能一层层关掉，是因为每一层都是独立的三维结构，而不是画上去的。</div>
+  </section>
+
+  <!-- ================= 第二站 ================= -->
+  <section class="station" id="s2" data-index="2">
+    <p class="eyebrow">第二站 · 10 分钟 · 系统</p>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap">
+      <div>
+        <h2>十二个系统，一栋楼里的十二个部门</h2>
+        <p class="lead">每个系统有自己的工位，也有自己的活。先把器官送回部门，再去模型里核对：它在哪、叫什么、挨着谁。</p>
+      </div>
+      <span class="minute-tag">10 MIN</span>
+    </div>
+
+    <div class="grid-2" style="margin-top:22px">
+      <div class="card">
+        <h3><span class="num">1</span>把器官送回它的部门</h3>
+        <p style="margin-bottom:12px">点左边一个器官，再点右边它所属的系统。配对成功会变绿。</p>
+        <div class="match-wrap">
+          <div>
+            <p class="match-col-title">器官 / 结构</p>
+            <div class="match-col" id="matchOrgans"></div>
+          </div>
+          <div>
+            <p class="match-col-title">系统</p>
+            <div class="match-col" id="matchSystems"></div>
+          </div>
+        </div>
+        <div class="match-score">
+          <span>配对进度 <b id="matchCount">0</b> / 6</span>
+          <button class="mini-btn" id="matchReset">重来</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="num">2</span>模型里的寻宝单</h3>
+        <p>在 BodyVista 找到这四样东西，再回来填表。区域按模型的划分：头、颈、胸、腹、盆、上肢、下肢。</p>
+        <div id="huntWrap"></div>
+        <p class="hunt-note" id="huntNote">填完点每行的"判定"，看看你送对了没有。</p>
+      </div>
+    </div>
+
+    <div class="strip teal" style="margin-top:18px">
+      <b>一个真实的坑：</b>在模型里搜"心脏"可能搜不到。因为它不是一整块，而是被拆成了心房、心室、瓣膜和一堆血管——每一个都有自己的名字。<strong>结构</strong>和<strong>器官</strong>不是一回事，这正是"2900 个结构"的意思。
+    </div>
+
+    <div class="grid-3" style="margin-top:18px">
+      <div class="card tight">
+        <p class="kicker-sm">怎么搜</p>
+        <p style="margin-top:6px">点左侧「查找与浏览」。<strong>胃、肝、膀胱、甲状腺、股骨</strong> 都能直接搜到。</p>
+      </div>
+      <div class="card tight">
+        <p class="kicker-sm">怎么点</p>
+        <p style="margin-top:6px">用「选择」工具点模型上的结构，右侧会弹出知识卡：名字、所属系统、要点。</p>
+      </div>
+      <div class="card tight">
+        <p class="kicker-sm">怎么记</p>
+        <p style="margin-top:6px">别抄整段。只记一句："它在这里，它负责这个。"</p>
+      </div>
+    </div>
+    <p style="margin-top:18px"><button class="reveal-btn" data-reveal="r2a">系统为什么不能各干各的？</button></p>
+    <div class="answer" id="r2a"><b>因为身体是一起用的。</b>心脏把血送到肺去换气，肺把氧气交给血，血再把氧气送到肌肉，肌肉干活产生二氧化碳，血又把它带回肺。少一个环节，整条线就断了。系统是"功能分组"，不是"隔间"。</div>
+  </section>
+  <!-- ================= 第三站 ================= -->
+  <section class="station" id="s3" data-index="3">
+    <p class="eyebrow">第三站 · 9 分钟 · 功能</p>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap">
+      <div>
+        <h2>停下来看，它们一直在动</h2>
+        <p class="lead">解剖图是静止的，可身体一刻也没停。先在这里看清楚一次心跳、一次气体交换，再去模型里看真的动画。</p>
+      </div>
+      <span class="minute-tag">9 MIN</span>
+    </div>
+
+    <div class="grid-2" style="margin-top:22px">
+      <div class="card" style="padding-top:14px">
+        <div class="tabs" role="tablist">
+          <button class="tab on" data-tab="heart" role="tab" aria-selected="true">一颗心跳三拍</button>
+          <button class="tab" data-tab="lung" role="tab" aria-selected="false">肺泡里的交换</button>
+        </div>
+
+        <div class="panel on" id="panel-heart">
+          <div class="beat-stage">
+            <svg class="beat-svg" viewBox="0 0 220 240" role="img" aria-label="心脏搏动示意">
+              <defs>
+                <marker id="ar" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+                  <path d="M0,0 L6,3 L0,6 z" fill="#b23a25"/>
+                </marker>
+              </defs>
+              <path d="M110 214 C74 190 34 160 34 112 C34 76 60 52 90 58 C102 60 108 70 110 78 C112 70 118 60 130 58 C160 52 186 76 186 112 C186 160 146 190 110 214 Z" fill="#f6e7e1" stroke="#b23a25" stroke-width="2"/>
+              <path d="M110 78 L110 200" stroke="#b23a25" stroke-width="1" opacity=".35"/>
+              <ellipse class="heart-chamber" id="chAtriaL" cx="86" cy="96" rx="19" ry="14" fill="#e9c2b6" stroke="#b23a25" stroke-width="1.2"/>
+              <ellipse class="heart-chamber" id="chAtriaR" cx="134" cy="96" rx="19" ry="14" fill="#e9c2b6" stroke="#b23a25" stroke-width="1.2"/>
+              <ellipse class="heart-chamber" id="chVentL" cx="86" cy="150" rx="21" ry="27" fill="#e9c2b6" stroke="#b23a25" stroke-width="1.2"/>
+              <ellipse class="heart-chamber" id="chVentR" cx="134" cy="150" rx="21" ry="27" fill="#e9c2b6" stroke="#b23a25" stroke-width="1.2"/>
+              <text x="86" y="99" text-anchor="middle" font-size="10" fill="#5b5346">心房</text>
+              <text x="134" y="99" text-anchor="middle" font-size="10" fill="#5b5346">心房</text>
+              <text x="86" y="153" text-anchor="middle" font-size="10" fill="#5b5346">心室</text>
+              <text x="134" y="153" text-anchor="middle" font-size="10" fill="#5b5346">心室</text>
+              <path id="flowIn" class="flow" d="M110 26 L110 78" marker-end="url(#ar)"/>
+              <path id="flowOutL" class="flow" d="M64 150 L28 150 M64 150 L28 150" marker-end="url(#ar)"/>
+              <path id="flowOutR" class="flow" d="M156 150 L192 150" marker-end="url(#ar)"/>
+              <text x="110" y="18" text-anchor="middle" font-size="9" fill="#8a7f6d">回流的血</text>
+              <text x="20" y="132" text-anchor="middle" font-size="9" fill="#8a7f6d">肺</text>
+              <text x="200" y="132" text-anchor="middle" font-size="9" fill="#8a7f6d">全身</text>
+            </svg>
+            <div>
+              <p class="beat-phase" id="beatPhase">准备</p>
+              <p class="beat-desc" id="beatDesc">按"播放"，看一次心跳里，心房和心室谁先收缩。</p>
+              <div class="phase-dots"><i class="phase-dot" id="pd0"></i><i class="phase-dot" id="pd1"></i><i class="phase-dot" id="pd2"></i></div>
+              <div class="beat-controls">
+                <button class="btn small" id="beatPlay">播放</button>
+                <button class="btn small ghost" id="beatStep">一步一步看</button>
+              </div>
+            </div>
+          </div>
+          <p style="margin-top:14px;font-size:12.5px;color:var(--ink-3);border-top:1px dashed var(--rule);padding-top:10px">注意：真实的心脏有四个腔（左、右心房和左、右心室）。这张图先只保留"心房→心室→出去"的顺序。</p>
+        </div>
+
+        <div class="panel" id="panel-lung">
+          <svg class="alveoli-svg" viewBox="0 0 420 300" role="img" aria-label="肺泡气体交换示意">
+            <defs>
+              <radialGradient id="alv" cx="50%" cy="45%" r="55%">
+                <stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#e8f0ee"/>
+              </radialGradient>
+            </defs>
+            <path d="M60 120 C60 60 130 30 190 46 C250 62 300 44 338 84 C372 120 350 172 300 186 C250 200 210 196 180 210 C130 232 62 200 60 120 Z" fill="url(#alv)" stroke="#2c6a63" stroke-width="2"/>
+            <text x="196" y="128" text-anchor="middle" font-family="Songti SC,serif" font-size="17" fill="#2c6a63">肺泡</text>
+            <text x="196" y="150" text-anchor="middle" font-size="10" fill="#8a7f6d">壁只有一层细胞那么薄</text>
+            <path d="M70 196 C120 214 300 214 356 190" stroke="#2c6a63" stroke-width="1.4" stroke-dasharray="4 4" fill="none"/>
+            <path d="M40 240 C120 226 300 226 380 240 L380 282 C300 268 120 268 40 282 Z" fill="#f3e2dc" stroke="#b23a25" stroke-width="1.6"/>
+            <text x="210" y="262" text-anchor="middle" font-size="11" fill="#b23a25">毛细血管</text>
+            <g>
+              <circle class="particle o2" cx="150" cy="178" r="5" style="animation-delay:.1s"/>
+              <circle class="particle o2" cx="202" cy="172" r="5" style="animation-delay:.9s"/>
+              <circle class="particle o2" cx="252" cy="180" r="5" style="animation-delay:1.7s"/>
+              <circle class="particle co2" cx="170" cy="264" r="5" style="animation-delay:.4s"/>
+              <circle class="particle co2" cx="222" cy="268" r="5" style="animation-delay:1.3s"/>
+              <circle class="particle co2" cx="274" cy="262" r="5" style="animation-delay:2.1s"/>
+            </g>
+            <text x="24" y="72" font-size="10" fill="#2c6a63">O₂ 进来</text>
+            <text x="316" y="292" font-size="10" fill="#a07c3f">CO₂ 出去</text>
+          </svg>
+          <div class="legend"><span><i style="background:#2c6a63"></i>氧气 O₂</span><span><i style="background:#a07c3f"></i>二氧化碳 CO₂</span></div>
+          <p style="margin-top:6px">氧气从肺泡穿过薄薄的壁，进入毛细血管；二氧化碳从血液里出来，进入肺泡，再被呼出去。方向由浓度差决定，不需要"泵"。</p>
+        </div>
+
+        <div class="qa" style="margin-top:14px">
+          <p class="q"><b>Q1</b><span>一次心跳里，谁先收缩？</span></p>
+          <button class="reveal-btn" data-reveal="r3a">看答案</button>
+          <div class="answer" id="r3a"><b>心房先收缩</b>，把血挤进心室；然后心室收缩，把血泵向肺和全身；最后全心舒张，血重新流回来装满。你听到的"扑通"两声，主要是瓣膜关上的声音。</div>
+        </div>
+        <div class="qa">
+          <p class="q"><b>Q2</b><span>肺泡里的氧气，主要往哪走？</span></p>
+          <button class="reveal-btn" data-reveal="r3b">看答案</button>
+          <div class="answer" id="r3b">从<b>肺泡进入血液</b>。同时，血液里的二氧化碳进入肺泡。两边隔着的那层膜非常薄，气体直接扩散过去。</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3><span class="num">3</span>在模型里看动画</h3>
+          <div class="task"><span class="idx">01</span><span class="tx">顶部切到 <b>「生命律动」</b>，左侧选 <b>心血管系统</b>。</span></div>
+          <div class="task"><span class="idx">02</span><span class="tx">点 <b>「心脏搏动」</b>，用进度条慢慢拖，数一数有几个阶段。</span></div>
+          <div class="task"><span class="idx">03</span><span class="tx">回到顶部 <b>「微观探索」</b>，选 <b>肺泡气体交换</b>。</span></div>
+          <div class="task"><span class="idx">04</span><span class="tx">看氧气和二氧化碳的方向，和你刚才的猜测一样吗？</span></div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <h3><span class="num">?</span>为什么不能停</h3>
+          <p>心脏每天大约跳 <strong>10 万次</strong>。肺泡大约有 <strong>3 亿个</strong>，摊开的面积接近 <strong>70 平方米</strong>。</p>
+          <p>它们运送和交换的东西——氧气、养分、二氧化碳——一刻也不能断。所以心肌不能像手臂那样"请个假"——它只能在两次跳动之间，偷偷松一口气。</p>
+        </div>
+
+        <div class="strip">
+          <b>观察任务：</b>在模型里把速度调到最慢，跟着一次心跳，用手指在桌上敲三下：<br>
+          <span style="font-family:var(--mono);font-size:12px">心房 · 心室 · 舒张</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 第四站 ================= -->
+  <section class="station" id="s4" data-index="4">
+    <p class="eyebrow">第四站 · 8 分钟 · 检验</p>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap">
+      <div>
+        <h2>看得见，还要说得清</h2>
+        <p class="lead">先做模型里的「解剖挑战」，再做这里的六道题。答错不要紧——解析比分数重要。</p>
+      </div>
+      <span class="minute-tag">8 MIN</span>
+    </div>
+
+    <div class="grid-2" style="margin-top:22px">
+      <div class="card">
+        <div class="quiz-head">
+          <p class="kicker-sm">离线小测 · 六题</p>
+          <span class="quiz-progress" id="quizProgress">第 1 题 / 6</span>
+        </div>
+        <p class="quiz-q" id="quizQ">正在准备题目…</p>
+        <div class="options" id="quizOptions"></div>
+        <p class="quiz-feedback" id="quizFeedback"></p>
+        <div class="quiz-actions">
+          <span class="quiz-progress" id="quizScore">得分 0 / 6</span>
+          <button class="btn small" id="quizNext" disabled>下一题 →</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="card card-tone">
+          <h3><span class="num">A</span>模型里的挑战</h3>
+          <div class="task"><span class="idx">01</span><span class="tx">顶部点 <b>「解剖挑战」</b>。</span></div>
+          <div class="task"><span class="idx">02</span><span class="tx">选 <b>「结构识别」</b>：每题给一个结构，从选项里认出它。</span></div>
+          <div class="task"><span class="idx">03</span><span class="tx">一轮 5 题，做完记下答对几题。</span></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
+            <label for="bvcScore" style="font-size:12.5px;color:var(--ink-2)">我答对了</label>
+            <select id="bvcScore" style="width:76px">
+              <option value="">—</option>
+              <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+            </select>
+            <span style="font-size:12.5px;color:var(--ink-2)">题</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <h3><span class="num">B</span>比分数更重要的</h3>
+          <p>把错题当成线索：是名字没记住，还是位置想错了，还是把"结构"和"功能"弄混了？三种错，补法不一样。</p>
+          <ul>
+            <li>名字没记住 → 回去点它，读一遍知识卡。</li>
+            <li>位置想错了 → 打开剖切，从三个方向各看一次。</li>
+            <li>功能弄混了 → 问自己："它把什么，送到哪里？"</li>
+          </ul>
+        </div>
+
+        <div class="card tight" style="margin-top:14px">
+          <h3><span class="num">C</span>三种题型，练的不一样</h3>
+          <div class="task"><span class="idx">型1</span><span class="tx"><b>结构识别</b>：看模型认结构，练"长什么样"。</span></div>
+          <div class="task"><span class="idx">型2</span><span class="tx"><b>解剖寻找</b>：按名字在 3D 里找到它，练"在哪里"。</span></div>
+          <div class="task"><span class="idx">型3</span><span class="tx"><b>显微解剖</b>：回答微观结构的作用，练"干什么"。</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 第五站 ================= -->
+  <section class="station" id="s5" data-index="5">
+    <p class="eyebrow">第五站 · 5 分钟 · 收尾</p>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap">
+      <div>
+        <h2>把身体讲成一个故事</h2>
+        <p class="lead">解剖学不只是一堆名字。真正的理解是四句话：它在哪、它长什么样、它在干什么、没有它会怎样。</p>
+      </div>
+      <span class="minute-tag">5 MIN</span>
+    </div>
+
+    <div class="grid-2" style="margin-top:22px">
+      <div class="card">
+        <h3><span class="num">1</span>一句话解剖</h3>
+        <div class="field">
+          <label for="pickStruct">选一个你今天印象最深的结构</label>
+          <select id="pickStruct">
+            <option value="心脏">心脏</option>
+            <option value="肺">肺</option>
+            <option value="胃">胃</option>
+            <option value="肾">肾</option>
+            <option value="股骨">股骨</option>
+            <option value="甲状腺">甲状腺</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="sentHere"><b>01</b>它在这里</label>
+          <input type="text" id="sentHere" placeholder="例：胸口偏左，两片肺之间">
+        </div>
+        <div class="field">
+          <label for="sentJob"><b>02</b>它负责</label>
+          <input type="text" id="sentJob" placeholder="例：把血泵到全身">
+        </div>
+        <div class="field">
+          <label for="sentFail"><b>03</b>如果它停工</label>
+          <input type="text" id="sentFail" placeholder="例：全身得不到氧气和养分">
+        </div>
+        <div class="sentence" id="sentPreview">选一个结构，写下三句话，这里会拼成你的"一句话解剖"。</div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3><span class="num">2</span>出门条 · 3–2–1</h3>
+          <div class="field">
+            <label for="ex1"><b>3</b>个新认识的结构</label>
+            <textarea id="ex1" rows="2" placeholder="例：锁骨、股骨、甲状腺"></textarea>
+          </div>
+          <div class="field">
+            <label for="ex2"><b>2</b>件让你惊讶的事</label>
+            <textarea id="ex2" rows="2" placeholder="例：婴儿的骨头比成人多"></textarea>
+          </div>
+          <div class="field">
+            <label for="ex3"><b>1</b>个还想问的问题</label>
+            <textarea id="ex3" rows="2" placeholder="例：骨头里面为什么会有血管？"></textarea>
+          </div>
+          <div style="display:flex;gap:9px;flex-wrap:wrap">
+            <button class="btn small" id="saveExit">保存我的记录</button>
+            <button class="btn small ghost" data-print="sheet">打印学习单</button>
+          </div>
+          <p class="hunt-note" id="saveNote">记录会保存在这台电脑的浏览器里，不会上传。</p>
+        </div>
+
+        <div class="card" style="margin-top:14px;display:flex;align-items:center;gap:16px">
+          <div class="stamp" id="finalStamp">探索<br>完成</div>
+          <div>
+            <p style="font-size:13px">走完五站，你已经会做三件事：<strong>分层看、按系统找、用功能解释结构</strong>。</p>
+            <p style="font-size:12px;color:var(--ink-3);margin-top:6px">下一站可以去：循环系统、神经系统，或者口腔与牙齿。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+    <p class="lead" style="font-family:var(--serif);font-size:clamp(19px,2.6vw,26px);line-height:1.7;letter-spacing:.03em;max-width:34ch">
+      你的身体里大约有 <strong>37 万亿个细胞</strong>。它们不认识你，却一直在替你工作。
+    </p>
+    <p style="margin-top:14px;font-size:12px;color:var(--ink-3)">参考：BodyVista（FreedomAI，MIT 代码许可）与 OpenStax《解剖学与生理学》第 2 版。模型为教学示意，不用于诊断。</p>
+  </section>
+</main>
+
+<div class="pin-toast" id="pinToast" aria-live="polite"></div>
+
+<footer class="pager">
+  <div class="pager-in">
+    <span class="hint" id="pagerHint">建议顺序：先看图，再开模型</span>
+    <button class="btn small ghost" id="prevBtn" disabled>← 上一站</button>
+    <button class="btn small" id="nextBtn">下一站 →</button>
+  </div>
+</footer>
+<div class="overlay" id="guideOverlay" aria-hidden="true">
+  <button class="guide-close" id="closeGuide" aria-label="关闭教师手册">×</button>
+  <div class="guide" id="guideDoc">
+    <div class="guide-head">
+      <div>
+        <p class="kicker-sm">教师手册 · TEACHER'S NOTES</p>
+        <h2>身体探索局</h2>
+        <p style="margin-top:4px">45 分钟 · 9–12 岁 · 一台能联网的电脑 + 一块大屏</p>
+      </div>
+      <div style="display:flex;gap:8px" class="no-print">
+        <button class="btn small" data-print="guide">打印 / 存 PDF</button>
+      </div>
+    </div>
+
+    <h3><span>01</span>课程概览</h3>
+    <table>
+      <tr><th style="width:22%">项目</th><th>说明</th></tr>
+      <tr><td>课程名</td><td>身体探索局：一堂用 3D 解剖讲的人体课</td></tr>
+      <tr><td>适用</td><td>小学 4–6 年级（9–12 岁）；亲子共学可下探到 8 岁</td></tr>
+      <tr><td>时长</td><td>45 分钟（可裁成 30 分钟，见 §07）</td></tr>
+      <tr><td>核心问题</td><td>身体里面有什么？它们在哪里、在干什么？</td></tr>
+      <tr><td>工具</td><td>BodyVista（浏览器 3D 人体，中文界面）+ 本页</td></tr>
+      <tr><td>前置</td><td>不需要解剖基础。知道"器官""系统"两个词即可。</td></tr>
+      <tr><td>产出</td><td>一张学习单 + 一句"一句话解剖" + 一个还想问的问题</td></tr>
+    </table>
+    <p class="small-note">BodyVista 是 FreedomAI 的开源项目，代码为 MIT 许可；模型与部分内容来自第三方，许可见项目说明。课堂使用请保留出处，不用于临床或商业诊断。</p>
+
+    <h3><span>02</span>学习目标</h3>
+    <p><b>知识：</b>能说出身体的四个层次（皮肤、肌肉、骨骼、内脏）；能把 6 个器官归入对应系统；能描述心脏泵血与肺泡换气的基本方向。</p>
+    <p><b>方法：</b>会使用"隐藏 / 半透明 / 实体"做分层观察；会用"选择 + 知识卡"查一个结构的位置与功能；知道模型是简化示意，不是真人。</p>
+    <p><b>态度：</b>对身体保持好奇与尊重；知道不同人的身体存在差异；不把屏幕上的操作模仿到真人或动物身上。</p>
+
+    <h3><span>03</span>45 分钟流程</h3>
+    <table>
+      <tr><th style="width:14%">时间</th><th style="width:20%">环节</th><th>教师</th><th>学生</th></tr>
+      <tr><td>0–3′</td><td>开场</td><td>抛问题："如果身体是一栋楼，里面有多少个房间？"打开封面，读出四个数字。</td><td>猜一猜，说出自己知道的器官。</td></tr>
+      <tr><td>3–11′</td><td>第一站 分层</td><td>带做分层尺；演示"骨与关节→实体、其他→隐藏"；巡视。</td><td>点亮 5 个结构；在模型里找到锁骨、肋骨、骨盆、股骨。</td></tr>
+      <tr><td>11–21′</td><td>第二站 系统</td><td>先让学生做配对，再讲"结构 ≠ 器官"；演示搜索"胃"。</td><td>完成 6 对配对；填 4 行寻宝单；在模型里核对。</td></tr>
+      <tr><td>21–30′</td><td>第三站 运转</td><td>播放心跳三拍；慢速拖进度条；切到肺泡。</td><td>跟着敲三拍；说出氧气、二氧化碳的方向。</td></tr>
+      <tr><td>30–38′</td><td>第四站 挑战</td><td>发令："先做模型 5 题，再做页面 6 题。"</td><td>独立完成；错了看解析。</td></tr>
+      <tr><td>38–45′</td><td>第五站 收尾（含 2′ 机动）</td><td>请 2–3 人读"一句话解剖"；收出门条。</td><td>写 3–2–1；说出一个还想问的问题。</td></tr>
+    </table>
+
+    <h3><span>04</span>逐站脚本与提问</h3>
+    <div class="script"><b>开场（3′）：</b>"我们每天都在用身体，可你见过它里面吗？今天我们要打开一个 3D 人体：2900 个结构、12 个系统。先猜——身体里最多的东西是什么？"（等 3 个答案，不评判）"学完你再来改答案。"</div>
+    <div class="script"><b>第一站（8′）：</b>"先摸手臂：最外面是什么？再用力按，下面是什么？最后敲一敲桌子，那种硬的感觉来自什么？"（皮肤、肌肉、骨）"模型最厉害的地方，是能把皮肤变透明。现在把骨头留下，其他关掉。"<br><b>关键提问：</b>"为什么医生要拍片子，而不是把皮肤切开看看？"<br><b>容易卡住：</b>学生找不到"隐藏/实体"——那是每行右侧的四个小按钮，不是开关。</div>
+    <div class="script"><b>第二站（10′）：</b>"十二个系统像十二个部门。心脏属于哪个部门？胃呢？"做完配对后追问："为什么心脏的血管会出现在别的系统里？"（因为系统按功能分组，结构可以跨系统）<br><b>关键提问：</b>"模型里搜'心脏'为什么没有？"（它被拆成了心房、心室、瓣膜、血管）"这说明'结构'和'器官'有什么不同？"</div>
+    <div class="script"><b>第三站（9′）：</b>"解剖图是停住的，可你的心脏现在就在跳。摸一下胸口。"播放三拍："心房先，心室后，然后一起放松。你听到的'扑通'，是门关上的声音。"<br><b>关键提问：</b>"如果肺突然不工作了，先受影响的是哪里？为什么？"<br><b>注意：</b>不要让学生憋气做实验。</div>
+    <div class="script"><b>第四站（8′）：</b>"先做模型的 5 题，再做页面的 6 题。错题不是失败，是告诉你该回去看哪一层。"<br><b>关键提问：</b>"这道题你错在名字、位置，还是功能？"（把错误分类，比讲正确答案更有用）</div>
+    <div class="script"><b>第五站（5′）：</b>"解剖学的四句话：它在哪、长什么样、在干什么、没有它会怎样。选一个结构，写成三句话。"请 2–3 人读，其他人猜是哪个结构。<br><b>收尾：</b>"你的身体里有 37 万亿个细胞，它们不认识你，却一直在替你工作。"</div>
+
+    <h3><span>05</span>BodyVista 操作卡</h3>
+    <table>
+      <tr><th style="width:26%">要做什么</th><th>在哪里</th></tr>
+      <tr><td>只留骨头</td><td>左侧「人体系统」→「骨与关节」行，点「实体」；其他系统点「隐藏」</td></tr>
+      <tr><td>看肌肉包着骨头</td><td>「肌肉系统」行点「半透明」</td></tr>
+      <tr><td>看内部器官</td><td>左侧上方「内部器官」快捷按钮，或逐行打开</td></tr>
+      <tr><td>换观察区域</td><td>左侧「全身」下拉：头、颈、胸、腹、盆、上肢、下肢</td></tr>
+      <tr><td>找结构</td><td>左侧「查找与浏览」→ 输入名字（胃、肝、膀胱、甲状腺、股骨较稳）</td></tr>
+      <tr><td>读知识卡</td><td>「选择」工具点结构 → 右侧弹出名字、系统、要点、参考</td></tr>
+      <tr><td>看动态</td><td>顶部「生命律动」→ 选系统 → 选条目 → 播放/拖动进度</td></tr>
+      <tr><td>看微观</td><td>顶部「微观探索」→ 肺泡、肾单位、肌节、突触、绒毛、血管壁</td></tr>
+      <tr><td>做挑战</td><td>顶部「解剖挑战」→ 结构识别 / 显微解剖 / 解剖寻找 → 5 题</td></tr>
+      <tr><td>剖切（进阶）</td><td>左侧工具「剖切」→ 横断面 / 矢状面 / 冠状面 + 拖动位置</td></tr>
+    </table>
+    <p class="small-note">常见问题：① 首次加载慢——模型按系统加载，课前先打开一次让它缓存；课上先只开「骨骼与体表」，用到哪个系统再开哪个（心血管模型很大，别一上来全开）。② 平板性能不足——只留一层，关掉其他标签页。③ 搜不到整器官——这是模型的结构粒度，不是故障，正好用来讲"结构 vs 器官"。</p>
+
+    <h3><span>06</span>预设问答</h3>
+    <p><b>问：为什么模型里的器官是半透明的、颜色怪怪的？</b><br>答：颜色是"教学色"，用来区分系统，不是真实颜色。真实组织在灯光下颜色更深、更湿。</p>
+    <p><b>问：模型和真人一模一样吗？</b><br>答：不一样。它是标准化的示意模型，去掉了脂肪、个体差异和很多细节。真人每个人的血管走向都不同。</p>
+    <p><b>问：学解剖有什么用？</b><br>答：知道东西在哪，才知道疼在哪里、针扎哪里、运动时哪里在发力；也才知道身体有多复杂，不会随便相信"一招治好"。 </p>
+    <p><b>问：为什么骨头有洞、有管子？</b><br>答：血管和神经要穿过去。骨不是一块石头，是活的器官。</p>
+    <p><b>问：可以把皮肤切开看吗？</b><br>答：不可以。模型可以随便拆，真人不行。医学里用影像和标本，课堂用模型。</p>
+
+    <h3><span>07</span>差异化与无网方案</h3>
+    <p><b>30 分钟版：</b>第一站（8′）+ 第二站配对（6′）+ 第三站（8′）+ 第五站（8′）。跳过寻宝单与挑战，把出门条当作唯一的书面产出。</p>
+    <p><b>低年级（8–9 岁）：</b>只做第一、三、五站；配对减到 4 对；寻宝单由教师读题，学生指位置。目标改成"能说出三个结构在哪里"。</p>
+    <p><b>高年级（11–12 岁）：</b>加"剖切"任务：从横断面找到肝和胃的相对位置；加"测量"任务：量股骨占全身高度的百分比；挑战选"解剖寻找"。</p>
+    <p><b>无网 / 设备不足：</b>本页的分层图、配对、心跳与肺泡动画、六道小测、学习单全部离线可用。教师用手机热点或提前缓存 BodyVista；实在没有，就用本页图讲，把"去模型里看"改成"在我身上指位置"。</p>
+    <p><b>大班：</b>两人一台设备，一人操作一人记录，每站交换；用"举手投票"替代个别提问。</p>
+
+    <h3><span>08</span>评价量表</h3>
+    <table>
+      <tr><th style="width:20%">维度</th><th>看得见的表现</th><th style="width:18%">记录</th></tr>
+      <tr><td>观察</td><td>能按顺序切换层次，说出"现在看到的是哪一层"</td><td>☆☆☆</td></tr>
+      <tr><td>定位</td><td>能在模型里找到指定结构，并用区域词描述位置</td><td>☆☆☆</td></tr>
+      <tr><td>联系</td><td>能把结构和功能连起来说（"因为…所以…"）</td><td>☆☆☆</td></tr>
+      <tr><td>提问</td><td>提出一个自己想知道、且课上没有答案的问题</td><td>☆☆☆</td></tr>
+    </table>
+    <p class="small-note">不建议给分数。用"哪一句让你最意外"代替评分，把学生的原话记在学习单背面。</p>
+
+    <h3><span>09</span>边界与提醒</h3>
+    <ul>
+      <li>模型是教学示意，<b>不能用于诊断、治疗或自我检查</b>。身体不舒服要找医生。</li>
+      <li>不要让学生互相触摸、指认隐私部位；需要讲生殖系统时，按学校规范单独处理。</li>
+      <li>不要模仿屏幕上的"解剖""剖切"动作到真人或动物身上。</li>
+      <li>强调个体差异：身高、体型、器官位置都略有不同，模型只是"一个版本"。</li>
+      <li>使用 BodyVista 请保留出处与许可说明；模型版权归原项目与原始数据方。</li>
+    </ul>
+
+    <h3><span>10</span>一页速查</h3>
+    <div class="two-col">
+      <div>
+        <p><b>五站与分钟</b></p>
+        <ul>
+          <li>拆开看 8′：皮肤 → 肌肉 → 骨骼 → 内脏</li>
+          <li>系统寻宝 10′：6 对配对 + 4 行寻宝</li>
+          <li>运转 9′：心跳三拍 + 肺泡交换</li>
+          <li>挑战 8′：模型 5 题 + 页面 6 题</li>
+          <li>收尾 5′：一句话解剖 + 3–2–1</li>
+        </ul>
+      </div>
+      <div>
+        <p><b>五个提问，够用一节课</b></p>
+        <ul>
+          <li>如果皮肤不透明，你怎么知道里面在发生什么？</li>
+          <li>这个东西在哪一层？和谁挨着？</li>
+          <li>它是"结构"还是"器官"？为什么模型里搜不到"心脏"？</li>
+          <li>一次心跳里，谁先收缩？</li>
+          <li>氧气往哪走？它为什么不能停？</li>
+        </ul>
+      </div>
+    </div>
+    <p class="small-note">三句提醒：模型是示意，不是真人；每个人的身体都不一样；屏幕上的"剖切"不能对着真人做。</p>
+
+    <h3><span>11</span>参考</h3>
+    <ul>
+      <li>BodyVista — https://github.com/FreedomIntelligence/BodyVista （在线演示：https://freedomintelligence.github.io/BodyVista/）</li>
+      <li>OpenStax, <i>Anatomy and Physiology 2e</i> — 骨骼、肌肉、循环、呼吸、泌尿、神经各章</li>
+      <li>Z-Anatomy / BodyParts3D — 解剖模型来源，详见项目 CREDITS 与 catalog.json 的来源字段</li>
+    </ul>
+    <p style="margin-top:20px;font-family:var(--mono);font-size:10px;color:var(--ink-3);letter-spacing:.08em">身体探索局 · 教师手册 · 可打印 / 存为 PDF</p>
+  </div>
+</div>
+
+<!-- 打印用学习单（屏幕上隐藏） -->
+<section class="sheet" id="sheetDoc">
+  <div class="sheet-page">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #111;padding-bottom:8px;margin-bottom:16px">
+      <div>
+        <p style="font-family:var(--mono);font-size:8pt;letter-spacing:.2em">BODY ATLAS LAB · WORKSHEET</p>
+        <h2 style="font-family:var(--serif);font-size:22pt;margin:2px 0 0">身体探索局 · 学习单</h2>
+      </div>
+      <div style="font-size:10pt;color:#444">姓名 ____________　日期 ____________</div>
+    </div>
+
+    <h3 style="font-family:var(--serif);font-size:12pt;border-bottom:1px solid #999;margin:12px 0 6px">一、分层观察</h3>
+    <p style="font-size:9.5pt;color:#333">在图上或模型里点亮 5 个结构，写下它们的名字和所在的那一层。</p>
+    <table style="width:100%;border-collapse:collapse;font-size:10pt;margin-top:6px">
+      <tr><th style="border:1px solid #999;padding:6px;width:12%">序号</th><th style="border:1px solid #999;padding:6px">结构名</th><th style="border:1px solid #999;padding:6px;width:28%">在哪一层</th><th style="border:1px solid #999;padding:6px;width:26%">它大概在身体哪里</th></tr>
+      <tr><td style="border:1px solid #999;padding:8px">1</td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td></tr>
+      <tr><td style="border:1px solid #999;padding:8px">2</td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td></tr>
+      <tr><td style="border:1px solid #999;padding:8px">3</td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td></tr>
+      <tr><td style="border:1px solid #999;padding:8px">4</td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td></tr>
+      <tr><td style="border:1px solid #999;padding:8px">5</td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td></tr>
+    </table>
+
+    <h3 style="font-family:var(--serif);font-size:12pt;border-bottom:1px solid #999;margin:14px 0 6px">二、系统寻宝</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:10pt">
+      <tr><th style="border:1px solid #999;padding:6px;width:20%">结构</th><th style="border:1px solid #999;padding:6px;width:26%">属于哪个系统</th><th style="border:1px solid #999;padding:6px;width:22%">在哪个区域</th><th style="border:1px solid #999;padding:6px">它负责什么（一句话）</th></tr>
+      <tr><td style="border:1px solid #999;padding:9px">胃</td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td></tr>
+      <tr><td style="border:1px solid #999;padding:9px">膀胱</td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td></tr>
+      <tr><td style="border:1px solid #999;padding:9px">甲状腺</td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td></tr>
+      <tr><td style="border:1px solid #999;padding:9px">股骨</td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td><td style="border:1px solid #999"></td></tr>
+    </table>
+
+    <h3 style="font-family:var(--serif);font-size:12pt;border-bottom:1px solid #999;margin:14px 0 6px">三、心跳与肺泡</h3>
+    <p style="font-size:10pt;line-height:2">1. 一次心跳里，先收缩的是 ____________，然后 ____________ 收缩，最后 ____________。<br>
+    2. 氧气从 ____________ 进入 ____________；二氧化碳从 ____________ 进入 ____________。<br>
+    3. 我想问的一个问题：________________________________________________________</p>
+
+    <h3 style="font-family:var(--serif);font-size:12pt;border-bottom:1px solid #999;margin:14px 0 6px">四、挑战成绩</h3>
+    <p style="font-size:10pt">模型「结构识别」答对 ______ / 5 题；页面小测得分 ______ / 6。</p>
+
+    <h3 style="font-family:var(--serif);font-size:12pt;border-bottom:1px solid #999;margin:14px 0 6px">五、一句话解剖</h3>
+    <p style="font-size:10pt;line-height:2.2">我选的结构是 ____________。它在 ____________，负责 ____________。如果它停工，____________。</p>
+    <p style="font-size:9pt;color:#666">提示：不要抄百科。用你自己的话，说给一个没上过这节课的人听。</p>
+  </div>
+
+  <div class="sheet-page">
+    <h3 style="font-family:var(--serif);font-size:14pt;border-bottom:1px solid #999;margin:0 0 6px">六、画一画</h3>
+    <p style="font-size:10pt;color:#333;margin-bottom:6px">画出今天最想记住的那个结构，用箭头标出它在身体里的位置。</p>
+    <div style="height:78mm;border:1px solid #999;background-image:radial-gradient(#ccc 1px,transparent 1px);background-size:14px 14px;margin-bottom:10px"></div>
+
+    <h3 style="font-family:var(--serif);font-size:14pt;border-bottom:1px solid #999;margin:14px 0 8px">出门条 · 3–2–1</h3>
+    <p style="font-size:10.5pt;line-height:2.4">3 个新认识的结构：<br>① __________________　② __________________　③ __________________</p>
+    <p style="font-size:10.5pt;line-height:2.4">2 件让我惊讶的事：<br>① ____________________________________________________________<br>② ____________________________________________________________</p>
+    <p style="font-size:10.5pt;line-height:2.4">1 个还想问的问题：<br>______________________________________________________________<br>______________________________________________________________</p>
+    <div style="margin-top:26px;border:1px dashed #999;padding:12px">
+      <p style="font-size:9pt;color:#555">课堂约定：模型是教学示意，不能用来诊断；不把屏幕上的操作模仿到真人或动物身上；每个人的身体都不一样，模型只是其中一个版本。</p>
+    </div>
+    <div style="margin-top:34px;display:flex;justify-content:space-between;align-items:flex-end">
+      <p style="font-size:9pt;color:#666">BodyVista · FreedomAI（MIT 代码许可）｜ OpenStax Anatomy and Physiology 2e</p>
+      <div style="width:74px;height:74px;border:2px double #b23a25;color:#b23a25;display:grid;place-items:center;font-family:var(--serif);font-size:12pt;transform:rotate(-7deg)">探索<br>完成</div>
+    </div>
+  </div>
+</section>
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const KEY = 'bodyvista-lab-v1';
+  const store = {
+    step: 0, maxStep: 0, pins: [], match: [], hunt: {}, quiz: {}, bvc: '', sent: {}, exit: {}, savedAt: ''
+  };
+  try { Object.assign(store, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
+  const save = () => {
+    try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {}
+  };
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  /* ---------------- 导航 ---------------- */
+  const stations = $$('.station');
+  const steps = $$('.step');
+  const prevBtn = $('#prevBtn'), nextBtn = $('#nextBtn'), hint = $('#pagerHint');
+  const hints = [
+    '先看四个数字，猜一猜身体里有什么',
+    '先在图上看，再去模型里找',
+    '配对之后再进模型核对',
+    '看清一次心跳，再去看动画',
+    '错了也看解析',
+    '写一句话，把身体讲给别人听'
+  ];
+  let step = Number(store.step) || 0;
+
+  function go(n, silent) {
+    n = Math.max(0, Math.min(5, n));
+    step = n;
+    store.step = n;
+    store.maxStep = Math.max(store.maxStep || 0, n);
+    const toastEl = $('#pinToast'); if (toastEl) toastEl.classList.remove('on');
+    save();
+    stations.forEach(s => s.classList.toggle('active', Number(s.dataset.index) === n));
+    steps.forEach(b => {
+      const i = Number(b.dataset.step);
+      b.classList.toggle('on', i === n);
+      b.classList.toggle('done', i < n || (store.maxStep >= i && i !== n));
+    });
+    prevBtn.disabled = n === 0;
+    nextBtn.textContent = n === 5 ? '回到封面 ↺' : '下一站 →';
+    hint.textContent = hints[n] || '';
+    $('#progressLine').style.width = (n / 5 * 100) + '%';
+    if (!silent) window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (n === 5) stampAll();
+  }
+  steps.forEach(b => {
+    b.setAttribute('aria-label', b.querySelector('.lbl').textContent + '，第 ' + b.dataset.step + ' 站');
+    b.addEventListener('click', () => go(Number(b.dataset.step)));
+  });
+  prevBtn.addEventListener('click', () => go(step - 1));
+  nextBtn.addEventListener('click', () => go(step === 5 ? 0 : step + 1));
+  $$('[data-goto]').forEach(b => b.addEventListener('click', () => go(Number(b.dataset.goto))));
+  $('.brand').addEventListener('click', () => go(0));
+  document.addEventListener('keydown', e => {
+    if (guide.classList.contains('on')) return;
+    if (e.target.matches('input, textarea, select')) return;
+    if (e.key === 'ArrowRight') go(step + 1);
+    if (e.key === 'ArrowLeft') go(step - 1);
+    if (e.key === 'Escape') closeGuide();
+  });
+
+  /* ---------------- 人体分层图 ---------------- */
+  const svg = $('#bodySvg');
+  const pinData = [
+    { x: 150, y: 44, layer: 'bone', name: '颅骨', meta: '骨骼 · 头部', note: '保护大脑的"头盔"，由多块骨拼在一起，成年后大部分缝会闭合。' },
+    { x: 150, y: 118, layer: 'bone', name: '锁骨', meta: '骨骼 · 颈胸交界', note: '横在脖子下方，像一根撑开的衣架，把肩带"挂"在身体中轴上。' },
+    { x: 150, y: 168, layer: 'bone', name: '肋骨', meta: '骨骼 · 胸部', note: '12 对，围成胸廓。它们保护心和肺，也随呼吸一起起伏。' },
+    { x: 150, y: 232, layer: 'bone', name: '脊柱', meta: '骨骼 · 背部', note: '一节一节叠起来，既能撑住身体，又能弯、能转，中间还藏着脊髓。' },
+    { x: 178, y: 318, layer: 'bone', name: '骨盆', meta: '骨骼 · 盆部', note: '承上启下的"底座"，把上身重量传到两条腿。' },
+    { x: 133, y: 392, layer: 'bone', name: '股骨', meta: '骨骼 · 下肢', note: '人体最长、最结实的骨。它一头连髋、一头连膝。' },
+    { x: 150, y: 62, layer: 'organ', name: '脑', meta: '神经系统 · 头部', note: '指挥中心：感觉、运动、记忆、情绪都在这里被处理。' },
+    { x: 158, y: 188, layer: 'organ', name: '心', meta: '心血管系统 · 胸部', note: '拳头大小，把血泵向肺和全身。它从胎儿时期就开始跳，从不请假。' },
+    { x: 126, y: 166, layer: 'organ', name: '肺', meta: '呼吸系统 · 胸部', note: '两片，里面有几亿个肺泡，负责把氧气送进血液、把二氧化碳送出去。' },
+    { x: 131, y: 220, layer: 'organ', name: '肝', meta: '消化系统 · 腹部', note: '身体里最大的"化工厂"：处理养分、分解废物、储存能量。' },
+    { x: 168, y: 215, layer: 'organ', name: '胃', meta: '消化系统 · 腹部', note: '一个有弹性的口袋，暂存食物、搅拌，并用胃酸开始消化蛋白质。' },
+    { x: 177, y: 242, layer: 'organ', name: '肾', meta: '泌尿系统 · 腹部', note: '两个"过滤器"，每天把大量血液过滤一遍，把废物做成尿。' },
+    { x: 150, y: 262, layer: 'organ', name: '肠', meta: '消化系统 · 腹部', note: '小肠吸收养分，大肠回收水分。内壁的绒毛把吸收面积放大很多倍。' },
+    { x: 150, y: 297, layer: 'organ', name: '膀胱', meta: '泌尿系统 · 盆部', note: '尿液的临时仓库。装满时会把"该去厕所了"的信号送到大脑。' }
+  ];
+
+  function buildFigure() {
+    const skinLine = '#b9a98d', skinFill = '#efe7d6', boneLine = '#a8967a';
+    const limb = (d, w) => `<path d="${d}" fill="none" stroke="${skinLine}" stroke-width="${w + 3}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${skinFill}" stroke-width="${w}" stroke-linecap="round"/>`;
+    const boneLimb = (d, w) => `<path d="${d}" fill="none" stroke="${boneLine}" stroke-width="${w}" stroke-linecap="round"/>`;
+    const bone = [], muscle = [], organs = [];
+
+    /* ---- 骨骼 ---- */
+    bone.push(`<ellipse cx="150" cy="64" rx="19" ry="22" fill="#f6f0e2" stroke="${boneLine}" stroke-width="2"/>`);
+    bone.push(`<path d="M134 76 Q150 92 166 76" fill="none" stroke="${boneLine}" stroke-width="2"/>`);
+    bone.push(`<ellipse cx="143" cy="64" rx="4.6" ry="5.4" fill="#e4d8bf"/><ellipse cx="157" cy="64" rx="4.6" ry="5.4" fill="#e4d8bf"/>`);
+    bone.push(`<path d="M146 72 L150 78 L154 72 Z" fill="#e4d8bf"/>`);
+    for (let i = 0; i < 21; i++) bone.push(`<rect x="146" y="${90 + i * 9.6}" width="8" height="6.6" rx="2.4" fill="#f6f0e2" stroke="${boneLine}" stroke-width="1.1"/>`);
+    const ribW = [27, 33, 38, 41, 41, 38, 34, 29, 23, 17];
+    for (let i = 0; i < 10; i++) {
+      const y = 124 + i * 9.6, w = ribW[i], h = 34 + i * 1.3;
+      bone.push(`<path d="M150 ${y} C ${150 - w} ${y + 1}, ${150 - w - 4} ${y + h - 8}, 150 ${y + h}" fill="none" stroke="${boneLine}" stroke-width="2" stroke-linecap="round"/>`);
+      bone.push(`<path d="M150 ${y} C ${150 + w} ${y + 1}, ${150 + w + 4} ${y + h - 8}, 150 ${y + h}" fill="none" stroke="${boneLine}" stroke-width="2" stroke-linecap="round"/>`);
+    }
+    bone.push(`<rect x="147.6" y="122" width="4.8" height="94" rx="2" fill="#f6f0e2" stroke="${boneLine}" stroke-width="1.2"/>`);
+    bone.push(`<path d="M150 108 C136 102 121 105 110 116" fill="none" stroke="${boneLine}" stroke-width="3.6" stroke-linecap="round"/>`);
+    bone.push(`<path d="M150 108 C164 102 179 105 190 116" fill="none" stroke="${boneLine}" stroke-width="3.6" stroke-linecap="round"/>`);
+    bone.push(`<path d="M150 290 C136 286 120 294 118 308 C116 323 130 334 150 334 C170 334 184 323 182 308 C180 294 164 286 150 290 Z" fill="#f6f0e2" stroke="${boneLine}" stroke-width="2"/>`);
+    bone.push(`<circle cx="124" cy="318" r="7" fill="#f6f0e2" stroke="${boneLine}" stroke-width="2"/><circle cx="176" cy="318" r="7" fill="#f6f0e2" stroke="${boneLine}" stroke-width="2"/>`);
+    const sideBones = `
+      <path d="M110 130 C104 168 98 204 95 236" fill="none" stroke="${boneLine}" stroke-width="6.4" stroke-linecap="round"/>
+      <circle cx="95" cy="240" r="5.4" fill="#f6f0e2" stroke="${boneLine}" stroke-width="1.6"/>
+      <path d="M93 245 C92 270 91 296 91 314" fill="none" stroke="${boneLine}" stroke-width="3" stroke-linecap="round"/>
+      <path d="M99 245 C99 270 98 296 98 314" fill="none" stroke="${boneLine}" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M91 318 q-3 9 5 9 q7 0 5 -9" fill="none" stroke="${boneLine}" stroke-width="1.8"/>
+      <path d="M134 322 C133 356 132 396 132 430 C132 446 132 456 132 460" fill="none" stroke="${boneLine}" stroke-width="8.4" stroke-linecap="round"/>
+      <circle cx="132" cy="464" r="6.4" fill="#f6f0e2" stroke="${boneLine}" stroke-width="1.8"/>
+      <path d="M132 469 C132 505 132 548 132 584" fill="none" stroke="${boneLine}" stroke-width="6.6" stroke-linecap="round"/>
+      <path d="M138 472 C138 508 138 546 137 578" fill="none" stroke="${boneLine}" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M132 586 q-8 8 2 11 h13 q7 -3 1 -11" fill="#f6f0e2" stroke="${boneLine}" stroke-width="1.8"/>`;
+    bone.push(sideBones);
+    bone.push(`<g transform="translate(300,0) scale(-1,1)">${sideBones}</g>`);
+
+    /* ---- 肌肉 ---- */
+    const sideMuscle = `
+      <ellipse cx="109" cy="135" rx="13" ry="12" fill="#b23a25" opacity=".26" stroke="#b23a25" stroke-opacity=".3"/>
+      <ellipse cx="98" cy="192" rx="9" ry="26" fill="#b23a25" opacity=".24"/>
+      <ellipse cx="134" cy="384" rx="15" ry="62" fill="#b23a25" opacity=".24"/>
+      <ellipse cx="132" cy="532" rx="11" ry="34" fill="#b23a25" opacity=".24"/>`;
+    muscle.push(sideMuscle);
+    muscle.push(`<g transform="translate(300,0) scale(-1,1)">${sideMuscle}</g>`);
+    muscle.push(`<path d="M150 118 C136 114 120 120 113 134 C109 144 117 158 132 162 C142 164 150 159 150 150 Z" fill="#b23a25" opacity=".26"/>`);
+    muscle.push(`<path d="M150 118 C164 114 180 120 187 134 C191 144 183 158 168 162 C158 164 150 159 150 150 Z" fill="#b23a25" opacity=".26"/>`);
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 2; c++) muscle.push(`<rect x="${142 + c * 8}" y="${174 + r * 16}" width="6.6" height="12" rx="3" fill="#b23a25" opacity=".24"/>`);
+
+    /* ---- 内脏 ---- */
+    organs.push(`<path d="M150 46 C162 40 172 47 172 58 C172 68 164 74 156 74 L150 74 C142 74 134 68 134 58 C134 47 144 40 150 46 Z" fill="#d8a7a0" stroke="#a86b62" stroke-width="1.3"/>`);
+    organs.push(`<path d="M140 58 q10 -6 20 2 M138 65 q11 -4 20 3" fill="none" stroke="#a86b62" stroke-width=".9" opacity=".7"/>`);
+    organs.push(`<path d="M146 138 C133 131 118 143 117 166 C116 190 127 207 140 205 C146 204 147 197 147 189 Z" fill="#c99a95" opacity=".9" stroke="#a86b62" stroke-width="1.3"/>`);
+    organs.push(`<path d="M154 138 C167 131 182 143 183 166 C184 190 173 207 160 205 C154 204 153 197 153 189 Z" fill="#c99a95" opacity=".9" stroke="#a86b62" stroke-width="1.3"/>`);
+    organs.push(`<path d="M159 170 C171 163 181 174 176 187 C171 200 160 209 152 215 C146 204 143 190 148 181 C151 173 154 171 159 170 Z" fill="#b5473a" stroke="#8e3328" stroke-width="1.2"/>`);
+    organs.push(`<path d="M119 208 C133 200 152 202 160 212 C165 222 160 234 151 238 C137 242 121 234 118 222 Z" fill="#8f5a4a" opacity=".92" stroke="#6f4438" stroke-width="1.2"/>`);
+    organs.push(`<path d="M162 203 C173 198 184 207 183 219 C182 231 170 237 162 230 C155 224 156 209 162 203 Z" fill="#c08b74" opacity=".92" stroke="#96634e" stroke-width="1.2"/>`);
+    organs.push(`<path d="M126 240 C120 236 116 242 118 248 C120 255 127 258 131 254 C135 250 133 243 126 240 Z" fill="#9a6f6a" stroke="#7a5551" stroke-width="1"/>`);
+    organs.push(`<path d="M174 240 C180 236 184 242 182 248 C180 255 173 258 169 254 C165 250 167 243 174 240 Z" fill="#9a6f6a" stroke="#7a5551" stroke-width="1"/>`);
+    organs.push(`<path d="M132 250 q7 -8 14 0 t14 0 t14 0 M132 262 q7 8 14 0 t14 0 t14 0" fill="none" stroke="#b98a5f" stroke-width="5" stroke-linecap="round" opacity=".9"/>`);
+    organs.push(`<path d="M126 246 C120 264 128 278 150 278 C172 278 180 264 174 246" fill="none" stroke="#b98a5f" stroke-width="3.6" stroke-linecap="round" opacity=".55"/>`);
+    organs.push(`<ellipse cx="150" cy="296" rx="9" ry="7.5" fill="#cbb98a" stroke="#9c8a5b" stroke-width="1.2"/>`);
+
+    /* ---- 刻度（全身高度 %） ---- */
+    const ticks = [];
+    for (let y = 40; y <= 600; y += 40) {
+      ticks.push(`<path d="M22 ${y} h8 M270 ${y} h8" stroke="#c8b99c" stroke-width=".8"/>`);
+    }
+    ticks.push(`<text x="18" y="43" text-anchor="end" font-size="7.5" fill="#b3a68f">0%</text>`);
+    ticks.push(`<text x="18" y="323" text-anchor="end" font-size="7.5" fill="#b3a68f">50%</text>`);
+    ticks.push(`<text x="18" y="603" text-anchor="end" font-size="7.5" fill="#b3a68f">100%</text>`);
+
+    svg.innerHTML = `
+      <g class="layer l-skin">
+        ${limb('M134 300 C130 360 129 430 130 500 C131 545 131 578 132 592', 28)}
+        ${limb('M166 300 C170 360 171 430 170 500 C169 545 169 578 168 592', 28)}
+        ${limb('M110 128 C99 144 95 166 93 186 L89 250 C87 285 87 312 89 332', 18)}
+        ${limb('M190 128 C201 144 205 166 207 186 L211 250 C213 285 213 312 211 332', 18)}
+        <path d="M139 90 L161 90 L163 120 L137 120 Z" fill="${skinFill}" stroke="${skinLine}" stroke-width="1.4"/>
+        <path d="M150 104 C171 104 187 109 196 119 C202 126 203 135 201 144 C196 180 182 210 178 232 C177 258 182 288 188 312 L112 312 C118 288 123 258 122 232 C118 210 104 180 99 144 C97 135 98 126 104 119 C113 109 129 104 150 104 Z" fill="${skinFill}" stroke="${skinLine}" stroke-width="1.6"/>
+        <ellipse cx="150" cy="72" rx="26" ry="31" fill="${skinFill}" stroke="${skinLine}" stroke-width="1.6"/>
+        <ellipse cx="88" cy="340" rx="8.5" ry="11" fill="${skinFill}" stroke="${skinLine}" stroke-width="1.4"/>
+        <ellipse cx="212" cy="340" rx="8.5" ry="11" fill="${skinFill}" stroke="${skinLine}" stroke-width="1.4"/>
+        <path d="M120 592 q-5 10 10 10 h14 q7 -3 1 -10 z" fill="${skinFill}" stroke="${skinLine}" stroke-width="1.3"/>
+        <path d="M180 592 q5 10 -10 10 h-14 q-7 -3 -1 -10 z" fill="${skinFill}" stroke="${skinLine}" stroke-width="1.3"/>
+      </g>
+      <g class="layer l-muscle">${muscle.join('')}</g>
+      <g class="layer l-bone">${bone.join('')}</g>
+      <g class="layer l-organ">${organs.join('')}</g>
+      <g class="l-ticks">${ticks.join('')}</g>
+      <g class="pins"></g>`;
+  }
+
+  function buildPins() {
+    const wrap = $('.pins', svg);
+    pinData.forEach((p, i) => {
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('class', 'pin');
+      g.dataset.layer = p.layer;
+      g.dataset.i = i;
+      g.setAttribute('tabindex', '0');
+      g.setAttribute('role', 'button');
+      g.setAttribute('aria-label', p.name);
+      g.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); pickPin(p, g); } });
+      g.innerHTML = `<circle class="ring" cx="${p.x}" cy="${p.y}" r="6.4"/><circle class="dot" cx="${p.x}" cy="${p.y}" r="5.4"/><circle cx="${p.x}" cy="${p.y}" r="18" fill="transparent"/>`;
+      g.addEventListener('click', () => pickPin(p, g));
+      wrap.appendChild(g);
+    });
+  }
+
+  function pickPin(p, g) {
+    $$('.pin', svg).forEach(x => x.classList.remove('sel'));
+    g.classList.add('sel');
+    const card = $('#structCard');
+    card.classList.remove('empty');
+    card.innerHTML = `<p class="sc-name">${esc(p.name)}</p><p class="sc-meta">${esc(p.meta)}</p><p class="sc-note">${esc(p.note)}</p>`;
+    if (window.innerWidth < 900) {
+      const toast = $('#pinToast');
+      toast.innerHTML = `<b>${esc(p.name)}</b><span>${esc(p.meta)}</span>`;
+      toast.classList.add('on');
+      clearTimeout(pickPin._t);
+      pickPin._t = setTimeout(() => toast.classList.remove('on'), 3200);
+    }
+    if (!store.pins.includes(p.name)) {
+      store.pins.push(p.name);
+      save();
+      updatePinProgress();
+    }
+    if (!g.classList.contains('found')) g.classList.add('found');
+  }
+
+  function updatePinProgress() {
+    const n = Math.min(store.pins.length, 5);
+    $('#pinCount').textContent = n;
+    const task = $('#pinTask');
+    task.classList.toggle('done', n >= 5);
+    task.querySelector('.idx').textContent = n >= 5 ? '✓' : '◌';
+    if (n >= 5) task.querySelector('.tx').innerHTML = `已点亮 <b>${n}</b> / 5 个结构 — 侦察员上线`;
+  }
+
+  const depthText = [
+    ['皮肤', '最外面这一层，是人体最大的器官——皮肤。'],
+    ['肌肉', '皮肤变淡了。下面是一束一束的肌肉，它们收缩，骨头才会动。'],
+    ['骨骼', '只剩骨架。骨是身体的支架，也是钙的仓库。'],
+    ['内脏', '内脏各就各位：心在中间偏左，肺在两边，肝在右边，胃在左边。'],
+    ['全部', '全部叠在一起。真实的身体就是这样，一层贴着一层。']
+  ];
+  function setDepth(d) {
+    const all = d === 'all';
+    svg.dataset.depth = all ? 'false' : String(d);
+    if (all) svg.dataset.depth = 'all';
+    $$('.depth-btn').forEach(b => b.classList.toggle('on', b.dataset.depth === String(d)));
+    const lv = all ? 4 : Number(d);
+    $('#figLayerName').textContent = depthText[lv][0];
+    $('#depthHint').innerHTML = depthText[lv][1];
+    $$('.pin', svg).forEach(g => {
+      const layer = g.dataset.layer;
+      const show = all ? true : (layer === 'bone' ? lv >= 2 : lv >= 3);
+      g.classList.toggle('on', show);
+    });
+  }
+  $$('.depth-btn').forEach(b => b.addEventListener('click', () => setDepth(b.dataset.depth)));
+
+  /* ---------------- 配对 ---------------- */
+  const pairs = [
+    ['心脏', '循环系统'], ['肺', '呼吸系统'], ['胃', '消化系统'],
+    ['肾', '泌尿系统'], ['脑', '神经系统'], ['股骨', '骨骼与肌肉']
+  ];
+  let matchSel = null, matchDone = new Set();
+  function buildMatch() {
+    const org = $('#matchOrgans'), sys = $('#matchSystems');
+    org.innerHTML = ''; sys.innerHTML = '';
+    pairs.forEach(([o]) => {
+      const b = document.createElement('button');
+      b.className = 'match-item'; b.dataset.organ = o; b.textContent = o;
+      b.addEventListener('click', () => selectOrgan(b));
+      org.appendChild(b);
+    });
+    const shuffled = [...pairs];
+    for (let i = shuffled.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
+    if (shuffled.every((p, i) => p[1] === pairs[i][1])) shuffled.push(shuffled.shift());
+    shuffled.forEach(([, s]) => {
+      const b = document.createElement('button');
+      b.className = 'match-item'; b.dataset.system = s; b.textContent = s;
+      b.addEventListener('click', () => selectSystem(b));
+      sys.appendChild(b);
+    });
+    matchDone = new Set(store.match || []);
+    $$('.match-item', org).forEach(b => { if (matchDone.has(b.dataset.organ)) b.classList.add('matched'); });
+    $$('.match-item', sys).forEach(b => { if (matchDone.has(b.dataset.system)) b.classList.add('matched'); });
+    updateMatchCount();
+  }
+  function selectOrgan(b) {
+    if (b.classList.contains('matched')) return;
+    $$('#matchOrgans .match-item').forEach(x => x.classList.remove('sel'));
+    b.classList.add('sel'); matchSel = b;
+  }
+  function selectSystem(b) {
+    if (b.classList.contains('matched') || !matchSel) return;
+    const organ = matchSel.dataset.organ;
+    const ok = pairs.find(p => p[0] === organ)[1] === b.dataset.system;
+    if (ok) {
+      b.classList.add('matched'); matchSel.classList.add('matched'); matchSel.classList.remove('sel');
+      matchDone.add(organ); matchDone.add(b.dataset.system);
+      store.match = [...matchDone]; save();
+      matchSel = null; updateMatchCount();
+    } else {
+      b.classList.add('bad'); setTimeout(() => b.classList.remove('bad'), 320);
+    }
+  }
+  function updateMatchCount() {
+    const n = pairs.filter(([o]) => matchDone.has(o)).length;
+    $('#matchCount').textContent = n;
+    if (n === pairs.length) $('#matchCount').textContent = n + ' ✓';
+  }
+  $('#matchReset').addEventListener('click', () => {
+    store.match = []; save(); buildMatch();
+  });
+
+  /* ---------------- 寻宝表 ---------------- */
+  const hunt = [
+    { name: '胃', system: '消化系统', region: '腹部', note: '像一个有弹性的口袋：暂存食物、搅拌，并开始消化蛋白质。' },
+    { name: '膀胱', system: '泌尿系统', region: '盆部', note: '尿液的"临时仓库"，装满时会把信号送到大脑。' },
+    { name: '甲状腺', system: '内分泌系统', region: '颈部', note: '贴在气管前面的"小蝴蝶"，调节身体消耗能量的速度。' },
+    { name: '股骨', system: '骨骼与肌肉', region: '下肢', note: '人体最长、最结实的骨，一头连髋、一头连膝。' }
+  ];
+  const systems = ['消化系统', '泌尿系统', '内分泌系统', '骨骼与肌肉', '呼吸系统', '循环系统', '神经系统'];
+  const regions = ['头部', '颈部', '胸部', '腹部', '盆部', '上肢', '下肢'];
+  function buildHunt() {
+    const wrap = $('#huntWrap');
+    const rows = hunt.map((h, i) => {
+      const st = store.hunt?.[h.name] || {};
+      return `<tr>
+        <td class="name">${esc(h.name)}</td>
+        <td><select data-i="${i}" data-k="system"><option value="">选择</option>${systems.map(x => `<option ${st.system === x ? 'selected' : ''}>${x}</option>`).join('')}</select></td>
+        <td><select data-i="${i}" data-k="region"><option value="">选择</option>${regions.map(x => `<option ${st.region === x ? 'selected' : ''}>${x}</option>`).join('')}</select></td>
+        <td class="hunt-status ${st.ok ? 'ok' : ''}">${st.ok ? '✓' : ''}</td>
+      </tr>`;
+    }).join('');
+    wrap.innerHTML = `<table class="hunt-table">
+      <thead><tr><th>结构</th><th>系统</th><th>区域</th><th></th></tr></thead>
+      <tbody>${rows}</tbody></table>
+      <div style="display:flex;justify-content:flex-end;margin-top:8px"><button class="btn small" id="huntCheck">判定我的答案</button></div>`;
+    wrap.onchange = e => {
+      const sel = e.target.closest('select'); if (!sel) return;
+      const i = Number(sel.dataset.i);
+      store.hunt[hunt[i].name] = { ...(store.hunt[hunt[i].name] || {}), [sel.dataset.k]: sel.value, ok: false };
+      save();
+    };
+    $('#huntCheck').onclick = () => {
+      let good = 0;
+      $$('.hunt-table tbody tr', wrap).forEach((tr, i) => {
+        const sels = $$('select', tr);
+        const h = hunt[i];
+        const ok = sels[0].value === h.system && sels[1].value === h.region;
+        if (ok) good++;
+        const cell = $('.hunt-status', tr);
+        cell.textContent = ok ? '✓' : '×';
+        cell.className = 'hunt-status ' + (ok ? 'ok' : 'no');
+        tr.style.background = ok ? 'rgba(217,232,228,.32)' : '';
+        store.hunt[h.name] = { system: sels[0].value, region: sels[1].value, ok };
+      });
+      save();
+      const note = $('#huntNote');
+      note.innerHTML = good === 4
+        ? '<b>四行全对。</b>你已经能把结构放进"系统 + 区域"的坐标里了。'
+        : `对了 <b>${good}</b> / 4 行。错的先别改，回模型里点开它，看看右侧知识卡怎么写。`;
+    };
+  }
+
+  /* ---------------- 心跳 ---------------- */
+  const phaseData = [
+    { name: '心房收缩', desc: '心房先用力，把血挤进下面两个心室。这时房室瓣打开。', dots: 0 },
+    { name: '心室收缩', desc: '心室用力，把血泵向肺和全身。瓣膜关上，你听到的"扑通"就在这一下。', dots: 1 },
+    { name: '全心舒张', desc: '心肌放松，心腔变大，血从静脉回流，重新装满，准备下一拍。', dots: 2 }
+  ];
+  let beatTimer = null, phase = 0;
+  function renderPhase(p) {
+    phase = p;
+    const d = phaseData[p];
+    $('#beatPhase').textContent = d.name;
+    $('#beatDesc').textContent = d.desc;
+    for (let i = 0; i < 3; i++) $('#pd' + i).classList.toggle('on', i === p);
+    const atria = ['#chAtriaL', '#chAtriaR'], vents = ['#chVentL', '#chVentR'];
+    atria.forEach(x => { const e = $(x); e.style.transform = p === 0 ? 'scale(.82)' : 'scale(1)'; e.style.fill = p === 0 ? '#d8694f' : '#e9c2b6'; });
+    vents.forEach(x => { const e = $(x); e.style.transform = p === 1 ? 'scale(.86)' : 'scale(1)'; e.style.fill = p === 1 ? '#d8694f' : '#e9c2b6'; });
+    $('#flowIn').classList.toggle('on', p === 2);
+    $('#flowOutL').classList.toggle('on', p === 1);
+    $('#flowOutR').classList.toggle('on', p === 1);
+  }
+  function playBeat() {
+    if (beatTimer) { clearInterval(beatTimer); beatTimer = null; $('#beatPlay').textContent = '播放'; return; }
+    $('#beatPlay').textContent = '暂停';
+    beatTimer = setInterval(() => renderPhase((phase + 1) % 3), 1500);
+  }
+  $('#beatPlay').addEventListener('click', playBeat);
+  $('#beatStep').addEventListener('click', () => {
+    if (beatTimer) { clearInterval(beatTimer); beatTimer = null; $('#beatPlay').textContent = '播放'; }
+    renderPhase((phase + 1) % 3);
+  });
+
+  /* ---------------- 标签页 ---------------- */
+  $$('.tab').forEach(t => t.addEventListener('click', () => {
+    $$('.tab').forEach(x => { x.classList.remove('on'); x.setAttribute('aria-selected', 'false'); });
+    t.classList.add('on'); t.setAttribute('aria-selected', 'true');
+    $$('.panel').forEach(p => p.classList.toggle('on', p.id === 'panel-' + t.dataset.tab));
+  }));
+
+  /* ---------------- 小测 ---------------- */
+  const quiz = [
+    { q: '皮肤下面、把骨头包起来的，主要是什么？', o: ['肌肉', '神经', '血液', '空气'], a: 0, e: '肌肉贴着骨头长。它一收缩，就拉动骨头，身体才会动。' },
+    { q: '心脏属于哪个系统？', o: ['呼吸系统', '循环系统', '消化系统', '神经系统'], a: 1, e: '心脏是循环系统的"泵"：把血送进血管，血管再把血送到全身。' },
+    { q: '肺泡里的氧气，主要往哪个方向走？', o: ['从血液进入肺泡', '从肺泡进入血液', '留在肺泡里不动', '进入肋骨'], a: 1, e: '氧气从肺泡穿过薄壁进入毛细血管；二氧化碳则方向相反，从血液进入肺泡。' },
+    { q: '肾单位的主要工作是什么？', o: ['把食物磨碎', '过滤血液、形成尿', '把氧气送进血', '储存胆汁'], a: 1, e: '肾单位先过滤血液，再把有用的水和溶质重吸收回去，剩下的成为尿。' },
+    { q: '把皮肤设成"半透明"，能帮我们理解什么？', o: ['皮肤会发光', '身体结构有前后、深浅的位置关系', '骨头是软的', '器官会移动'], a: 1, e: '透明化去掉遮挡，让"里面"和"外面"的位置关系显出来——这是模型特有的观察方式。' },
+    { q: '关于这个 3D 人体模型，哪种说法是正确的？', o: ['它和真人一模一样', '它可以用来诊断疾病', '它是教学示意，不能代替医生', '它只适合医生看'], a: 2, e: '模型是简化、标准化的示意，去掉了脂肪和个体差异，不能用于诊断。' }
+  ];
+  let qi = 0, score = 0, answered = false, finished = false;
+  const letters = ['A', 'B', 'C', 'D'];
+
+  function renderQuiz() {
+    const cur = quiz[qi];
+    answered = false;
+    $('#quizProgress').textContent = `第 ${qi + 1} 题 / ${quiz.length}`;
+    $('#quizQ').textContent = cur.q;
+    $('#quizOptions').innerHTML = cur.o.map((t, i) =>
+      `<button class="option" data-i="${i}"><span class="letter">${letters[i]}</span><span>${esc(t)}</span></button>`).join('');
+    $('#quizFeedback').classList.remove('on');
+    $('#quizFeedback').textContent = '';
+    $('#quizNext').disabled = true;
+    $('#quizNext').textContent = qi === quiz.length - 1 ? '看结果 →' : '下一题 →';
+    $('#quizScore').textContent = `得分 ${score} / ${quiz.length}`;
+    $$('#quizOptions .option').forEach(b => b.addEventListener('click', () => answer(Number(b.dataset.i), b)));
+  }
+  function answer(i, btn) {
+    if (answered) return;
+    answered = true;
+    const cur = quiz[qi];
+    const ok = i === cur.a;
+    if (ok) { score++; btn.classList.add('correct'); }
+    else {
+      btn.classList.add('wrong');
+      $$('#quizOptions .option')[cur.a].classList.add('correct');
+    }
+    $$('#quizOptions .option').forEach(b => { b.disabled = true; if (!b.classList.contains('correct') && !b.classList.contains('wrong')) b.classList.add('dim'); });
+    const f = $('#quizFeedback');
+    f.innerHTML = `<b>${ok ? '对了。' : '再看一眼：'}</b>${esc(cur.e)}`;
+    f.classList.add('on');
+    $('#quizScore').textContent = `得分 ${score} / ${quiz.length}`;
+    $('#quizNext').disabled = false;
+    $('#quizNext').focus({ preventScroll: true });
+  }
+  function showResult() {
+    finished = true;
+    const total = quiz.length;
+    const msg = score >= 5 ? '看得细。下一步：去模型里挑一个你没点过的系统。'
+      : score >= 3 ? '基本看清了。把错的那题对应到某一站，回去再看一次。'
+      : '没关系，先回到第一站，把"层"和"位置"再看一遍。';
+    $('#quizQ').innerHTML = `这一轮：<b style="color:var(--red)">${score} / ${total}</b><br><span style="font-size:15px;font-family:var(--sans);color:var(--ink-2)">${msg}</span>
+      <span style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn small ghost" data-jump="1">回第一站：分层</button>
+        <button class="btn small ghost" data-jump="3">回第三站：心跳</button>
+      </span>`;
+    $$('#quizQ [data-jump]').forEach(b => b.addEventListener('click', () => go(Number(b.dataset.jump))));
+    $('#quizOptions').innerHTML = '';
+    $('#quizFeedback').classList.remove('on');
+    $('#quizNext').textContent = '再来一轮';
+    $('#quizNext').disabled = false;
+    $('#quizProgress').textContent = '完成';
+    $('#quizScore').textContent = `得分 ${score} / ${total}`;
+    store.quiz = { score, total, at: Date.now() }; save();
+  }
+  $('#quizNext').addEventListener('click', () => {
+    if (finished) { finished = false; qi = 0; score = 0; renderQuiz(); return; }
+    if (qi < quiz.length - 1) { qi++; renderQuiz(); }
+    else showResult();
+  });
+
+  $('#bvcScore').addEventListener('change', e => { store.bvc = e.target.value; save(); });
+
+  /* ---------------- 一句话解剖 ---------------- */
+  const sentFields = ['sentHere', 'sentJob', 'sentFail'];
+  function updateSentence() {
+    const name = $('#pickStruct').value;
+    const [a, b, c] = sentFields.map(id => $('#' + id).value.trim());
+    store.sent = { name, here: a, job: b, fail: c }; save();
+    const prev = $('#sentPreview');
+    if (!a && !b && !c) {
+      prev.innerHTML = '选一个结构，写下三句话，这里会拼成你的"一句话解剖"。';
+      return;
+    }
+    prev.innerHTML = `我选的是 <span class="blank">${esc(name)}</span>。它在 <span class="blank">${esc(a || '______')}</span>，负责 <span class="blank">${esc(b || '______')}</span>。如果它停工，<span class="blank">${esc(c || '______')}</span>。`;
+  }
+  sentFields.forEach(id => $('#' + id).addEventListener('input', updateSentence));
+
+  /* ---------------- 出门条 ---------------- */
+  function loadExit() {
+    const e = store.exit || {};
+    ['ex1', 'ex2', 'ex3'].forEach(k => { if (e[k]) $('#' + k).value = e[k]; });
+  }
+  $('#saveExit').addEventListener('click', () => {
+    store.exit = { ex1: $('#ex1').value, ex2: $('#ex2').value, ex3: $('#ex3').value };
+    store.savedAt = new Date().toLocaleString('zh-CN', { hour12: false });
+    save();
+    $('#saveNote').innerHTML = `<b style="color:var(--teal)">已保存在本机：</b>${esc(store.savedAt)}。换一台电脑不会同步。`;
+  });
+  ['ex1', 'ex2', 'ex3'].forEach(id => $('#' + id).addEventListener('input', () => {
+    store.exit = { ex1: $('#ex1').value, ex2: $('#ex2').value, ex3: $('#ex3').value }; save();
+  }));
+
+  function stampAll() {
+    const s = $('#finalStamp');
+    if (!s.classList.contains('pop')) { s.classList.add('pop'); }
+  }
+
+  /* ---------------- 教师手册 / 打印 ---------------- */
+  const guide = $('#guideOverlay');
+  function openGuide() { guide.classList.add('on'); guide.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; }
+  function closeGuide() { guide.classList.remove('on'); guide.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; }
+  $('#openGuide').addEventListener('click', openGuide);
+  $('#closeGuide').addEventListener('click', closeGuide);
+  guide.addEventListener('click', e => { if (e.target === guide) closeGuide(); });
+
+  function printDoc(kind) {
+    document.body.classList.add('print-' + kind);
+    const done = () => { document.body.classList.remove('print-' + kind); window.removeEventListener('afterprint', done); };
+    window.addEventListener('afterprint', done);
+    setTimeout(() => window.print(), 80);
+    setTimeout(done, 60000);
+  }
+  $$('[data-print]').forEach(b => b.addEventListener('click', () => printDoc(b.dataset.print)));
+
+  $('#openBodyVista').addEventListener('click', () => {
+    window.open('https://freedomintelligence.github.io/BodyVista/', 'bodyvista', 'noopener');
+  });
+
+  /* ---------------- 展开答案 ---------------- */
+  $$('[data-reveal]').forEach(b => b.addEventListener('click', () => {
+    const el = $('#' + b.dataset.reveal);
+    el.classList.toggle('on');
+    b.textContent = el.classList.contains('on') ? '收起' : '看答案';
+  }));
+
+  /* ---------------- 初始化 ---------------- */
+  $$('#guideDoc table').forEach(t => {
+    const first = t.rows[0];
+    if (first && first.querySelector('th') && first.parentElement.tagName !== 'THEAD') {
+      const thead = document.createElement('thead');
+      thead.appendChild(first);
+      t.insertBefore(thead, t.firstChild);
+    }
+  });
+
+  buildFigure();
+  buildPins();
+  updatePinProgress();
+  setDepth(0);
+  buildMatch();
+  buildHunt();
+  renderPhase(0);
+  renderQuiz();
+  loadExit();
+
+  const s = store.sent || {};
+  if (s.name) $('#pickStruct').value = s.name;
+  if (s.here) $('#sentHere').value = s.here;
+  if (s.job) $('#sentJob').value = s.job;
+  if (s.fail) $('#sentFail').value = s.fail;
+  updateSentence();
+  if (store.bvc) $('#bvcScore').value = store.bvc;
+  store.pins.forEach(name => {
+    const p = pinData.find(x => x.name === name);
+    if (p) { const g = $$('.pin', svg).find(x => Number(x.dataset.i) === pinData.indexOf(p)); if (g) g.classList.add('found'); }
+  });
+  go(step, true);
+})();
+</script>
+</body>
+</html>

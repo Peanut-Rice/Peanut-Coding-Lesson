@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#f5f0e7">
 <title>Peanut 的编程乐园 · 首页</title>
-<meta name="description" content="为小朋友准备的小馆：Logo 绘画课、星光琴键打字练习、小小物理实验室、拉布布 3D 收藏品、江山小史官历史课。全部离线可用。">
+<meta name="description" content="为小朋友准备的小馆：Logo 绘画课、星光琴键打字练习、小小物理实验室、拉布布 3D 收藏品、江山小史官历史课、身体探索局人体课。全部离线可用。">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥜</text></svg>">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -222,6 +222,7 @@
   .c-phys{--accent:#35707a}
   .c-labubu{--accent:#8f5f78}
   .c-hist{--accent:#9d5334}
+  .c-body{--accent:#3c6e66}
 
   /* ---------- 整行卡 ---------- */
   .card.wide{
@@ -268,6 +269,8 @@
     transition:transform .9s cubic-bezier(.22,1,.36,1);
   }
   .card.feature:hover .plate img{transform:scale(1.025)}
+  .card.feature .plate.light{background:#f1e9db;border-color:rgba(34,28,24,.14)}
+  .card.feature .plate.light figcaption{color:rgba(34,28,24,.55);text-shadow:none}
 
   /* ---------- 使用提示 ---------- */
   .notes{margin-top:clamp(46px,7vw,78px);padding-top:clamp(26px,4vw,38px);border-top:1px solid var(--hair)}
@@ -362,17 +365,17 @@
 
   <div class="masthead rise d1">
     <span class="brand"><span class="pea" aria-hidden="true">🥜</span> <b>Peanut's</b> Atelier</span>
-    <span>Vol. 01 · 五件作品</span>
+    <span>Vol. 01 · 六件作品</span>
   </div>
 
   <header>
     <span class="eyebrow rise d2">A small atelier for curious kids</span>
     <h1 class="rise d2"><span class="brand-serif">Peanut</span> 的编程乐园</h1>
     <p class="lead rise d3">
-      五件为小朋友做的小作品：画图、打字、做实验、逛 3D 展台、上一堂历史课。<br class="lead-br"><span class="nb">全部离线可用，</span><b>挑一件，开始吧。</b>
+      六件为小朋友做的小作品：画图、打字、做实验、逛 3D 展台、上一堂历史课，再拆开一具 3D 人体。<br class="lead-br"><span class="nb">全部离线可用，</span><b>挑一件，开始吧。</b>
     </p>
     <ul class="meta rise d3">
-      <li>五件作品</li>
+      <li>六件作品</li>
       <li>单文件</li>
       <li>完全离线</li>
       <li>MIT</li>
@@ -381,7 +384,7 @@
 
   <div class="section-head rise d3">
     <span class="lbl">Collection</span>
-    <span class="cn">收藏 · 五件小作品</span>
+    <span class="cn">收藏 · 六件小作品</span>
     <span class="line"></span>
   </div>
 
@@ -449,6 +452,21 @@
       <span class="go">开始上课 <span class="arrow">→</span></span>
     </a>
 
+    <a class="card c-body feature rise d6" href="身体探索局：一堂用 3D 解剖讲的人体课.html">
+      <div class="body">
+        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20.4S4.6 15.8 4.6 10.6A4.1 4.1 0 0 1 12 8a4.1 4.1 0 0 1 7.4 2.6c0 5.2-7.4 9.8-7.4 9.8Z"/><path d="M7.2 12.4h2.1l1.2-2.1 1.7 4.1 1.2-2h2.9"/></svg></span>
+        <h2>身体探索局<em class="en">Body Atlas Lab · 45-min Anatomy Lesson</em></h2>
+        <p>一堂 45 分钟的人体课：把 3D 人体一层层关掉——皮肤、肌肉、骨骼、内脏；做完器官配对，再去看心脏怎么跳、肺泡怎么换气。配教师手册与可打印学习单。</p>
+        <div class="tags">
+          <span>分层解剖</span><span>心跳与肺泡</span><span>五站课程</span><span>教师手册</span>
+        </div>
+        <span class="go">开始上课 <span class="arrow">→</span></span>
+      </div>
+      <figure class="plate light">
+        <img src="assets/body-lesson-preview.png" alt="身体探索局课程页：分层人体图与结构知识卡" width="1440" height="950" loading="lazy" decoding="async">
+      </figure>
+    </a>
+
   </main>
 
   <section class="notes rise d6">
@@ -460,9 +478,9 @@
     <div class="notes-grid">
       <p class="note"><b>浏览器</b> 用 Chrome 或 Edge 打开效果最好，手机上也能用。</p>
       <p class="note"><b>离线</b> 每个页面都是单个 HTML 文件，断网也能玩。</p>
-      <p class="note"><b>顺序</b> 建议：先画图 → 再练打字 → 做实验 → 逛 3D 展台 → 上一堂历史课。</p>
+      <p class="note"><b>顺序</b> 建议：先画图 → 再练打字 → 做实验 → 逛 3D 展台 → 上一堂历史课 → 拆一具 3D 人体。</p>
       <p class="note"><b>3D 展台</b> 拖拽旋转、滚轮缩放；按 <code>T</code> 转盘、按 <code>S</code> 保存静帧。</p>
-      <p class="note"><b>历史课配套</b> <a href="教师手册·江山小史官.pdf">教师手册</a> · <a href="疆域长卷·十八朝（A3海报）.pdf">A3 长卷海报</a>，都可以打印。</p>
+      <p class="note"><b>课程配套</b> 历史课 <a href="教师手册·江山小史官.pdf">教师手册</a> · <a href="疆域长卷·十八朝（A3海报）.pdf">A3 长卷海报</a>；人体课 <a href="教师手册·身体探索局.pdf">教师手册</a> · <a href="学习单·身体探索局.pdf">学习单</a>。都可以打印，人体课的 3D 模型需要联网。</p>
     </div>
   </section>
 
