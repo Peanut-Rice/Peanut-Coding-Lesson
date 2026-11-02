@@ -32,3 +32,6 @@ yarn-error.log*
 .tmp/
 temp/
 *.temp
+
+# BodyVista 本地离线构建（约 419MB，含第三方模型，默认不入库）
+bodyvista/
