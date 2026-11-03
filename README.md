@@ -2,6 +2,8 @@
 
 一个为小朋友设计的互动学习项目，包含编程工具、科学实验、历史地图课、3D 艺术展台和一堂 3D 人体课。
 
+**在线打开：<https://peanut-rice.github.io/Peanut-Coding-Lesson/>**（不用装任何东西；想离线用就把仓库下载下来，直接打开 `index.html`）
+
 [English Version](README_EN.md)
 
 ## 📚 项目内容

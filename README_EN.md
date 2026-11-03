@@ -2,6 +2,8 @@
 
 A coding-learning project designed for children, containing fun programming tools, interactive learning programs and a 3D art gallery.
 
+**Open it online: <https://peanut-rice.github.io/Peanut-Coding-Lesson/>** — nothing to install. For offline use, download the repo and open `index.html`.
+
 [中文版](README.md)
 
 ## 📚 Project Contents
