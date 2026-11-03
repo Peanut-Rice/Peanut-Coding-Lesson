@@ -409,6 +409,17 @@ canvas{display:block;flex-shrink:0}
   .left-panel{min-width:0}
   .speed-group input[type=range]{width:40px}
 }
+
+/* 回到作品乐园 */
+.back-home{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:3px 9px;border-radius:7px;
+  font-size:12px;line-height:1.5;text-decoration:none;white-space:nowrap;
+  color:var(--text2);border:1px solid var(--border);background:transparent;
+  transition:color .2s,border-color .2s;
+}
+.back-home:hover,.back-home:focus-visible{color:var(--accent);border-color:var(--accent)}
+@media(max-width:600px){.back-home{font-size:11px;padding:2px 7px}}
 </style>
 </head>
 <body class="theme-light">
@@ -416,6 +427,7 @@ canvas{display:block;flex-shrink:0}
 <!-- MAIN APP -->
 <div class="topbar">
   <div class="topbar-row1">
+    <a class="back-home" href="index.html" title="回到 Peanut 的编程乐园">&larr; 乐园</a>
     <span class="logo">&#x1F422; 编程启蒙课<span class="logo-sub">-三年三班</span></span>
     <span class="topbar-spacer"></span>
     <button class="info-btn" id="btnIntro" aria-label="查看原理入门">&#x1F4D6; 原理入门</button>

@@ -428,12 +428,39 @@ textarea::placeholder,input::placeholder{color:var(--ink-3)}
   .sheet-page{page-break-after:always}
   .sheet-page:last-child{page-break-after:auto}
 }
+
+/* 回到作品乐园 */
+a.back-home{
+  flex:0 0 auto;text-decoration:none;white-space:nowrap;
+  font-size:11.5px;letter-spacing:.06em;border:1px solid var(--rule-2);
+  padding:5px 9px;border-radius:2px;color:var(--ink-2);
+  background:rgba(251,247,237,.6);transition:.2s;
+}
+a.back-home:hover,a.back-home:focus-visible{background:var(--paper-2);color:var(--ink);border-color:var(--gold)}
+@media (max-width:700px){
+  a.back-home{width:24px;height:24px;justify-content:center;gap:0;padding:0;font-size:0;border-radius:50%}
+  a.back-home::before{content:"←";font-size:13px}
+  .topbar-in{gap:8px;padding:8px 12px}
+  .top-actions{flex:0 0 auto}
+  .top-actions .mini-btn{white-space:nowrap}
+}
+@media (max-width:480px){
+  .steps{gap:3px}
+  .steps .step{padding:4px 5px}
+  .brand b{font-size:15px}
+  .top-actions .mini-btn{font-size:11px;padding:4px 7px}
+}
+@media (max-width:359px){
+  .brand{display:none}
+  .topbar-in{gap:6px}
+}
 </style>
 </head>
 <body>
 <div class="progress-line" id="progressLine"></div>
 <header class="topbar">
   <div class="topbar-in">
+    <a class="back-home" href="index.html" title="回到 Peanut 的编程乐园">&larr; 乐园</a>
     <div class="brand"><b>身体探索局</b><span>Body Atlas Lab</span></div>
     <nav class="steps" id="steps" aria-label="课程站点">
       <button class="step" data-step="1"><em>1</em><span class="lbl">拆开看</span></button>

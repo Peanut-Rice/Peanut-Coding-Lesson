@@ -1,6 +1,7 @@
 # Third-Party Notices
 
 The Labubu 3D page (`拉布布3D：柔软怪物.html`) embeds the following third-party software and fonts.
+The typing practice page (`星光琴键：童话魔法乐章.html`) embeds one font, listed under Fonts.
 
 ## Three.js
 
@@ -34,7 +35,10 @@ Copyright 2015 The Cormorant Project Authors (github.com/CatharsisFonts/Cormoran
 **Jost**
 Copyright 2020 The Jost Project Authors (https://github.com/indestructible-type/Jost)
 
-Both fonts are licensed under the SIL Open Font License, Version 1.1.
+**Comfortaa** (embedded in `星光琴键：童话魔法乐章.html` as an inline base64 Latin subset)
+Copyright 2011 The Comfortaa Project Authors (https://github.com/googlefonts/comfortaa)
+
+All three fonts are licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at
 <http://scripts.sil.org/OFL>.
 

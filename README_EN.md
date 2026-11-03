@@ -66,11 +66,24 @@ A set of child-friendly coding learning projects.
 The child practises **spatial viewpoint and occlusion, light and colour, surface reflection, and composition**, plus the intuition that a 3D model is assembled from geometry, materials, lights and camera parameters—not simply drawn.  
 It is not a syntax lesson; it is a playful entry point to 3D graphics, best used as a parent–child activity or a classroom warm-up, for no more than about 20 minutes.
 
+### 6. 🫀 Body Atlas Lab · A 3D Anatomy Lesson
+**File:** `身体探索局：一堂用 3D 解剖讲的人体课.html`
+
+![Body Atlas Lab](assets/body-lesson-preview.webp)
+
+- A single-file, 45-minute lesson for ages 9–12, designed to be used alongside the open-source 3D anatomy platform [BodyVista](https://github.com/FreedomIntelligence/BodyVista) ([live demo](https://freedomintelligence.github.io/BodyVista/))
+- Five stations: **Peel it open** (a layered x-ray table — skin / muscle / bone / organs, with 14 clickable structures), **System hunt** (six organ–system pairs plus a four-row hunt sheet), **How it runs** (a three-beat heart animation and alveolar gas exchange), **Challenge** (six questions with explanations, bridging to the five "Anatomy Challenge" questions in the model), and **Wrap-up** (a one-sentence anatomy plus a 3–2–1 exit ticket)
+- Teacher's guide built in: 45-minute run sheet, station-by-station script and key questions, a BodyVista operation card (hide / outline / translucent / solid, life rhythm, micro exploration, anatomy challenge, clipping), anticipated questions, a 30-minute version and a no-network plan, an assessment rubric, and notes on boundaries and ethics; printable / saveable as PDF
+- A printable worksheet (with a "draw it" section); lighting progress, matching, the hunt, quiz scores and the exit ticket are stored in the local browser and never uploaded
+- All illustrations are inline SVG (layered body, heart, alveoli); no external images and no BodyVista model assets are bundled; models and content remain the property of their respective projects
+- Includes ready-made print files: `教师手册·身体探索局.pdf` and `学习单·身体探索局.pdf`
+- Licensing note: this project **does not bundle** BodyVista's models or pages, it only links to the official site; the course illustrations and text are original, and anatomical structure names are cited as factual teaching content. BodyVista's code is MIT, but the anatomical models come from third-party sources such as Z-Anatomy / BodyParts3D, which upstream marks with restrictions such as `NC exceptions; research only` — check the licences before redistributing
+
 ## 🚀 Quick Start
 
 1. Clone or download this repository
-2. Open the HTML files in a web browser
-3. Start learning to code!
+2. Open `index.html` — the catalogue lists all six pieces
+3. Pick one and start; every page also links back to the catalogue with "← 乐园"
 
 ## 📖 How to Use
 
@@ -102,6 +115,12 @@ It is not a syntax lesson; it is a playful entry point to 3D graphics, best used
 - Open "Little Discoverer" for four Chinese-language missions; tap "先看看模型" to step back, inspect the change, then return
 - Press `T` for the turntable, `S` to save a clean PNG still, and `C` to hide the interface
 
+### Body Atlas Lab
+- Open `身体探索局：一堂用 3D 解剖讲的人体课.html` and click "开始第一站"
+- Click "打开 BodyVista" when you need the 3D model; open it once before class so the browser can cache it
+- Click "教师手册" in the top-right for the teacher's guide; "打印学习单" prints the worksheet or saves it as PDF
+- Progress is stored in this computer's browser and does not sync across devices
+
 ## 🎨 Features
 
 - ✨ Friendly user interface
@@ -110,6 +129,7 @@ It is not a syntax lesson; it is a playful entry point to 3D graphics, best used
 - 🌐 Chinese language interface
 - 🧸 3D creation: procedural geometry, PBR materials, lighting studies and still export
 - 🔎 Learning through play: four Chinese discovery missions on viewpoint, lighting, materials and composition
+- 🫀 Layered anatomy with a five-station lesson, teacher's guide and printable worksheet
 - 🔄 Gradual learning curve
 
 ## 📝 Planned Features

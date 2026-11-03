@@ -70,7 +70,7 @@
 ### 6. 🫀 身体探索局 · 一堂用 3D 解剖讲的人体课
 **文件:** `身体探索局：一堂用 3D 解剖讲的人体课.html`
 
-![身体探索局](assets/body-lesson-preview.png)
+![身体探索局](assets/body-lesson-preview.webp)
 
 - 单文件课程页，45 分钟，面向 9–12 岁；配合开源 3D 人体平台 [BodyVista](https://github.com/FreedomIntelligence/BodyVista)（在线演示：[freedomintelligence.github.io/BodyVista](https://freedomintelligence.github.io/BodyVista/)）使用
 - 五站推进：**拆开看**（分层透视台：皮肤 / 肌肉 / 骨骼 / 内脏四层 + 14 个可点结构）、**系统寻宝**（6 对器官—系统配对 + 4 行寻宝表）、**运转**（心跳三拍动画 + 肺泡气体交换）、**挑战**（6 题带解析，衔接模型里的 5 题「解剖挑战」）、**收尾**（一句话解剖 + 3–2–1 出门条）
@@ -83,8 +83,8 @@
 ## 🚀 快速开始
 
 1. 克隆或下载本仓库
-2. 在网页浏览器中打开HTML文件
-3. 开始探索！
+2. 用浏览器打开 `index.html`（作品目录页，六件作品都在这里）
+3. 挑一件开始；每件作品左上角的「← 乐园」可以随时回到目录
 
 ## 📖 如何使用
 

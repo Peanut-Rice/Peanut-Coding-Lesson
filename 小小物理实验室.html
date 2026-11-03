@@ -237,6 +237,17 @@ kbd{background:var(--kbdBg);border-radius:5px;padding:1px 6px;font-family:inheri
   #quickbar{left:8px;right:8px}
   #controls{max-height:92dvh}
 }
+
+/* 回到作品乐园 */
+a.back-home{
+  display:inline-flex;align-items:center;
+  margin-right:8px;padding:2px 8px;border-radius:999px;
+  border:1px solid var(--line);color:var(--dim);
+  font-size:11px;line-height:1.5;text-decoration:none;vertical-align:middle;
+  transition:color .2s,border-color .2s;
+}
+a.back-home:hover,a.back-home:focus-visible{color:var(--accent);border-color:var(--accent)}
+@media (max-width:900px){a.back-home{font-size:10px;padding:1px 6px;margin-right:5px}}
 </style>
 </head>
 <body>
@@ -244,6 +255,7 @@ kbd{background:var(--kbdBg);border-radius:5px;padding:1px 6px;font-family:inheri
 
 <div id="ui">
   <div id="title" class="panel">
+    <a class="back-home" href="index.html" title="回到 Peanut 的编程乐园">&larr; 乐园</a>
     <b>🧪 小小物理实验室 <span class="badge" id="sceneBadge">直线实验</span></b>
     <small><span class="desk-hint">拖动可旋转视角 · 滚轮 / 双指缩放 · 所有物理量均为真实单位</span><span class="touch-hint">单指拖动旋转 · 双指缩放</span></small>
   </div>
