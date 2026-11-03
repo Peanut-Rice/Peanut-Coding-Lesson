@@ -1128,6 +1128,11 @@
     /* 回到作品乐园 */
     .back-home {
       flex: 0 0 auto;
+      /* .ui / .topbar 整体是 pointer-events:none（好让拖拽落到画布上），
+         这里的链接必须自己把指针事件要回来，否则点了没反应 */
+      pointer-events: auto;
+      position: relative;
+      z-index: 2;
       font-family: var(--sans);
       font-size: 10px;
       letter-spacing: 0.18em;
