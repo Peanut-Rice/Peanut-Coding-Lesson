@@ -45,6 +45,11 @@ for (const page of pages) {
   /* ---- 1. 外部资源 ---- */
   const resourceTags = [...raw.matchAll(/<(script|link|img|iframe|source|video|audio)\b[^>]*>/gi)];
   for (const [tag] of resourceTags) {
+    // <link rel="canonical"> 之类只是元信息，浏览器不会去下载
+    if (/^<link/i.test(tag)) {
+      const rel = (attr(tag, 'rel') || '').toLowerCase();
+      if (/(canonical|alternate|author|license|me)/.test(rel)) continue;
+    }
     const url = attr(tag, 'src') || attr(tag, 'href');
     if (url && /^https?:\/\//i.test(url)) fail(page, `外部资源: ${url.slice(0, 70)}`);
   }
