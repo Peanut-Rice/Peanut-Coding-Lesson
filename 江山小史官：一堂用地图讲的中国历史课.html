@@ -134,6 +134,14 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:600;margin:0;letter-spacing:1px
 .cover-art svg{display:block;width:100%;height:auto}
 .cover-art .cap{margin-top:10px;font-size:12px;color:var(--ink-3);text-align:center;letter-spacing:.5px}
 .start{margin-top:32px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+/* 上次看到哪一站（localStorage 里有记录时才出现） */
+#btnResume{
+  height:44px;padding:0 18px;border-radius:999px;
+  border:1px dashed var(--line);background:transparent;color:var(--ink-2);
+  font-size:13px;letter-spacing:.5px;font-family:inherit;cursor:pointer;transition:.2s;
+}
+#btnResume:hover,#btnResume:focus-visible{border-color:var(--gold);color:var(--ink);background:#fff}
+@media (max-width:700px){#btnResume{height:40px;padding:0 14px;font-size:12.5px}}
 .bigbtn{
   height:52px;padding:0 30px;border-radius:999px;border:1px solid var(--red);background:var(--red);
   color:#fff8ec;font-size:16px;letter-spacing:2px;box-shadow:0 12px 24px -14px rgba(141,43,34,.8);
@@ -555,6 +563,7 @@ a.back-home:hover,a.back-home:focus-visible{border-color:var(--gold);color:var(-
             </div>
             <div class="start">
               <button class="bigbtn" id="btnStart">上课 · 出发</button>
+              <button id="btnResume" type="button" hidden>继续上次 · <span id="resumeName"></span> →</button>
               <span class="hint">← → 键也可以翻页</span>
             </div>
             <p class="small" style="margin-top:18px;max-width:46ch">
@@ -1972,12 +1981,26 @@ function printPoster() {
    ============================================================ */
 const S = { view: 0, city: 'xian' };
 const VIEWS = ['v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'v6'];
+
+/* 记住看到哪一站：只写本机浏览器，不上传 */
+const PROGRESS_KEY = 'jiangshan-progress';
+const STATION_NAMES = ['封面', '时间机器', '城名侦探', '跟着东坡搬家', '古地名小试', '两千年长卷', '收尾'];
+function loadProgress() {
+  try {
+    const v = parseInt(localStorage.getItem(PROGRESS_KEY), 10);
+    return Number.isFinite(v) ? clamp(v, 0, VIEWS.length - 1) : 0;
+  } catch (e) { return 0; }
+}
+function saveProgress(v) {
+  try { localStorage.setItem(PROGRESS_KEY, String(v)); } catch (e) {}
+}
 const HINTS = ['封面：三条线索——何时、何地、何人', '第一关：时间机器 · 约 9 分钟', '第二关：城名侦探 · 约 7 分钟',
   '第三关：跟着东坡搬家 · 约 9 分钟', '第四关：古地名小试 · 约 5 分钟', '第五关：两千年长卷 · 约 4 分钟',
   '收尾：历史三问 · 约 3 分钟'];
 
-function showView(i) {
+function showView(i, persist = true) {
   S.view = clamp(i, 0, VIEWS.length - 1);
+  if (persist) saveProgress(S.view);
   VIEWS.forEach((id, k) => $('#' + id).classList.toggle('active', k === S.view));
   $$('.dot').forEach((d, k) => d.classList.toggle('on', k === S.view));
   $('#btnPrev').disabled = S.view === 0;
@@ -2030,6 +2053,7 @@ function initPlan() {
    启动
    ============================================================ */
 function boot() {
+  const saved = loadProgress();
   const prcFrame = TERR.find(f => f.key === 'prc');
   if (prcFrame) prcFrame.year = NOW_YEAR;     // 长卷最后一帧也跟着今年走
   initTimeline();
@@ -2040,7 +2064,14 @@ function boot() {
   initScroll();
   initNav();
   initPlan();
-  showView(0);
+  showView(0, false);
+  // 上次停在某一关（不是封面、也不是收尾）就递一个「继续上次」的入口，不自动跳转
+  if (saved > 0 && saved < VIEWS.length - 1) {
+    const btn = $('#btnResume');
+    $('#resumeName').textContent = STATION_NAMES[saved] || ('第 ' + (saved + 1) + ' 站');
+    btn.hidden = false;
+    btn.onclick = () => showView(saved);
+  }
 }
 document.addEventListener('DOMContentLoaded', boot);
 </script>

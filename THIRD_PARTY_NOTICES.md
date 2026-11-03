@@ -27,6 +27,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
+## BodyVista (linked, not bundled)
+
+The anatomy lesson (`身体探索局：一堂用 3D 解剖讲的人体课.html`) links to [BodyVista](https://github.com/FreedomIntelligence/BodyVista) but does not bundle, mirror or modify its code, pages or 3D models. The lesson's own illustrations are original inline SVG.
+
+- BodyVista source code: MIT (© the BodyVista authors).
+- The anatomical models BodyVista serves come from third-party sources such as Z-Anatomy and BodyParts3D. Upstream marks parts of that data with restrictions such as `NC exceptions; research only`, i.e. non-commercial use and research-only terms. Those terms are not the MIT licence, and they may apply to any model you host yourself — check them with the upstream project before redistributing or using the models commercially.
+
 ## Fonts
 
 **Cormorant Garamond**
