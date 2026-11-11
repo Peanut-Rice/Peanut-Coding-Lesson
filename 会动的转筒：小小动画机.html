@@ -33,7 +33,9 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .foot-home a:hover{color:var(--red-dk);border-color:#EBBFA6}
 
 /* ---------- 舞台 ---------- */
-.stage{position:relative;height:max(500px,calc(100svh - 262px));overflow:hidden;
+/* 舞台高度由 JS 按「视口高度 - 控制台实测高度」写死，这里只留一个兜底值：
+   第一行给不认 svh 的老安卓浏览器，第二行给现代浏览器，等脚本跑起来再覆盖。 */
+.stage{position:relative;height:500px;height:max(500px,calc(100svh - 262px));overflow:hidden;
   border-radius:0 0 30px 30px;background:#FFF6E4}
 #scene{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y;-webkit-user-select:none;user-select:none}
 .card{position:absolute;left:0;right:0;top:clamp(10px,2.2vh,26px);text-align:center;pointer-events:none;transition:opacity .6s var(--glide)}
@@ -235,7 +237,7 @@ body.premiere .stage{position:fixed;inset:0;height:auto;border-radius:0;z-index:
 .note p.foot-home{margin:26px 0 0;text-align:center;font-size:13px;line-height:1.6;font-weight:800}
 
 @media (max-width:760px){
-  .stage{height:max(480px,calc(100svh - 300px));border-radius:0 0 22px 22px}
+  .stage{height:480px;height:max(480px,calc(100svh - 300px));border-radius:0 0 22px 22px}
   .back-home{font-size:11px;padding:5px 10px;border-width:1.5px}
   h1{-webkit-text-stroke-width:5px;letter-spacing:.08em;text-indent:.08em}
   .band{grid-template-columns:repeat(6,1fr);bottom:12px;width:94vw}
@@ -252,7 +254,7 @@ body.premiere .stage{position:fixed;inset:0;height:auto;border-radius:0;z-index:
   .btn{padding:0 14px;font-size:17px;height:50px}
   .btn.main{min-width:150px;height:56px;font-size:20px}
   .readout{padding:6px 14px;min-height:48px;order:3}
-  .status{font-size:14px;max-width:24ch}
+  .status{font-size:14px;max-width:24ch;min-height:2.6em;display:flex;align-items:center}
   .front{width:100%;border-radius:16px 16px 0 0}
 }
 @media (prefers-reduced-motion:reduce){
@@ -670,7 +672,39 @@ brassG = gradStrip([[0, '#7d5c14'], [.2, '#d6a92f'], [.29, '#fff3c6'], [.36, '#f
 intG   = gradStrip([[0, '#2b1b12'], [.3, '#3d2718'], [.7, '#6b4630'], [.9, '#7d5538'], [1, '#4a3020']]);
 
 /* ================= 布局 ================= */
+/* 控制台（.apron）的高度随字号、换行、机型在 215~390px 之间跳，
+   早先写死「视口 - 262px」，个子高的平板就把最后那颗「我要画自己的小电影」挤出屏幕；
+   另有一类老安卓浏览器不认 svh，整条 max() 作废，舞台塌成 0，转筒直接看不见。
+   所以这里改成实测：视口（取小视口，浏览器工具栏显示时的那个）减去控制台实测高度。 */
+const apronEl = document.querySelector('.apron');
+const svhProbe = document.createElement('div');
+svhProbe.setAttribute('aria-hidden', 'true');
+svhProbe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:100svh;visibility:hidden;pointer-events:none';
+document.body.appendChild(svhProbe);
+function viewportH() {
+  const svh = svhProbe.getBoundingClientRect().height;
+  if (svh > 0) return svh;
+  return (window.visualViewport && window.visualViewport.height) || window.innerHeight || 0;
+}
+function fitStage() {
+  /* 首映时舞台变成 position:fixed;inset:0 自己撑满屏幕，行内高度必须让开 */
+  if (document.body.classList.contains('premiere')) {
+    if (stage.style.height) stage.style.height = '';
+    return false;
+  }
+  const minH = window.innerWidth <= 760 ? 480 : 500;
+  const avail = Math.floor(viewportH() - apronEl.getBoundingClientRect().height);
+  /* 装得下就正好撑满一屏；装不下就退让，但最矮也要 360，再矮转筒会被裁 */
+  const h = avail >= minH ? avail : Math.max(avail, 360);
+  if (stage.style.height === h + 'px') return false;
+  stage.style.height = h + 'px';
+  return true;
+}
+/* 控制台自己也会变高：状态文字换行、画完一部片子后多出来的那个「我的小电影」夹子。
+   变了就重新量一次，免得它把最下面的按钮顶出屏幕。 */
+if (window.ResizeObserver) new ResizeObserver(() => { if (fitStage()) layout(); }).observe(apronEl);
 function layout() {
+  fitStage();
   dpr = Math.min(2, window.devicePixelRatio || 1);
   W = stage.clientWidth; Hc = stage.clientHeight;
   cv.width = Math.round(W * dpr); cv.height = Math.round(Hc * dpr);
@@ -1562,7 +1596,7 @@ cv.addEventListener('pointermove', e => {
 });
 const endDrag = e => {
   if (!dragging) return;
-  const now = performance.now(), tap = Math.abs((e.clientX ?? dragX) - dragX0) < 7 && now - dragT0 < 260;
+  const now = performance.now(), tap = Math.abs((e.clientX != null ? e.clientX : dragX) - dragX0) < 7 && now - dragT0 < 260;
   dragging = false; cv.style.cursor = '';
   if (now - dragLast > 110) dragV = 0;
   omega = tap ? clamp(Math.max(omega, 1.9 * TAU), -MAXW, MAXW) : dragV;
@@ -1586,7 +1620,11 @@ crankEl.addEventListener('pointerup', endCrank); crankEl.addEventListener('point
 
 /* ================= 出发 ================= */
 let rt = 0;
-addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { layout(); setStrip(stripIdx); }, 80); });
+const refit = () => { clearTimeout(rt); rt = setTimeout(() => { layout(); setStrip(stripIdx); }, 80); };
+addEventListener('resize', refit);
+addEventListener('orientationchange', refit);
+/* 不认 svh 的浏览器只能靠 visualViewport 才知道工具栏把可视高度抢走了多少 */
+if (window.visualViewport && !(window.CSS && CSS.supports && CSS.supports('height', '100svh'))) window.visualViewport.addEventListener('resize', refit);
 layout(); setStrip(0); setActive(0); cells.forEach((c, i) => paintCell(i)); renderTasks(); restoreSave(); start();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => layout());
 })();
