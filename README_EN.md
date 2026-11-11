@@ -81,10 +81,23 @@ It is not a syntax lesson; it is a playful entry point to 3D graphics, best used
 - Includes ready-made print files: `教师手册·身体探索局.pdf` and `学习单·身体探索局.pdf`
 - Licensing note: this project **does not bundle** BodyVista's models or pages, it only links to the official site; the course illustrations and text are original, and anatomical structure names are cited as factual teaching content. BodyVista's code is MIT, but the anatomical models come from third-party sources such as Z-Anatomy / BodyParts3D, which upstream marks with restrictions such as `NC exceptions; research only` — check the licences before redistributing
 
+### 7. 🎠 The Living Zoetrope · A Little Picture Machine
+**File:** `会动的转筒：小小动画机.html`
+
+- A single-file, offline zoetrope toy: twelve drawings that differ only slightly are pasted inside a wooden drum — spin it and a horse starts running through the slits
+- Eight switchable strips: galloping horse, juggler, frog &amp; hoop, swallow, waltzing couple, ball &amp; star, plus a **car** and a **rocket**
+- Four ways to spin: the big 「转起来」 button, the three 「慢 / 刚好 / 快」 (slow / just right / fast) presets, flicking the drum with a finger, or winding the little brass crank; 「按住停住」 is the brake
+- A live 「pictures per second」 readout: 12 frames × revolutions per second, so a child can work out how fast it has to spin before it stops looking jerky
+- The "why" for kids: lift the lid and the slits leave with it, leaving twelve perfectly still drawings — animation is only still pictures in a row
+- **Draw your own movie**: a 12-frame board with an onion-skin ghost of the previous frame, 5 colours, 3 brush sizes, an eraser, undo, clear frame, 「照抄上一格」 (copy the previous frame), a **zoomed frame editor**, a live preview, and **autosave to this device**; 「送进转筒」 drops it into the drum and starts the spin
+- **Show it off**: a full-screen 「首映」 (premiere) mode with a title card, **GIF export** and a 12-frame contact sheet — all generated offline in the single file
+- **Four small missions** to tick off: find "just right", lift the lid and count, fill all 12 frames, and join frame 12 back to frame 1
+- Fully Chinese interface, big buttons, bright colours, works on a phone in portrait
+
 ## 🚀 Quick Start
 
 1. Clone or download this repository
-2. Open `index.html` — the catalogue lists all six pieces
+2. Open `index.html` — the catalogue lists all seven pieces
 3. Pick one and start; every page also links back to the catalogue with "← 乐园"
 
 ## 📖 How to Use
@@ -116,6 +129,12 @@ It is not a syntax lesson; it is a playful entry point to 3D graphics, best used
 - Click a row in Surface study to fly to the flock, the glass eyes or the gilded rose
 - Open "Little Discoverer" for four Chinese-language missions; tap "先看看模型" to step back, inspect the change, then return
 - Press `T` for the turntable, `S` to save a clean PNG still, and `C` to hide the interface
+
+### Living Zoetrope
+- Open `会动的转筒：小小动画机.html`
+- Pick a strip, press 「转起来」, then watch the slits on the drum (too blurry? slower; too stuttery? faster)
+- 「掀开盖子」 shows the twelve drawings inside; 「一格一格看」 steps through them one at a time
+- Tap 「我要画自己的小电影」 at the bottom for the 12-frame board — change each frame just a little, then 「送进转筒」 to watch your own animation
 
 ### Body Atlas Lab
 - Open `身体探索局：一堂用 3D 解剖讲的人体课.html` and click "开始第一站"
