@@ -687,15 +687,18 @@ function viewportH() {
   return (window.visualViewport && window.visualViewport.height) || window.innerHeight || 0;
 }
 function fitStage() {
-  /* 首映时舞台变成 position:fixed;inset:0 自己撑满屏幕，行内高度必须让开 */
-  if (document.body.classList.contains('premiere')) {
-    if (stage.style.height) stage.style.height = '';
-    return false;
+  const prem = document.body.classList.contains('premiere');
+  let h;
+  if (prem) {
+    /* 首映：舞台是 position:fixed，安卓的布局视口比看得见的那块高（工具栏那一条），
+       光靠 inset:0 会把转筒底座塞到工具栏底下，所以这里按小视口给一个实高。 */
+    h = Math.round(viewportH());
+  } else {
+    const minH = window.innerWidth <= 760 ? 480 : 500;
+    const avail = Math.floor(viewportH() - apronEl.getBoundingClientRect().height);
+    /* 装得下就正好撑满一屏；装不下就退让，但最矮也要 360，再矮转筒会被裁 */
+    h = avail >= minH ? avail : Math.max(avail, 360);
   }
-  const minH = window.innerWidth <= 760 ? 480 : 500;
-  const avail = Math.floor(viewportH() - apronEl.getBoundingClientRect().height);
-  /* 装得下就正好撑满一屏；装不下就退让，但最矮也要 360，再矮转筒会被裁 */
-  const h = avail >= minH ? avail : Math.max(avail, 360);
   if (stage.style.height === h + 'px') return false;
   stage.style.height = h + 'px';
   return true;
