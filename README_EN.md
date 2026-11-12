@@ -144,7 +144,7 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 
 1. Clone or download this repository
 2. Open `index.html` — the **six lessons** are listed there
-3. To play, take the **Cabinet** door under the title; inside, every toy links back with 「← 奇趣阁」, and the Cabinet links back to the atelier with 「← 乐园」
+3. To play, keep going past the lessons — the **Cabinet** door is at the bottom of the page; inside, every toy links back with 「← 奇趣阁」, and the Cabinet links back to the atelier with 「← 乐园」
 
 ## 📖 How to Use
 
@@ -189,7 +189,7 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 - Progress is stored in this computer's browser and does not sync across devices
 
 ### The Cabinet (six little toys: zoetrope / frost window / pin screen / wheel / marbling / koi)
-- Enter from the Cabinet door on the home page (`奇趣阁：六件小玩具.html`); 「← 奇趣阁」 at the top-left of each toy goes back to the Cabinet. Each toy has a 「四件小事」 list to discover
+- Enter from the Cabinet door at the bottom of the home page, after the lessons (`奇趣阁：六件小玩具.html`); 「← 奇趣阁」 at the top-left of each toy goes back to the Cabinet. Each toy has a 「四件小事」 list to discover
 - **Frost window**: press and hold to breathe, write in the fog; 「重新结霜」 gives you a fresh pane
 - **Pin screen**: push with a finger; 「印手」 for a handprint, 「按个字」 for a word, 「翻板」 to drop the board
 - **Wheel**: hold 「转起来」 (or the pedal), then drag on the clay; if it slumps, tap 「再团一团」, then glaze and fire
