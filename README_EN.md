@@ -1,12 +1,12 @@
 # Peanut's Coding Lesson 🎓
 
-A coding-learning project for children: programming tools, a physics lab, a history-on-the-map lesson, a 3D art toy, a 3D anatomy lesson — plus six small things to play with by hand: a zoetrope, a frosted window, a pin screen, a pottery wheel, a marbling tray and a koi pond.
+A coding-learning project for children: **six lessons** — programming, physics, history on the map, a 3D art toy, a 3D anatomy lesson — plus **the Cabinet**, six small things to play with by hand: a zoetrope, a frosted window, a pin screen, a pottery wheel, a marbling tray and a koi pond.
 
 **Open it online: <https://peanut-rice.github.io/Peanut-Coding-Lesson/>** — nothing to install. For offline use, download the repo and open `index.html`.
 
 [中文版](README.md)
 
-## 📚 Project Contents
+## 📚 Six Lessons
 
 A set of child-friendly coding learning projects.
 
@@ -81,7 +81,11 @@ It is not a syntax lesson; it is a playful entry point to 3D graphics, best used
 - Includes ready-made print files: `教师手册·身体探索局.pdf` and `学习单·身体探索局.pdf`
 - Licensing note: this project **does not bundle** BodyVista's models or pages, it only links to the official site; the course illustrations and text are original, and anatomical structure names are cited as factual teaching content. BodyVista's code is MIT, but the anatomical models come from third-party sources such as Z-Anatomy / BodyParts3D, which upstream marks with restrictions such as `NC exceptions; research only` — check the licences before redistributing
 
-### 7. 🎠 The Living Zoetrope · A Little Picture Machine
+## 🎪 The Cabinet · Six Little Toys
+
+The atelier is where you take a lesson; the Cabinet is where you play. Six single-file toys, no scores and no winning; each one has four small missions and a "why" written for kids.
+
+### 1. 🎠 The Living Zoetrope · A Little Picture Machine
 **File:** `会动的转筒：小小动画机.html`
 
 - A single-file, offline zoetrope toy: twelve drawings that differ only slightly are pasted inside a wooden drum — spin it and a horse starts running through the slits
@@ -94,7 +98,7 @@ It is not a syntax lesson; it is a playful entry point to 3D graphics, best used
 - **Four small missions** to tick off: find "just right", lift the lid and count, fill all 12 frames, and join frame 12 back to frame 1
 - Fully Chinese interface, big buttons, bright colours, works on a phone in portrait
 
-### 8. ❄️ Frost on the Window
+### 2. ❄️ Frost on the Window
 **File:** `霜窗：哈一口气的玻璃.html`
 
 - A single-file, offline night window: frost grows tip by tip along the frame and the scratches in the glass, six-armed flowers open, the street lamps outside melt into soft bokeh
@@ -104,7 +108,7 @@ It is not a syntax lesson; it is a playful entry point to 3D graphics, best used
 - **Four small missions**: breathe a clear patch / write one character in the fog / watch the frost grow back / watch a bead run down
 - No score, no timer, quiet enough for bedtime; works in phone portrait
 
-### 9. 🪡 The Pin Screen
+### 3. 🪡 The Pin Screen
 **File:** `针幕：一板会记住手印的针.html`
 
 - A single-file, offline pin-art toy: a dense field of steel pins that light up when pushed and fall dark when they retreat; a raking light makes the heads glint
@@ -112,7 +116,7 @@ It is not a syntax lesson; it is a playful entry point to 3D graphics, best used
 - 「印手」 presses a whole handprint; 「按个字」 presses a word (花生 / 你好 / 王 / 哈哈); 「翻板」 drops the whole board back with a rolling wave
 - **Four small missions**; best on a touchscreen, fine with a mouse
 
-### 10. 🏺 The Wheel · Throw a Pot
+### 4. 🏺 The Wheel · Throw a Pot
 **File:** `陶轮：一团会塌的泥.html`
 
 - A single-file, offline pottery wheel: a lump of wet clay spins on the head; press the pedal to spin, then pull the clay up, push it in, open the mouth with a finger
@@ -120,7 +124,7 @@ It is not a syntax lesson; it is a playful entry point to 3D graphics, best used
 - Choose a glaze (celadon / tenmoku / cobalt / oatmeal), fire it in the kiln; the finished pot lands on the shelf with a number, saved on this device
 - Four steps: throw → glaze → fire → shelf; **four small missions**; better on a big screen, still throwable in phone portrait
 
-### 11. 🌊 Suminagashi · The Marbling Tray
+### 5. 🌊 Suminagashi · The Marbling Tray
 **File:** `水拓画：水上的花纹.html`
 
 - A single-file, offline marbling tray: ink floats on the water, each drop pushes the rings before it into nested, squeezed bands
@@ -128,7 +132,7 @@ It is not a syntax lesson; it is a playful entry point to 3D graphics, best used
 - Lay a sheet, lift it, and the pattern is printed (mirrored, as a real print is) and hung on the drying rack; re-ink and pull another — seven or eight in a row is normal
 - Prints persist in the browser; tap one to see it large; **four small missions**; in phone portrait your finger is the comb
 
-### 12. 🐟 Koi Pond, Noon
+### 6. 🐟 Koi Pond, Noon
 **File:** `锦鲤池：养一池鱼.html`
 
 - A single-file, offline noon koi pond: each fish swims on a segmented spine, pectoral fins paddling and tail fanning; caustics on the floor, lily pads and fallen leaves on the surface
@@ -139,8 +143,8 @@ It is not a syntax lesson; it is a playful entry point to 3D graphics, best used
 ## 🚀 Quick Start
 
 1. Clone or download this repository
-2. Open `index.html` — the catalogue lists all twelve pieces
-3. Pick one and start; every page also links back to the catalogue with "← 乐园"
+2. Open `index.html` — the **six lessons** are listed there
+3. To play, take the **Cabinet** door under the title; inside, every toy links back with 「← 奇趣阁」, and the Cabinet links back to the atelier with 「← 乐园」
 
 ## 📖 How to Use
 
@@ -184,8 +188,8 @@ It is not a syntax lesson; it is a playful entry point to 3D graphics, best used
 - Click "教师手册" in the top-right for the teacher's guide; "打印学习单" prints the worksheet or saves it as PDF
 - Progress is stored in this computer's browser and does not sync across devices
 
-### The six little toys (zoetrope / frost window / pin screen / wheel / marbling / koi)
-- All reachable from `index.html`; 「← 乐园」 at the top-left goes back to the catalogue; each has a 「四件小事」 list to discover
+### The Cabinet (six little toys: zoetrope / frost window / pin screen / wheel / marbling / koi)
+- Enter from the Cabinet door on the home page (`奇趣阁：六件小玩具.html`); 「← 奇趣阁」 at the top-left of each toy goes back to the Cabinet. Each toy has a 「四件小事」 list to discover
 - **Frost window**: press and hold to breathe, write in the fog; 「重新结霜」 gives you a fresh pane
 - **Pin screen**: push with a finger; 「印手」 for a handprint, 「按个字」 for a word, 「翻板」 to drop the board
 - **Wheel**: hold 「转起来」 (or the pedal), then drag on the clay; if it slumps, tap 「再团一团」, then glaze and fire
