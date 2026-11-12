@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0C0E">
+<title>针幕 · 一板会记住手印的针</title>
+<meta name="description" content="一板密密麻麻的钢针：用手指按下去，针会记住你的手印；按一个手印、按出一个字、再把整块板翻一翻。单文件离线可用，触摸屏最好玩。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='88'>🪡</text></svg>">
+<style>
+  :root{
+    --black:#0B0C0E; --steel:#C9CED6; --mid:#6C7480; --white:#fff; --warm:#EFBE84;
+    --ui:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei UI","Microsoft YaHei","Noto Sans SC","Hiragino Sans GB",system-ui,sans-serif;
+    --settle:cubic-bezier(.16,.84,.24,1);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{
+    position:fixed; inset:0; overflow:hidden;
+    color:var(--steel); font-family:var(--ui);
+    background:
+      radial-gradient(120% 80% at 20% -12%, rgba(108,116,128,.20), transparent 58%),
+      radial-gradient(90% 60% at 82% 116%, rgba(108,116,128,.10), transparent 60%),
+      var(--black);
+    -webkit-font-smoothing:antialiased; -webkit-text-size-adjust:100%;
+    -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent;
+  }
+  button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;margin:0}
+  :focus-visible{outline:2px solid rgba(201,206,214,.9); outline-offset:3px; border-radius:14px}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;margin:0}
+
+  /* ---------------- 舞台 ---------------- */
+  .stage{
+    position:relative; height:100vh; height:100dvh; display:flex; flex-direction:column;
+    gap:9px; padding:10px 12px max(8px,env(safe-area-inset-bottom)); max-width:1180px; margin:0 auto;
+  }
+
+  /* ---------------- 顶栏 ---------------- */
+  .top{position:relative;flex:none;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px}
+  .back-home{
+    display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:8px 14px;border-radius:999px;
+    background:rgba(201,206,214,.07); border:1px solid rgba(201,206,214,.24); color:rgba(226,234,242,.92);
+    font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap;
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:background .25s var(--settle),border-color .25s var(--settle);
+  }
+  .back-home:hover,.back-home:focus-visible{background:rgba(201,206,214,.14);border-color:rgba(201,206,214,.5)}
+  .back-home i{font-style:normal;font-size:15px;line-height:1}
+
+  .headline{position:absolute;left:50%;top:0;transform:translateX(-50%);text-align:center;pointer-events:none;width:max-content;max-width:62%}
+  h1{
+    margin:0;font-size:clamp(21px,3.4vw,27px);font-weight:500;line-height:1.2;
+    letter-spacing:.42em;text-indent:.42em;color:rgba(233,239,246,.95);
+    text-shadow:0 2px 22px rgba(0,0,0,.7);
+  }
+  .tasks-btn{
+    display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:8px 13px;border-radius:999px;
+    background:rgba(201,206,214,.07);border:1px solid rgba(201,206,214,.24);color:rgba(226,234,242,.92);
+    font-size:13px;font-weight:600;white-space:nowrap;
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:background .25s var(--settle),border-color .25s var(--settle);
+  }
+  .tasks-btn:hover,.tasks-btn:focus-visible{background:rgba(201,206,214,.14);border-color:rgba(201,206,214,.5)}
+  .tasks-btn b{font-weight:700;color:var(--warm);font-size:12px;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+
+  .hint{
+    flex:none; align-self:center; display:inline-flex;align-items:center;gap:7px;margin:0;
+    padding:5px 14px 6px;border-radius:999px;white-space:nowrap;
+    background:rgba(201,206,214,.05);border:1px solid rgba(201,206,214,.14);
+    color:rgba(214,222,232,.82);font-size:clamp(11.5px,1.6vw,13px);letter-spacing:.02em;
+    transition:opacity .8s var(--settle),transform .8s var(--settle);
+  }
+  .hint .dot{width:6px;height:6px;border-radius:50%;background:var(--warm);box-shadow:0 0 9px rgba(239,190,132,.9);animation:pulse 2.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+  .hint.gone{opacity:0;transform:translateY(-6px)}
+
+  /* ---------------- 针板 ---------------- */
+  .rig{position:relative;flex:1 1 0;min-height:0;display:flex;width:100%;max-width:1040px;margin:0 auto;perspective:2000px}
+  .frame{
+    position:relative;flex:1;min-width:0;display:flex;flex-direction:column;
+    padding:clamp(7px,.9vw,11px); border-radius:clamp(15px,1.9vw,22px);
+    background:
+      radial-gradient(120% 90% at 16% -8%, rgba(255,255,255,.10), transparent 55%),
+      linear-gradient(158deg,#24272c 0%,#121417 24%,#0b0c0e 58%,#060708 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.20), inset 0 -1px 0 rgba(255,255,255,.045),
+      0 0 0 1px #000, 0 26px 54px -20px rgba(0,0,0,.95), 0 5px 14px rgba(0,0,0,.6);
+    transform-origin:50% 58%;
+  }
+  .frame.flipping{animation:boardFlip .92s var(--settle)}
+  @keyframes boardFlip{
+    0%{transform:rotateX(0) translateY(0)}
+    24%{transform:rotateX(-13deg) translateY(-5px)}
+    62%{transform:rotateX(4deg) translateY(1px)}
+    100%{transform:rotateX(0) translateY(0)}
+  }
+  .well{
+    position:relative; flex:1; min-height:0; overflow:hidden;
+    border-radius:clamp(9px,1.3vw,14px); background:#050607;
+    box-shadow:0 0 0 1px #000, 0 1px 0 1px rgba(201,206,214,.12);
+  }
+  #field{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:none;cursor:none}
+  .well::before{
+    content:"";position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;
+    background:linear-gradient(112deg,transparent 29%,rgba(255,255,255,.045) 30.2%,rgba(255,255,255,.012) 42%,transparent 43%,transparent 49%,rgba(255,255,255,.022) 49.6%,transparent 54%);
+  }
+  .well::after{
+    content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;
+    box-shadow:inset 0 0 16px 4px rgba(0,0,0,.8), inset 0 2px 6px rgba(0,0,0,.85);
+  }
+  .sweep{
+    position:absolute;inset:-40% -70%;z-index:5;pointer-events:none;opacity:0;
+    background:linear-gradient(104deg,transparent 40%,rgba(255,255,255,.17) 48%,rgba(255,255,255,.05) 54%,transparent 63%);
+    transform:translateX(-55%);
+  }
+  .sweep.run{animation:sweepRun .92s var(--settle) both}
+  @keyframes sweepRun{0%{opacity:0;transform:translateX(-58%)}22%{opacity:1}100%{opacity:0;transform:translateX(58%)}}
+
+  .screw{
+    position:absolute;width:5px;height:5px;border-radius:50%;z-index:2;
+    background:
+      linear-gradient(45deg,transparent 42%,rgba(11,12,14,.9) 42% 58%,transparent 58%),
+      radial-gradient(circle at 34% 30%,#fff,#6C7480 58%,#24272c);
+    box-shadow:0 0 0 1px rgba(0,0,0,.75);
+  }
+  .screw.tl{left:2px;top:2px}.screw.tr{right:2px;top:2px}.screw.bl{left:2px;bottom:2px}.screw.br{right:2px;bottom:2px}
+
+  #cursor{
+    position:fixed;left:0;top:0;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;z-index:9;
+    pointer-events:none;opacity:0;transition:opacity .25s var(--settle),width .22s var(--settle),height .22s var(--settle),margin .22s var(--settle);
+    border:1px solid rgba(201,206,214,.5);
+    background:radial-gradient(circle,rgba(255,255,255,.14),transparent 62%);
+    box-shadow:0 0 16px rgba(201,206,214,.18);
+  }
+  #cursor.handmode{width:74px;height:74px;margin:-37px 0 0 -37px;border-style:dashed;border-color:rgba(239,190,132,.6)}
+  #cursor.show{opacity:1}
+
+  /* ---------------- 控制台 ---------------- */
+  .dock{flex:none;display:flex;flex-direction:column;gap:8px;width:100%;max-width:560px;margin:0 auto}
+  .acts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+
+  .act{
+    position:relative;height:58px;border-radius:14px;border:1px solid #34383f;
+    background:linear-gradient(180deg,#1e2227 0%,#121417 52%,#0a0b0d 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 3px 0 #000,0 10px 18px -10px rgba(0,0,0,.9);
+    color:#9aa1ab;font-size:15px;font-weight:600;letter-spacing:.04em;
+    display:flex;align-items:center;justify-content:center;gap:7px;padding:0 6px;
+    touch-action:manipulation;overflow:hidden;
+    transition:transform .16s var(--settle),color .25s var(--settle),border-color .25s var(--settle),box-shadow .2s var(--settle),background .25s var(--settle);
+  }
+  .act svg{width:21px;height:21px;flex:none;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s var(--settle)}
+  .act:hover{color:#d7dde5;border-color:#4a5058;background:linear-gradient(180deg,#252a31 0%,#16181c 52%,#0d0e11 100%)}
+  .act:active{transform:translateY(2px);box-shadow:inset 0 2px 6px rgba(0,0,0,.9),0 1px 0 #000}
+  .act.on{
+    color:#fff;border-color:#7d8794;
+    background:linear-gradient(180deg,#333a43 0%,#202429 55%,#15181c 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.30),inset 0 -8px 14px -10px rgba(255,255,255,.35),0 3px 0 #000,0 10px 18px -10px rgba(0,0,0,.9),0 0 0 1px rgba(201,206,214,.14);
+  }
+  .act.on svg{transform:translateY(-1px);filter:drop-shadow(0 0 5px rgba(255,255,255,.55))}
+  .act.busy{pointer-events:none;opacity:.5}
+
+  .words{display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px}
+  .words-label{font-size:12px;color:#79808b;letter-spacing:.06em;white-space:nowrap;margin-right:1px}
+  .word{
+    flex:1 1 0;min-width:0;max-width:96px;height:46px;border-radius:11px;border:1px solid #2c3037;
+    background:linear-gradient(180deg,#22262c 0%,#121417 55%,#0c0d10 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.11),0 2px 0 #000,0 7px 12px -8px rgba(0,0,0,.9);
+    color:#e7ebf1;font-size:19px;font-weight:700;letter-spacing:.08em;line-height:1;
+    display:flex;align-items:center;justify-content:center;padding:0 4px;
+    touch-action:manipulation;transition:transform .14s var(--settle),box-shadow .2s,color .2s,border-color .2s;
+  }
+  .word:hover{border-color:#4a5058;color:#fff}
+  .word:active{transform:translateY(2px);box-shadow:inset 0 2px 5px rgba(0,0,0,.9),0 1px 0 #000}
+  .word.pressed{color:var(--warm);border-color:rgba(239,190,132,.55)}
+
+  .rail{display:flex;align-items:center;justify-content:center;gap:8px;min-height:40px}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;height:44px;padding:0 14px;border-radius:999px;
+    border:1px solid rgba(201,206,214,.2);background:rgba(201,206,214,.05);
+    color:rgba(214,222,232,.72);font-size:12px;letter-spacing:.04em;white-space:nowrap;
+    touch-action:manipulation;transition:background .25s var(--settle),color .25s var(--settle),border-color .25s var(--settle);
+  }
+  .chip:hover{background:rgba(201,206,214,.12);color:#fff;border-color:rgba(201,206,214,.42)}
+  .chip svg{width:17px;height:14px;flex:none;overflow:visible}
+  .chip svg .w{transition:opacity .25s var(--settle)}
+  .chip svg .x{opacity:0;transition:opacity .25s var(--settle)}
+  .chip[aria-pressed="true"]{color:var(--warm);border-color:rgba(239,190,132,.45);background:rgba(239,190,132,.08)}
+  .chip.on{color:var(--warm);border-color:rgba(239,190,132,.45);background:rgba(239,190,132,.08)}
+  .chip[aria-pressed="true"] svg .w{opacity:0}
+  .chip[aria-pressed="true"] svg .x{opacity:1}
+  .foot{margin:0;text-align:center;font-size:11.5px;line-height:1.6;color:rgba(201,206,214,.55)}
+  .foot a{color:rgba(201,206,214,.62);text-decoration:none;border-bottom:1px dotted rgba(201,206,214,.32);padding-bottom:1px}
+  .foot a:hover,.foot a:focus-visible{color:#fff;border-color:var(--warm)}
+
+  /* ---------------- 小抽屉 ---------------- */
+  .scrim{position:fixed;inset:0;z-index:18;background:rgba(3,4,6,.6);opacity:0;pointer-events:none;
+    transition:opacity .45s var(--settle);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+  .scrim.open{opacity:1;pointer-events:auto}
+  .sheet{
+    position:fixed;left:50%;bottom:0;z-index:19;width:min(520px,100%);max-height:86vh;max-height:86dvh;
+    overflow:auto;-webkit-overflow-scrolling:touch;transform:translate(-50%,104%);
+    transition:transform .55s var(--settle);
+    padding:24px clamp(18px,5vw,30px) calc(24px + env(safe-area-inset-bottom));
+    background:linear-gradient(180deg,#1a1d22 0%,#101216 55%,#0a0b0d 100%);
+    border:1px solid rgba(201,206,214,.16);border-bottom:0;border-radius:24px 24px 0 0;
+    box-shadow:0 -26px 70px rgba(0,0,0,.7);color:rgba(222,229,237,.9);
+  }
+  .sheet.open{transform:translate(-50%,0)}
+  .sheet-close{position:absolute;right:14px;top:14px;width:40px;height:40px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(201,206,214,.08);border:1px solid rgba(201,206,214,.2);color:rgba(235,241,248,.9);font-size:15px;line-height:1}
+  .sheet-close:hover{background:rgba(201,206,214,.16)}
+  .sheet h2{margin:0 0 6px;font-size:18px;font-weight:600;letter-spacing:.05em;color:#EDF3FA;display:flex;align-items:baseline;gap:9px;padding-right:44px}
+  .sheet .lead{margin:0 0 4px;font-size:12.5px;line-height:1.7;color:rgba(201,206,214,.55)}
+  .sheet p{margin:0 0 14px;font-size:13.5px;line-height:1.95;color:rgba(210,221,232,.82)}
+  .sheet p b{color:#fff;font-weight:600}
+  .sheet .tasks-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+    margin:16px 0 10px;padding-top:16px;border-top:1px solid rgba(201,206,214,.14);
+    font-size:15px;font-weight:600;letter-spacing:.05em;color:#EDF3FA}
+  .sheet .tasks-head span{font-size:11.5px;font-weight:700;letter-spacing:.1em;color:var(--warm)}
+  .tasks{display:grid;gap:6px}
+  .task{display:flex;align-items:flex-start;gap:11px;padding:9px 13px;border-radius:14px;
+    background:rgba(201,206,214,.045);border:1px solid rgba(201,206,214,.1);
+    transition:background .3s var(--settle),border-color .3s var(--settle)}
+  .task .tick{flex:none;width:20px;height:20px;margin-top:1px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;border:1px solid rgba(201,206,214,.35);
+    color:transparent;font-size:12px;line-height:1;transition:all .3s var(--settle)}
+  .task p{margin:0;font-size:13px;line-height:1.55;color:rgba(220,229,238,.88)}
+  .task small{display:block;margin-top:2px;font-size:11.5px;line-height:1.5;color:rgba(196,208,222,.55);letter-spacing:.01em}
+  .task.done{background:rgba(239,190,132,.09);border-color:rgba(239,190,132,.28)}
+  .task.done .tick{background:var(--warm);border-color:var(--warm);color:#191307}
+  .task.done p{color:#fff}
+  .sheet .foot-home{margin:20px 0 0;padding-top:16px;border-top:1px solid rgba(201,206,214,.14);text-align:center;font-size:13px}
+  .sheet .foot-home a{color:rgba(201,206,214,.72);text-decoration:none;border-bottom:1px dotted rgba(201,206,214,.35);padding-bottom:2px}
+  .sheet .foot-home a:hover,.sheet .foot-home a:focus-visible{color:#fff;border-color:var(--warm)}
+
+  .toast{
+    position:fixed;left:50%;bottom:calc(208px + env(safe-area-inset-bottom));z-index:21;
+    transform:translate(-50%,14px);opacity:0;pointer-events:none;
+    padding:9px 17px;border-radius:999px;background:rgba(16,18,22,.94);
+    border:1px solid rgba(239,190,132,.42);color:#FFF3E2;font-size:13px;letter-spacing:.02em;white-space:nowrap;
+    box-shadow:0 14px 40px rgba(0,0,0,.55);max-width:90vw;
+    transition:opacity .3s var(--settle),transform .4s var(--settle);
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  /* 「这是怎么做到的」：盖住按钮区，不盖住针板 */
+  .why{
+    position:fixed; left:50%; bottom:calc(10px + env(safe-area-inset-bottom)); z-index:14;
+    width:min(560px,calc(100% - 20px)); max-height:min(52vh,260px); overflow:auto;
+    transform:translate(-50%,14px); opacity:0; pointer-events:none;
+    padding:12px 17px 13px; border-radius:18px;
+    background:linear-gradient(180deg,rgba(30,34,40,.98),rgba(13,15,18,.99));
+    border:1px solid rgba(201,206,214,.2);
+    box-shadow:0 22px 60px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.07);
+    color:rgba(216,225,235,.86);
+    transition:opacity .28s var(--settle),transform .36s var(--settle);
+  }
+  .why.open{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+  .why h2{margin:0 0 6px;font-size:14px;font-weight:600;letter-spacing:.04em;color:#EDF3FA;padding-right:34px}
+  .why p{margin:0 0 6px;font-size:12.5px;line-height:1.72;color:rgba(206,217,229,.8)}
+  .why p:last-child{margin-bottom:0}
+  .why b{color:#fff;font-weight:600}
+  .why-close{
+    position:absolute;right:8px;top:8px;width:34px;height:34px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:13px;line-height:1;
+    background:rgba(201,206,214,.08);border:1px solid rgba(201,206,214,.18);color:rgba(235,241,248,.85);
+  }
+  .why-close:hover{background:rgba(201,206,214,.16)}
+
+  @media (max-width:420px){
+    .stage{padding:8px 10px max(6px,env(safe-area-inset-bottom));gap:7px}
+    .back-home{padding:7px 11px;font-size:12.5px}
+    .back-home i{font-size:14px}
+    .tasks-btn{padding:7px 11px;font-size:12.5px}
+    .act{height:56px;font-size:14px;gap:6px}
+    .act svg{width:19px;height:19px}
+    .word{font-size:18px;height:44px}
+    .words-label{font-size:11px}
+    .toast{font-size:12px;padding:8px 14px;bottom:calc(202px + env(safe-area-inset-bottom))}
+  }
+  @media (hover:none){#cursor{display:none}}
+
+  /* 横屏矮屏：板在左，按钮在右 */
+  @media (orientation:landscape) and (max-height:600px){
+    .stage{
+      display:grid;grid-template-columns:minmax(0,1fr) clamp(190px,25vw,250px);
+      grid-template-rows:auto minmax(0,1fr);gap:6px 12px;padding:6px 12px;
+    }
+    .top{grid-column:1/-1;grid-row:1;min-height:38px}
+    .hint{display:none}
+    .rig{grid-column:1;grid-row:2;max-width:none;margin:0}
+    .dock{grid-column:2;grid-row:2;max-width:none;margin:0;justify-content:center;gap:6px}
+    .acts{grid-template-columns:1fr;gap:6px}
+    .act{height:46px;font-size:14px}
+    .words{flex-wrap:wrap;gap:5px;min-height:0}
+    .word{flex:1 1 40%;height:40px;max-width:none;font-size:17px}
+    .words-label{display:none}
+    .rail{min-height:34px}
+    .chip{height:34px;font-size:11px;padding:0 10px}
+    .foot{font-size:10.5px}
+    .toast{bottom:calc(20px + env(safe-area-inset-bottom))}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .hint .dot{animation:none;opacity:.9}
+    .frame.flipping{animation:none}
+    .sweep.run{animation:none}
+    .hint,.hint.gone,#cursor,.act,.act svg,.act::before,.word,.chip,.sheet,.scrim,.toast,.back-home,.tasks-btn,.frame{
+      transition-duration:.01s !important;animation:none !important;
+    }
+  }
+</style>
+</head>
+<body>
+<main class="stage">
+  <header class="top">
+    <a class="back-home" href="index.html" title="回到 Peanut 的编程乐园"><i aria-hidden="true">←</i>乐园</a>
+    <div class="headline"><h1>针 幕</h1></div>
+    <button class="tasks-btn" id="openTasks" type="button" aria-haspopup="dialog">四件小事 <b id="taskCount">0/4</b></button>
+  </header>
+
+  <p class="hint" id="hint"><span class="dot" aria-hidden="true"></span>用手指按下去，针会记住你的手</p>
+
+  <section class="rig" aria-label="针幕玩具">
+    <div class="frame" id="frame">
+      <div class="well">
+        <canvas id="field" role="img" aria-label="一块密密麻麻的钢针。按住并拖动，针会被按下去，然后慢慢弹回原样。"></canvas>
+        <div class="sweep" id="sweep" aria-hidden="true"></div>
+      </div>
+      <i class="screw tl" aria-hidden="true"></i><i class="screw tr" aria-hidden="true"></i>
+      <i class="screw bl" aria-hidden="true"></i><i class="screw br" aria-hidden="true"></i>
+    </div>
+    <div id="cursor" aria-hidden="true"></div>
+  </section>
+
+  <div class="dock">
+    <div class="acts" role="group" aria-label="怎么按">
+      <button class="act on" id="finger" type="button" aria-pressed="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 13.4V5.3a1.7 1.7 0 0 1 3.4 0v6.2"/><path d="M14.4 10.2V9a1.6 1.6 0 0 1 3.2 0v5.7a4.9 4.9 0 0 1-4.9 4.9h-1.2a4.6 4.6 0 0 1-3.6-1.7l-2.6-3.2a1.6 1.6 0 0 1 2.5-2l1.5 1.6"/><path d="M3.6 20.6h16.8" opacity=".45"/></svg>
+        手指
+      </button>
+      <button class="act" id="hand" type="button" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.7 13.2V8.6a1.5 1.5 0 0 1 3 0v4.4"/><path d="M13.7 12.9V7.5a1.5 1.5 0 0 1 3 0v5.4"/><path d="M10.7 13.2V9.7a1.5 1.5 0 0 0-3 0v5.4"/><path d="M16.7 12.9v-1.5a1.5 1.5 0 0 1 3 0v4.2a6.2 6.2 0 0 1-6.2 6.2h-1.6a6.2 6.2 0 0 1-6.2-6.2v-2.1a1.5 1.5 0 0 1 3 0"/></svg>
+        印手
+      </button>
+      <button class="act" id="flip" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="8.4" width="14" height="7.2" rx="1.7"/><path d="M2.4 12h2.2M19.4 12h2.2M8 5.3a6.4 6.4 0 0 1 8 0M16 5.3l-2.3-.4M16 5.3l-.8-2.1M16 18.7a6.4 6.4 0 0 1-8 0M8 18.7l2.3.4M8 18.7l.8 2.1"/></svg>
+        翻板
+      </button>
+    </div>
+
+    <div class="words" role="group" aria-label="按一个字">
+      <span class="words-label" aria-hidden="true">按个字</span>
+      <button class="word" type="button" data-w="花生" aria-label="按出「花生」">花生</button>
+      <button class="word" type="button" data-w="你好" aria-label="按出「你好」">你好</button>
+      <button class="word" type="button" data-w="王" aria-label="按出「王」">王</button>
+      <button class="word" type="button" data-w="哈哈" aria-label="按出「哈哈」">哈哈</button>
+    </div>
+
+    <div class="rail">
+      <button class="chip" id="snd" type="button" aria-pressed="false" aria-label="声音：针的沙沙声">
+        <svg viewBox="0 0 24 18" aria-hidden="true"><path d="M2.5 6.6h3.2l4.4-3.9v12.6l-4.4-3.9H2.5z"/><path class="w" d="M13.6 5.6a4.4 4.4 0 0 1 0 6.8M16.2 3.2a8 8 0 0 1 0 11.6"/><path class="x" d="M14 6.6l5 4.8M19 6.6l-5 4.8"/></svg>
+        <span id="sndLabel">声音</span>
+      </button>
+      <button class="chip" id="why" type="button">这是怎么做到的</button>
+    </div>
+
+    <p class="foot"><a href="index.html">← 回到 Peanut 的编程乐园</a></p>
+  </div>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="true">
+  <button class="sheet-close" id="closeTasks" type="button" aria-label="关上">✕</button>
+  <h2 id="sheetTitle">四件小事</h2>
+  <p class="lead">做一件，就自己打个勾，记在这台电脑上。</p>
+  <div class="tasks-head">已经做到 <span id="taskCount2">0 / 4</span></div>
+  <div class="tasks" id="tasks"></div>
+  <p class="foot-home"><a href="index.html">← 回到 Peanut 的编程乐园</a></p>
+</section>
+
+<section class="why" id="whyPanel" aria-hidden="true" aria-labelledby="whyTitle">
+  <button class="why-close" id="whyClose" type="button" aria-label="关上">✕</button>
+  <h2 id="whyTitle">这是怎么做到的？</h2>
+  <p>每一根针的后面，都顶着一根<b>小弹簧</b>。你按下去，它就缩进去；手一松，弹簧不急着弹回来，而是一点一点把它推回家——所以手印会慢慢化开。</p>
+  <p>真的玩具叫<b>「针幕」</b>（Pin Art）：把脸或手按在板子后面，前面就浮出一张亮闪闪的针做的像；翻过来抖一抖，板子又空了。这块板上有 <b id="pinCount">5,000</b> 根针。</p>
+</section>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+let canvas = $('field');
+const frame = $('frame'), hints = $('hint'), cursor = $('cursor');
+const mq = matchMedia('(prefers-reduced-motion: reduce)');
+let RM = mq.matches;
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+
+/* ------------------------------------------------------------------ state */
+let W = 0, H = 0, dpr = 1, pitch = 7, rowH = 6, cols = 0, rows = 0, N = 0, ox = 0, oy = 0;
+let HT, VEL, MAP, PREV, RND, FALL, SETL, DYN, STAT, SW;
+let preset = null, press = 0, goal = 0, holdT = 0, holdMs = 0, flush = 0;
+let mode = 'finger';
+const flip = { on: false, t: 0 };
+let awake = true, energy = 0, lightDirty = true;
+const ptr = { down: false, x: 0, y: 0, force: 1 };
+let lastX = 0, lastY = 0, depth = 0;
+let lastPoint = { x: 0, y: 0 };
+
+/* ------------------------------------------------------------------ shapes */
+function ell(u, v, cx, cy, rx, ry, hh) {
+  const a = (u - cx) / rx, b = (v - cy) / ry, d = a * a + b * b;
+  return d >= 1 ? 0 : hh * Math.sqrt(1 - d);
+}
+function cap(u, v, ax, ay, bx, by, r, hh) {
+  const dx = bx - ax, dy = by - ay;
+  let t = ((u - ax) * dx + (v - ay) * dy) / (dx * dx + dy * dy);
+  t = t < 0 ? 0 : t > 1 ? 1 : t;
+  const ex = u - ax - dx * t, ey = v - ay - dy * t, d = (ex * ex + ey * ey) / (r * r);
+  return d >= 1 ? 0 : hh * Math.sqrt(1 - d);
+}
+/* a splayed five-finger handprint, palm at (0,.30), fingers reaching up */
+function hand(u, v) {
+  if (u < -0.83 || u > 0.52 || v < -0.75 || v > 0.78) return 0;
+  let m = ell(u, v, 0, 0.30, 0.425, 0.425, 1);
+  let c;
+  if ((c = ell(u, v, -0.255, 0.27, 0.245, 0.30, 0.93)) > m) m = c;          // thenar
+  if ((c = ell(u, v, 0.02, 0.605, 0.29, 0.165, 0.58)) > m) m = c;           // heel of the palm
+  if ((c = ell(u, v, -0.34, 0.35, 0.16, 0.17, 0.72)) > m) m = c;            // web of the thumb
+  if ((c = cap(u, v, -0.17, 0.06, -0.46, -0.50, 0.105, 0.82)) > m) m = c;   // index
+  if ((c = cap(u, v, -0.02, 0.02, -0.14, -0.62, 0.110, 0.87)) > m) m = c;   // middle
+  if ((c = cap(u, v, 0.13, 0.04, 0.20, -0.57, 0.105, 0.84)) > m) m = c;     // ring
+  if ((c = cap(u, v, 0.27, 0.12, 0.42, -0.35, 0.090, 0.76)) > m) m = c;     // little
+  if ((c = cap(u, v, -0.30, 0.33, -0.70, 0.03, 0.115, 0.80)) > m) m = c;    // thumb
+  return m;
+}
+
+/* ------------------------------------------------------------------ grid */
+function build() {
+  W = canvas.clientWidth; H = canvas.clientHeight;
+  if (W < 40 || H < 40) return;
+  dpr = Math.min(2, window.devicePixelRatio || 1);
+  canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+  const want = W < 700 ? 5000 : 10500;
+  pitch = clamp(Math.sqrt(W * H / (want * 0.8660254)), 4.6, 11);
+  rowH = pitch * 0.8660254;
+  const pad = pitch * 0.95;
+  cols = Math.max(6, Math.floor((W - 2 * pad - pitch * 0.5) / pitch) + 1);
+  rows = Math.max(6, Math.floor((H - 2 * pad) / rowH) + 1);
+  ox = (W - ((cols - 1) * pitch + pitch * 0.5)) / 2 + pitch * 0.12;
+  oy = (H - (rows - 1) * rowH) / 2 + pitch * 0.14;
+  N = cols * rows;
+  HT = new Float32Array(N); VEL = new Float32Array(N); MAP = new Float32Array(N);
+  PREV = new Float32Array(N); RND = new Float32Array(N); FALL = new Float32Array(N);
+  SETL = new Uint8Array(N); SW = new Float32Array(N);
+  DYN = new Float32Array(N * 4); STAT = new Float32Array(N * 3);
+  let s = 987654321;
+  const rnd = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+  for (let j = 0, i = 0; j < rows; j++) {
+    for (let c = 0; c < cols; c++, i++) {
+      const x = ox + (c + (j & 1) * 0.5) * pitch, y = oy + j * rowH, r = rnd();
+      RND[i] = r; FALL[i] = 0.28 + rnd() * 0.10;
+      STAT[i * 3] = x; STAT[i * 3 + 1] = y; STAT[i * 3 + 2] = r;
+    }
+  }
+  const pe = $('pinCount');
+  if (pe) pe.textContent = N.toLocaleString('en-US');
+  preset = null; press = 0; goal = 0; depth = 0; ptr.down = false; flush = 0;
+  flip.on = false; frame.classList.remove('flipping');
+  $('sweep').classList.remove('run');
+  lastX = lastY = 0; lastPoint = { x: W / 2, y: H / 2 };
+  renderer.resize();
+  awake = true; lightDirty = true;
+}
+
+/* ------------------------------------------------------------------ stamps */
+function startStamp(ms) {
+  preset = 'stamp'; press = RM ? 1 : 0; goal = 1; holdMs = ms; awake = true;
+  flush = 0.5;                    /* 旧印子在半秒里让开，新印子才看得清 */
+  clearTimeout(holdT);
+  holdT = setTimeout(() => { if (preset) { goal = 0; awake = true; } }, ms);
+}
+function stampHandAt(px, py) {
+  if (flip.on || !N) return;
+  const s = Math.min(W * 0.80 / 1.325, H * 0.80 / 1.49);
+  const hw = s * 0.663, hh = s * 0.745;
+  px = clamp(px, hw + 2, W - hw - 2);
+  py = clamp(py, hh + 2, H - hh - 2);
+  const cx = px + s * 0.1525, cy = py - s * 0.015;
+  for (let i = 0; i < N; i++) {
+    const u = (PX_(i) - cx) / s, v = (PY_(i) - cy) / s;
+    MAP[i] = hand(u, v);
+    SW[i] = clamp(Math.hypot(u * 0.92, v * 0.8) / 0.95, 0, 1);
+  }
+  startStamp(2200);
+  lastPoint = { x: px, y: py };
+  finish('hand');
+}
+const PX_ = i => STAT[i * 3], PY_ = i => STAT[i * 3 + 1];
+
+function textMap(str) {
+  const chars = Array.from(str);
+  const portrait = H > W * 1.05;
+  const lines = (portrait && chars.length > 1) ? chars : [str];
+  const c = document.createElement('canvas');
+  const w = Math.max(8, Math.round(W)), h = Math.max(8, Math.round(H));
+  c.width = w; c.height = h;
+  const g = c.getContext('2d', { willReadFrequently: true });
+  const fam = '"PingFang SC","Microsoft YaHei UI","Microsoft YaHei","Noto Sans SC","Hiragino Sans GB","Heiti SC",sans-serif';
+  g.font = '700 100px ' + fam;
+  let tw = 1, asc = 88, desc = 12;
+  for (const l of lines) {
+    const m = g.measureText(l);
+    tw = Math.max(tw, m.width);
+    if (m.actualBoundingBoxAscent) asc = Math.max(asc, m.actualBoundingBoxAscent);
+    if (m.actualBoundingBoxDescent) desc = Math.max(desc, m.actualBoundingBoxDescent);
+  }
+  /* 药丸按实测的墨迹高度定字号，字才不会顶到边 */
+  const k = (lines.length - 1) * 1.08 + (asc + desc) / 100;
+  const wCap = lines.length > 1 ? 0.62 : 0.86;
+  const fs = Math.min(w * wCap / tw * 100, h * 0.78 / k);
+  g.font = '700 ' + fs + 'px ' + fam;
+  g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+  g.fillStyle = '#fff'; g.strokeStyle = '#fff'; g.lineJoin = 'round';
+  g.lineWidth = Math.max(1.4, pitch * 0.55);
+  const lh = fs * 1.08, ascF = asc / 100 * fs, descF = desc / 100 * fs;
+  const blockH = (lines.length - 1) * lh + ascF + descF;
+  const y0 = h / 2 - blockH / 2 + ascF;
+  lines.forEach((l, kk) => {
+    g.strokeText(l, w / 2, y0 + kk * lh);
+    g.fillText(l, w / 2, y0 + kk * lh);
+  });
+  const img = g.getImageData(0, 0, w, h).data;
+  const r = Math.max(1, Math.round(pitch * 0.45)), step = Math.max(1, Math.round(r / 2) + 1);
+  const cx = w / 2, cy = h / 2, inv = 1 / (Math.hypot(cx, cy) || 1);
+  for (let i = 0; i < N; i++) {
+    const x = STAT[i * 3] | 0, y = STAT[i * 3 + 1] | 0;
+    let a = 0, n = 0;
+    for (let yy = y - r; yy <= y + r; yy += step) {
+      if (yy < 0 || yy >= h) continue;
+      for (let xx = x - r; xx <= x + r; xx += step) {
+        if (xx < 0 || xx >= w) continue;
+        n++; a += img[(yy * w + xx) * 4 + 3];
+      }
+    }
+    a = n ? Math.min(1, a / (n * 255) * 1.3) : 0;
+    MAP[i] = a * a * (3 - 2 * a);
+    const dx = STAT[i * 3] - cx, dy = STAT[i * 3 + 1] - cy;
+    SW[i] = clamp(Math.hypot(dx, dy) * inv * 1.15, 0, 1);
+  }
+}
+function stampWord(str) {
+  if (flip.on || !N) return;
+  textMap(str);
+  startStamp(4800);
+  finish('word');
+}
+
+/* ------------------------------------------------------------------ simulation */
+const K = 540, CZ = 21, CZ_RM = 46, G = 22;
+function simulate(dt) {
+  const rate = goal > press ? 6.5 : 10.5;
+  press += (goal - press) * (1 - Math.exp(-dt * rate));
+  if (Math.abs(goal - press) < 0.0015) press = goal;
+
+  const pr = preset ? press : 0;
+  const wave = goal === 1 && pr > 0.001 && pr < 0.999;
+  const C = RM ? CZ_RM : CZ;
+  flush = Math.max(0, flush - dt);
+  const fallMul = flush > 0 ? 3.2 : 1;
+
+  const pOn = ptr.down && depth > 0.012 && !flip.on;
+  const r = pointerR();
+  let ax = 0, ay = 0, bx = 0, by = 0, l2 = 0;
+  let mx0 = 0, mx1 = 0, my0 = 0, my1 = 0;
+  if (pOn) {
+    ax = lastX; ay = lastY; bx = ptr.x; by = ptr.y;
+    lastX = bx; lastY = by;
+    const dx = bx - ax, dy = by - ay; l2 = dx * dx + dy * dy;
+    mx0 = Math.min(ax, bx) - r; mx1 = Math.max(ax, bx) + r;
+    my0 = Math.min(ay, by) - r; my1 = Math.max(ay, by) + r;
+  }
+  if (!pOn) { lastX = ptr.x; lastY = ptr.y; }
+  const rr = r * r, inv2 = l2 > 0.0004 ? 1 / l2 : 0;
+  let moving = 0, en = 0;
+
+  for (let i = 0; i < N; i++) {
+    let h = HT[i], v = VEL[i];
+    let tg = 0;
+    if (pr > 0) {
+      const m = MAP[i];
+      if (m > 0) {
+        if (wave) {
+          const q = (pr - SW[i] * 0.55) / 0.45;
+          tg = m * pr * (q <= 0 ? 0 : q >= 1 ? 1 : q * q * (3 - 2 * q));
+        } else tg = m * pr;
+      }
+    }
+    if (pOn) {
+      const x = STAT[i * 3], y = STAT[i * 3 + 1];
+      if (x > mx0 && x < mx1 && y > my0 && y < my1) {
+        let tt = inv2 > 0 ? ((x - ax) * (bx - ax) + (y - ay) * (by - ay)) * inv2 : 0;
+        tt = tt < 0 ? 0 : tt > 1 ? 1 : tt;
+        const ex = x - ax - (bx - ax) * tt, ey = y - ay - (by - ay) * tt;
+        const d2 = (ex * ex + ey * ey) / rr;
+        if (d2 < 1) {
+          const p = Math.pow(1 - d2, 0.36) * depth;
+          if (p > tg) tg = p;
+        }
+      }
+    }
+    const pt = PREV[i]; PREV[i] = tg;
+    if (h === tg && v === 0) continue;
+    if (tg < pt - 1e-4) SETL[i] = 0;
+    let spring = false;
+    if (tg > h) { SETL[i] = 1; spring = true; }
+    else if (v > 0 || SETL[i]) spring = true;
+    if (spring) {
+      v += (K * (tg - h) - C * v) * dt; h += v * dt;
+      if (h > 1.12) { h = 1.12; v = 0; }
+      if (h < 0) { h = 0; v = 0; }
+      const e = tg - h;
+      if (v < 0.012 && v > -0.012 && e < 0.0015 && e > -0.0015) { h = tg; v = 0; SETL[i] = 0; }
+      else { moving++; en += v < 0 ? -v : v; }
+    } else {
+      const vt = -FALL[i] * fallMul * (0.07 + 0.95 * (h - tg));
+      v += (vt - v) * Math.min(1, dt * 5); h += v * dt;
+      if (h <= tg) { h = tg; v = 0; } else { moving++; en -= v * 0.25; }
+    }
+    HT[i] = h; VEL[i] = v;
+  }
+  if (goal === 0 && press < 0.002) { press = 0; preset = null; }
+  energy = en / N;
+  return moving;
+}
+
+function flipDelay(i) {
+  return 0.26 * (STAT[i * 3] / W) + 0.14 * (STAT[i * 3 + 1] / H) + RND[i] * 0.045;
+}
+function simulateFlip(dt) {
+  flip.t += dt;
+  let moving = 0, en = 0;
+  for (let i = 0; i < N; i++) {
+    const t0 = flip.t - (0.03 + flipDelay(i));
+    if (t0 < 0) continue;
+    if (SETL[i] === 0) { VEL[i] = 4.0 + RND[i] * 0.9; SETL[i] = 1; }
+    if (SETL[i] === 1) {
+      let v = VEL[i] - G * dt, h = HT[i] + v * dt;
+      if (h <= 0) {
+        h = 0;
+        if (v < -1.0) v = -v * 0.26; else { v = 0; SETL[i] = 2; }
+      }
+      HT[i] = h; VEL[i] = v;
+      if (SETL[i] === 1) { moving++; en += v < 0 ? -v : v; }
+    }
+  }
+  energy = en / N;
+  if (flip.t > 1.15) endFlip();
+  return moving;
+}
+function endFlip() {
+  flip.on = false; flip.t = 0;
+  HT.fill(0); VEL.fill(0); PREV.fill(0); SETL.fill(0);
+  preset = null; press = 0; goal = 0; energy = 0;
+  frame.classList.remove('flipping');
+  $('sweep').classList.remove('run');
+  awake = true; lightDirty = true;
+}
+function doFlip() {
+  if (flip.on) return;
+  clearTimeout(holdT);
+  preset = null; goal = 0; press = 0; depth = 0; ptr.down = false;
+  if (RM) {
+    /* 少动一点：不翻、不扫光，板子轻轻一暗就空了 */
+    flip.on = false; HT.fill(0); VEL.fill(0); PREV.fill(0); SETL.fill(0); energy = 0;
+    awake = true; lightDirty = true;
+  } else {
+    flip.on = true; flip.t = 0; SETL.fill(0); awake = true;
+    frame.classList.remove('flipping'); void frame.offsetWidth; frame.classList.add('flipping');
+    const sw = $('sweep');
+    sw.classList.remove('run'); void sw.offsetWidth; sw.classList.add('run');
+  }
+  finish('flip');
+}
+
+/* ------------------------------------------------------------------ shading */
+function shade() {
+  const SH = 2.6, te = 0.53, lx = -0.704, ly = -0.704;
+  const cm = cols - 1, rm = rows - 1, ip = 1 / pitch, ir = 1 / rowH;
+  for (let j = 0, i = 0; j < rows; j++) {
+    const odd = j & 1, up = j > 0 ? -cols : 0, dn = j < rm ? cols : 0;
+    for (let c = 0; c < cols; c++, i++) {
+      const h = HT[i];
+      const l = c > 0 ? HT[i - 1] : h, rt = c < cm ? HT[i + 1] : h;
+      const a = odd ? c : (c > 0 ? c - 1 : 0), b = odd ? (c < cm ? c + 1 : cm) : c;
+      const base = i - c;
+      const ul = HT[base + up + a], ur = HT[base + up + b], dl = HT[base + dn + a], dr = HT[base + dn + b];
+      const k = i * 4;
+      DYN[k] = h;
+      DYN[k + 1] = ((rt - l) + 0.5 * (ur - ul + dr - dl)) * 0.3333;
+      DYN[k + 2] = (dl + dr - ul - ur) * 0.2887;
+      let sh = 0;
+      const x = STAT[i * 3] - ox, y = STAT[i * 3 + 1] - oy;
+      for (let q = 1; q <= 4; q++) {
+        const rj = Math.round((y + ly * q * pitch) * ir);
+        if (rj < 0 || rj > rm) break;
+        const ri = Math.round((x + lx * q * pitch) * ip - (rj & 1) * 0.5);
+        if (ri < 0 || ri > cm) break;
+        const o = (HT[rj * cols + ri] - h) * SH - q * te;
+        if (o > sh) sh = o;
+      }
+      DYN[k + 3] = sh > 0.5 ? 1 : sh * 2;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ renderers */
+const VS = `
+attribute vec3 aP; attribute vec4 aD;
+uniform vec2 uRes; uniform float uPitch; uniform float uDpr;
+varying vec4 vD; varying float vR; varying float vPx; varying vec2 vPos; varying vec2 vUv;
+void main(){
+  float h = aD.x;
+  vec2 c = aP.xy / uRes - .5;
+  vec2 par = (vec2(-.5,-.64) + c * vec2(.5,.42)) * uPitch * .86;
+  vec2 p = aP.xy + par * h;
+  float d = uPitch * .875 * (1. + .15 * h) * uDpr;
+  vPx = d; gl_PointSize = d + 2.;
+  gl_Position = vec4((p / uRes * 2. - 1.) * vec2(1.,-1.), 0., 1.);
+  vD = aD; vR = aP.z; vPos = p; vUv = aP.xy / uRes;
+}`;
+const FS = `
+precision mediump float;
+uniform vec3 uL;
+varying vec4 vD; varying float vR; varying float vPx; varying vec2 vPos; varying vec2 vUv;
+void main(){
+  vec2 q = (gl_PointCoord * 2. - 1.) * ((vPx + 2.) / vPx);
+  float r = length(q);
+  float aa = 2.4 / vPx;
+  float a = 1. - smoothstep(1. - aa, 1. + aa * .15, r);
+  if (a < .01) discard;
+  vec3 n = normalize(vec3(-vD.yz * 2.6 + q * (.16 + .34 * r), 1.));
+  float diff = max(dot(n, uL), 0.);
+  vec3 hv = normalize(uL + vec3(0., 0., 1.));
+  float sp = pow(max(dot(n, hv), 0.), 64.);
+  float ang = atan(q.y, q.x) - atan(uL.y, uL.x) + (vR - .5) * .9;
+  float bow = pow(abs(cos(ang)), 7.) * smoothstep(.05, .55, r) * (1. - .5 * r);
+  float b = .10 + .72 * pow(diff, 1.2) + 1.15 * sp + bow * (.06 + .26 * diff);
+  b *= .90 + .20 * vR;
+  b += .50 * vD.x;
+  b *= 1. - .62 * vD.w;
+  b *= .70 + .48 * (1. - smoothstep(0., 1.05, vUv.x * .45 + vUv.y * .62));
+  b *= 1. - .30 * smoothstep(.62, 1., r);
+  b *= 1. - .22 * smoothstep(.5, 1.1, length(vUv - .5) * 1.3);
+  vec3 c0 = vec3(.05, .054, .064), c1 = vec3(.424, .455, .502), c2 = vec3(.788, .808, .839);
+  vec3 col = b < .5 ? mix(c0, c1, b * 2.) : b < .85 ? mix(c1, c2, (b - .5) / .35) : mix(c2, vec3(1.), clamp((b - .85) / .3, 0., 1.));
+  gl_FragColor = vec4(col * a, a);
+}`;
+
+function makeGL() {
+  let gl = null;
+  try {
+    gl = canvas.getContext('webgl', { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance' });
+  } catch (e) { gl = null; }
+  if (!gl) return null;
+  let prog, bS, bD, u = {}, aP, aD, ok = false;
+  function sh(type, src) {
+    const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.warn('pinscreen shader', gl.getShaderInfoLog(s)); return null; }
+    return s;
+  }
+  function init() {
+    const v = sh(gl.VERTEX_SHADER, VS), f = sh(gl.FRAGMENT_SHADER, FS);
+    if (!v || !f) return false;
+    prog = gl.createProgram(); gl.attachShader(prog, v); gl.attachShader(prog, f); gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.warn('pinscreen link', gl.getProgramInfoLog(prog)); return false; }
+    gl.useProgram(prog);
+    for (const n of ['uRes', 'uPitch', 'uDpr', 'uL']) u[n] = gl.getUniformLocation(prog, n);
+    aP = gl.getAttribLocation(prog, 'aP'); aD = gl.getAttribLocation(prog, 'aD');
+    bS = gl.createBuffer(); bD = gl.createBuffer();
+    gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.clearColor(0.016, 0.018, 0.022, 1);
+    return true;
+  }
+  ok = init();
+  if (!ok) return null;
+  const api = {
+    kind: 'gl', lost: false,
+    resize() {
+      if (api.lost) return;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.bindBuffer(gl.ARRAY_BUFFER, bS); gl.bufferData(gl.ARRAY_BUFFER, STAT, gl.STATIC_DRAW);
+      gl.enableVertexAttribArray(aP); gl.vertexAttribPointer(aP, 3, gl.FLOAT, false, 0, 0);
+      gl.bindBuffer(gl.ARRAY_BUFFER, bD); gl.bufferData(gl.ARRAY_BUFFER, DYN, gl.DYNAMIC_DRAW);
+      gl.enableVertexAttribArray(aD); gl.vertexAttribPointer(aD, 4, gl.FLOAT, false, 0, 0);
+      gl.uniform2f(u.uRes, W, H); gl.uniform1f(u.uPitch, pitch); gl.uniform1f(u.uDpr, dpr);
+    },
+    draw() {
+      if (api.lost) return;
+      gl.uniform3f(u.uL, -0.62, -0.62, 0.469);
+      gl.bindBuffer(gl.ARRAY_BUFFER, bD); gl.bufferSubData(gl.ARRAY_BUFFER, 0, DYN);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.POINTS, 0, N);
+    }
+  };
+  canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); api.lost = true; });
+  canvas.addEventListener('webglcontextrestored', () => { u = {}; if (init()) { api.lost = false; api.resize(); lightDirty = true; } });
+  return api;
+}
+
+function make2D() {
+  let g = canvas.getContext('2d', { alpha: false });
+  if (!g) {
+    /* 这块 canvas 已经被 WebGL 占过了，换一块干净的再画 */
+    const c2 = canvas.cloneNode(false);
+    canvas.parentNode.replaceChild(c2, canvas);
+    canvas = c2;
+    g = canvas.getContext('2d', { alpha: false });
+  }
+  if (!g) return null;
+  const LV = 16; let sprites = [], sz = 0;
+  const ramp = b => {
+    const c0 = [13, 14, 16], c1 = [108, 116, 128], c2 = [201, 206, 214], c3 = [255, 255, 255];
+    let a, c, t;
+    if (b < 0.5) { a = c0; c = c1; t = b * 2; }
+    else if (b < 0.85) { a = c1; c = c2; t = (b - 0.5) / 0.35; }
+    else { a = c2; c = c3; t = clamp((b - 0.85) / 0.3, 0, 1); }
+    t = clamp(t, 0, 1);
+    return 'rgb(' + Math.round(a[0] + (c[0] - a[0]) * t) + ',' + Math.round(a[1] + (c[1] - a[1]) * t) + ',' + Math.round(a[2] + (c[2] - a[2]) * t) + ')';
+  };
+  function makeSprites() {
+    sz = Math.ceil(pitch * 0.875 * dpr) + 2; sprites = [];
+    const lx = -0.62, ly = -0.62, r = (sz - 2) / 2, c = sz / 2;
+    for (let k = 0; k < LV; k++) {
+      const s = document.createElement('canvas'); s.width = s.height = sz;
+      const x = s.getContext('2d'), b = k / (LV - 1) * 1.15;
+      const gr = x.createRadialGradient(c + lx * r * 0.55, c + ly * r * 0.55, 0, c, c, r);
+      gr.addColorStop(0, ramp(b * 1.25 + 0.3)); gr.addColorStop(0.45, ramp(b)); gr.addColorStop(1, ramp(b * 0.45));
+      x.fillStyle = gr; x.beginPath(); x.arc(c, c, r, 0, 6.2832); x.fill();
+      sprites.push(s);
+    }
+  }
+  return {
+    kind: '2d',
+    resize() { makeSprites(); },
+    draw() {
+      g.setTransform(1, 0, 0, 1, 0, 0);
+      g.fillStyle = '#040506'; g.fillRect(0, 0, canvas.width, canvas.height);
+      const hx = -0.62, hy = -0.62, hz = 1.469, hl = 1 / Math.hypot(hx, hy, hz);
+      for (let i = 0; i < N; i++) {
+        const k = i * 4, h = DYN[k];
+        let nx = -DYN[k + 1] * 2.6, ny = -DYN[k + 2] * 2.6;
+        const nl = 1 / Math.sqrt(nx * nx + ny * ny + 1);
+        const diff = Math.max(0, (nx * hx + ny * hy + 0.469) * nl);
+        const sp = Math.pow(Math.max(0, (nx * hx + ny * hy + hz) * nl * hl), 26);
+        const x0 = STAT[i * 3], y0 = STAT[i * 3 + 1];
+        const cu = x0 / W - 0.5, cv = y0 / H - 0.5;
+        const x = x0 + (-0.5 + cu * 0.5) * pitch * 0.86 * h, y = y0 + (-0.64 + cv * 0.42) * pitch * 0.86 * h;
+        const u = x / W, v = y / H;
+        let b = (0.11 + 0.72 * Math.pow(diff, 1.2) + 1.0 * sp) * (0.90 + 0.20 * RND[i]) + 0.50 * h;
+        b *= 1 - 0.62 * DYN[k + 3];
+        b *= 0.70 + 0.48 * (1 - clamp(u * 0.45 + v * 0.62, 0, 1.05));
+        b *= 1 - 0.22 * clamp((Math.hypot(u - .5, v - .5) - .38) * 1.9, 0, 1);
+        const lv = clamp(Math.round(b / 1.15 * (LV - 1)), 0, LV - 1), s = sz * (1 + 0.15 * h);
+        g.drawImage(sprites[lv], x * dpr - s / 2, y * dpr - s / 2, s, s);
+      }
+    }
+  };
+}
+const renderer = makeGL() || make2D() || { kind: 'none', resize() {}, draw() {} };
+document.documentElement.dataset.renderer = renderer.kind;
+
+/* ------------------------------------------------------------------ pointer */
+function pointerR() { return clamp(Math.min(W, H) * 0.068, 15, 32); }
+function local(e) {
+  const r = canvas.getBoundingClientRect();
+  ptr.x = (e.clientX - r.left) * (W / r.width);
+  ptr.y = (e.clientY - r.top) * (H / r.height);
+}
+let dragLen = 0, px0 = 0, py0 = 0, moved = false;
+const used = () => { hints.classList.add('gone'); };
+canvas.addEventListener('pointerdown', e => {
+  if (e.button > 0 || flip.on) return;
+  if (whyOpen) setWhy(false);
+  local(e);
+  ptr.down = true;
+  ptr.force = (e.pointerType !== 'mouse' && e.pressure > 0 && e.pressure !== 0.5) ? clamp(0.62 + e.pressure * 0.5, 0.62, 1) : 1;
+  lastX = ptr.x; lastY = ptr.y;
+  lastPoint = { x: ptr.x, y: ptr.y };
+  dragLen = 0; px0 = ptr.x; py0 = ptr.y; moved = false;
+  try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+  if (mode === 'hand') {
+    ptr.down = false;
+    stampHandAt(ptr.x, ptr.y);
+  }
+  used();
+  if (e.pointerType === 'mouse') { cursor.classList.add('show'); cursor.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px)'; }
+  e.preventDefault();
+});
+canvas.addEventListener('pointermove', e => {
+  local(e);
+  if (e.pointerType === 'mouse') {
+    cursor.classList.add('show');
+    cursor.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px)';
+  }
+  if (ptr.down) {
+    dragLen += Math.hypot(ptr.x - px0, ptr.y - py0);
+    px0 = ptr.x; py0 = ptr.y;
+    if (dragLen > 2) moved = true;
+    if (e.pointerType !== 'mouse' && e.pressure > 0 && e.pressure !== 0.5) ptr.force = clamp(0.62 + e.pressure * 0.5, 0.62, 1);
+  }
+});
+function release() {
+  if (!ptr.down) return;
+  ptr.down = false;
+  if (dragLen >= 120 && moved) {
+    setTimeout(() => finish('line'), 1500);
+  }
+}
+canvas.addEventListener('pointerup', release);
+canvas.addEventListener('pointercancel', () => { ptr.down = false; });
+canvas.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') cursor.classList.remove('show'); });
+canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+/* ------------------------------------------------------------------ keyboard */
+addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key;
+  if (k === 'f' || k === 'F') { doFlip(); }
+  else if (k === 'h' || k === 'H') { setMode('hand'); stampHandAt(lastPoint.x || W / 2, lastPoint.y || H / 2); }
+  else if (k === '1') stampWord('花生');
+  else if (k === '2') stampWord('你好');
+  else if (k === '3') stampWord('王');
+  else if (k === '4') stampWord('哈哈');
+  else if (k === 'Escape') { setSheet(false); setWhy(false); }
+});
+
+/* ------------------------------------------------------------------ modes */
+function setMode(m) {
+  mode = m;
+  const f = $('finger'), h = $('hand');
+  f.classList.toggle('on', m === 'finger'); f.setAttribute('aria-pressed', m === 'finger');
+  h.classList.toggle('on', m === 'hand'); h.setAttribute('aria-pressed', m === 'hand');
+  cursor.classList.toggle('handmode', m === 'hand');
+}
+$('finger').addEventListener('click', () => { setMode('finger'); used(); });
+$('hand').addEventListener('click', () => {
+  setMode('hand'); used();
+  stampHandAt(W / 2, H / 2);
+});
+$('flip').addEventListener('click', () => { used(); doFlip(); });
+document.querySelectorAll('.word').forEach(b => b.addEventListener('click', () => {
+  used(); stampWord(b.dataset.w);
+  b.classList.add('pressed');
+  setTimeout(() => b.classList.remove('pressed'), 420);
+}));
+
+/* ------------------------------------------------------------------ sound */
+let AC = null, sGain = null, sSrc = null, soundOn = false;
+function startAudio() {
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if (!Ctx) return false;
+  if (!AC) {
+    AC = new Ctx();
+    const len = Math.floor(AC.sampleRate * 2.4), buf = AC.createBuffer(1, len, AC.sampleRate), d = buf.getChannelData(0);
+    for (let n = 0; n < 5200; n++) {
+      const at = Math.floor(Math.random() * (len - 400)), L2 = 50 + Math.floor(Math.random() * 260), amp = 0.25 + Math.random() * 0.75;
+      for (let k = 0; k < L2; k++) d[at + k] += (Math.random() * 2 - 1) * amp * Math.pow(1 - k / L2, 3);
+    }
+    for (let k = 0; k < len; k++) d[k] = clamp(d[k] * 0.5, -1, 1);
+    sSrc = AC.createBufferSource(); sSrc.buffer = buf; sSrc.loop = true;
+    const b1 = AC.createBiquadFilter(); b1.type = 'bandpass'; b1.frequency.value = 3900; b1.Q.value = 0.8;
+    const b2 = AC.createBiquadFilter(); b2.type = 'bandpass'; b2.frequency.value = 8200; b2.Q.value = 1.6;
+    const g2 = AC.createGain(); g2.gain.value = 0.7;
+    sGain = AC.createGain(); sGain.gain.value = 0;
+    sSrc.connect(b1); sSrc.connect(b2); b1.connect(sGain); b2.connect(g2); g2.connect(sGain); sGain.connect(AC.destination);
+    sSrc.start();
+  }
+  if (AC.state === 'suspended') AC.resume();
+  return true;
+}
+$('snd').addEventListener('click', () => {
+  if (!soundOn) { if (!startAudio()) return; soundOn = true; }
+  else { soundOn = false; if (sGain) sGain.gain.setTargetAtTime(0, AC.currentTime, 0.04); }
+  $('snd').setAttribute('aria-pressed', soundOn);
+  $('sndLabel').textContent = soundOn ? '声音 开' : '声音';
+});
+
+/* ------------------------------------------------------------------ tasks */
+const TASKS = [
+  { id: 'hand', t: '推出一个手印', h: '按「印手」，或者在板上点一下' },
+  { id: 'word', t: '按出一个字', h: '下面四个字，挑一个按进去' },
+  { id: 'flip', t: '把整块板翻一次', h: '按「翻板」，针会一阵风似的全落下去' },
+  { id: 'line', t: '用手指画一条线，看它慢慢弹回来', h: '按住拖一小段，松手，再等一会儿' }
+];
+const doneTasks = new Set();
+try { JSON.parse(localStorage.getItem('pinscreen-tasks') || '[]').forEach(k => doneTasks.add(k)); } catch (e) {}
+function renderTasks() {
+  const box = $('tasks'); if (!box) return;
+  box.innerHTML = TASKS.map(t => '<div class="task' + (doneTasks.has(t.id) ? ' done' : '') + '" data-id="' + t.id + '">' +
+    '<span class="tick" aria-hidden="true">✓</span><p>' + t.t + '<small>' + t.h + '</small></p></div>').join('');
+  const c1 = $('taskCount'), c2 = $('taskCount2');
+  if (c1) c1.textContent = doneTasks.size + '/4';
+  if (c2) c2.textContent = doneTasks.size + ' / 4';
+}
+let toastTimer = 0;
+function toast(msg) {
+  const el = $('toast'); if (!el) return;
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2300);
+}
+function hideToast() {
+  const el = $('toast'); if (!el) return;
+  el.classList.remove('show'); clearTimeout(toastTimer);
+}
+function finish(id) {
+  if (doneTasks.has(id) || !TASKS.some(t => t.id === id)) return;
+  doneTasks.add(id); renderTasks();
+  try { localStorage.setItem('pinscreen-tasks', JSON.stringify([...doneTasks])); } catch (e) {}
+  toast('✓ ' + TASKS.find(t => t.id === id).t);
+}
+renderTasks();
+
+/* ------------------------------------------------------------------ sheet */
+const sheet = $('sheet'), scrim = $('scrim');
+let sheetOpen = false;
+function setSheet(open) {
+  sheetOpen = open;
+  sheet.classList.toggle('open', open);
+  scrim.classList.toggle('open', open);
+  sheet.setAttribute('aria-hidden', open ? 'false' : 'true');
+  if ('inert' in sheet) sheet.inert = !open;
+  if (open) { setWhy(false); hideToast(); $('closeTasks').focus({ preventScroll: true }); }
+  else if (document.activeElement === $('closeTasks')) $('closeTasks').blur();
+}
+$('openTasks').addEventListener('click', () => setSheet(true));
+$('closeTasks').addEventListener('click', () => setSheet(false));
+scrim.addEventListener('click', () => setSheet(false));
+if ('inert' in sheet) sheet.inert = true;
+
+/* 「这是怎么做到的」：只盖住下面的按钮，不盖住针板 */
+let whyOpen = false;
+function setWhy(open) {
+  whyOpen = open;
+  $('whyPanel').classList.toggle('open', open);
+  $('whyPanel').setAttribute('aria-hidden', open ? 'false' : 'true');
+  $('why').setAttribute('aria-expanded', open ? 'true' : 'false');
+  $('why').classList.toggle('on', open);
+  if (open) hideToast();
+}
+$('why').setAttribute('aria-expanded', 'false');
+$('why').addEventListener('click', () => setWhy(!whyOpen));
+$('whyClose').addEventListener('click', () => setWhy(false));
+
+/* ------------------------------------------------------------------ loop */
+let last = 0, raf = 0;
+function tick(now) {
+  raf = requestAnimationFrame(tick);
+  if (!N) return;
+  const raw = (now - last) / 1000; last = now;
+  const dt = clamp(raw, 0.001, 0.034);
+
+  if (flip.on) {
+    simulateFlip(dt);
+    shade(); renderer.draw();
+    if (soundOn && sGain) sGain.gain.setTargetAtTime(Math.min(0.42, energy * 2.4), AC.currentTime, 0.05);
+    return;
+  }
+
+  const dGoal = ptr.down ? ptr.force : 0;
+  depth += (dGoal - depth) * (1 - Math.exp(-dt * (ptr.down ? 14 : 9)));
+  if (!ptr.down && depth < 0.012) depth = 0;
+
+  const active = awake || depth > 0 || press !== goal;
+  if (active || lightDirty) {
+    if (active) awake = simulate(dt) > 0;
+    shade(); renderer.draw(); lightDirty = false;
+  } else energy = 0;
+
+  if (soundOn && sGain) sGain.gain.setTargetAtTime(Math.min(0.42, energy * 2.6), AC.currentTime, 0.055);
+}
+function start() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } }
+function stop() { cancelAnimationFrame(raf); raf = 0; }
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    stop();
+    if (soundOn && sGain && AC) sGain.gain.setTargetAtTime(0, AC.currentTime, 0.02);
+  } else {
+    if (N) { awake = true; lightDirty = true; }
+    start();
+  }
+});
+
+/* ------------------------------------------------------------------ resize + go */
+let rz = 0;
+addEventListener('resize', () => {
+  clearTimeout(rz);
+  rz = setTimeout(() => {
+    if (Math.abs(canvas.clientWidth - W) > 2 || Math.abs(canvas.clientHeight - H) > 2) build();
+  }, 160);
+});
+const onRM = () => { RM = mq.matches; awake = true; };
+if (mq.addEventListener) mq.addEventListener('change', onRM); else if (mq.addListener) mq.addListener(onRM);
+
+build();
+start();
+setTimeout(() => { if (!sheetOpen) hints.classList.add('gone'); }, 22000);
+})();
+</script>
+</body>
+</html>
