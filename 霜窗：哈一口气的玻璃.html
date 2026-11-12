@@ -1497,7 +1497,6 @@ function showHint(html){
   hintEl.classList.remove('gone'); hintGone = false;
   clearTimeout(hintTimer); hintTimer = setTimeout(hideHint, 20000);
 }
-setTimeout(hideHint, 17000);
 main.addEventListener('pointerdown', hideHint, { passive: true });
 
 renderTasks();
