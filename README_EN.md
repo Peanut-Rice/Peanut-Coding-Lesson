@@ -83,7 +83,7 @@ It is not a syntax lesson; it is a playful entry point to 3D graphics, best used
 
 ## 🎪 The Cabinet · Six Little Toys
 
-The atelier is where you take a lesson; the Cabinet is where you play. Six single-file toys, no scores and no winning; each one has four small missions and a "why" written for kids.
+The atelier is where you take a lesson; the Cabinet is where you play. Six single-file toys, no scores and no winning; most have four small missions, and each one has a "why" written for kids.
 
 ### 1. 🎠 The Living Zoetrope · A Little Picture Machine
 **File:** `会动的转筒：小小动画机.html`
@@ -120,9 +120,12 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 **File:** `陶轮：一团会塌的泥.html`
 
 - A single-file, offline pottery wheel: a lump of wet clay spins on the head; press the pedal to spin, then pull the clay up, push it in, open the mouth with a finger
-- Spin too fast or pull the wall too thin and the pot wobbles and slumps — that is not a failure, tap 「再团一团」 and it also keeps a cheerful 「塌了几次」 tally
-- Choose a glaze (celadon / tenmoku / cobalt / oatmeal), fire it in the kiln; the finished pot lands on the shelf with a number, saved on this device
-- Four steps: throw → glaze → fire → shelf; **four small missions**; better on a big screen, still throwable in phone portrait
+- Spin too fast or pull the wall too thin and the pot wobbles and slumps — that is not a failure, tap 「再团一团」 and it also keeps a cheerful 「塌了几次」 tally, and tells you whether you spun too fast, pulled too thin, or yanked too hard
+- While throwing, a small tag reads 「像 · 花瓶」 and changes as you shape; when it comes out of the kiln, a line announces 「第 7 号 · 青瓷花瓶上架了」
+- Choose a glaze (celadon / tenmoku / cobalt / oatmeal), fire it in the kiln; the finished pot lands on a **shelf that holds up to 20**, with a number, saved on this device
+- **Look and keep**: tap a pot for a large view and give it a name; 「存成一张图」 saves the whole shelf (or a single pot) as a PNG; a pot can be taken down from its detail card, with a few seconds to undo; when the shelf is full at 20, a new pot asks the oldest one to step down
+- **No two firings alike**: the same glaze comes out a little deeper or paler, and sometimes opens ice-crackle; if the shelf is off-screen after firing, a 「看架子」 hint scrolls to it
+- Four steps: throw → glaze → fire → shelf; better on a big screen, still throwable in phone portrait
 
 ### 5. 🌊 Suminagashi · The Marbling Tray
 **File:** `水拓画：水上的花纹.html`
@@ -190,10 +193,10 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 - Progress is stored in this computer's browser and does not sync across devices
 
 ### The Cabinet (six little toys: zoetrope / frost window / pin screen / wheel / marbling / koi)
-- Enter from the Cabinet door at the bottom of the home page, after the lessons (`奇趣阁：六件小玩具.html`); 「← 奇趣阁」 at the top-left of each toy goes back to the Cabinet. Each toy has a 「四件小事」 list to discover
+- Enter from the Cabinet door at the bottom of the home page, after the lessons (`奇趣阁：六件小玩具.html`); 「← 奇趣阁」 at the top-left of each toy goes back to the Cabinet. Most toys have a 「四件小事」 list to discover
 - **Frost window**: press and hold to breathe, write in the fog; 「重新结霜」 gives you a fresh pane
 - **Pin screen**: push with a finger; 「印手」 for a handprint, 「按个字」 for a word, 「翻板」 to drop the board
-- **Wheel**: hold 「转起来」 (or the pedal), then drag on the clay; if it slumps, tap 「再团一团」, then glaze and fire
+- **Wheel**: hold 「转起来」 (or the pedal), then drag on the clay; if it slumps, tap 「再团一团」, then glaze and fire. On the shelf, tap a pot to see it large, name it, take it down, or 「存成一张图」
 - **Marbling**: drop ink, drag the comb, stir with the fan, then 「拉一张纸」; tap a print on the rack to see it large
 - **Koi pond**: tap the water, hold to feed, move a finger slowly; tap a fish for its name. Switch to 「我的池塘」 to build your own: pick fish, plant pads and lotus, drag things around, change the season — saved on the device, and exportable as a picture
 - **Zoetrope**: see the section above
