@@ -322,6 +322,27 @@
   .diy-ops .chip:disabled{opacity:.4; cursor:not-allowed}
   .saved-tag{font-size:11px; letter-spacing:.06em; color:rgba(246,243,230,.6); opacity:0; transition:opacity .4s var(--settle)}
   .saved-tag.on{opacity:1}
+  .chip.done-chip{border-color:rgba(242,196,107,.62); color:#FFE8B4}
+
+  /* ---------- 搭好了：把工具全收起来，只留一个小铅笔 ---------- */
+  .restore-btn{
+    position:absolute; left:calc(12px + env(safe-area-inset-left)); bottom:calc(14px + env(safe-area-inset-bottom));
+    z-index:9; pointer-events:auto; cursor:pointer;
+    display:inline-flex; align-items:center; gap:6px; min-height:38px; padding:8px 14px;
+    border-radius:999px; border:1px solid rgba(246,243,230,.26);
+    background:rgba(6,28,30,.55); color:rgba(246,243,230,.84);
+    font-family:var(--ui); font-size:12.5px; font-weight:600; letter-spacing:.04em;
+    opacity:.62; transition:opacity .3s var(--settle), background .3s var(--settle), color .3s var(--settle);
+  }
+  .restore-btn:hover,.restore-btn:focus-visible{opacity:1; background:rgba(18,56,58,.86); color:#fff}
+  .restore-btn[hidden]{display:none}
+
+  body.immersive .rail,
+  body.immersive #diyBar,
+  body.immersive .sill,
+  body.immersive .tasks-btn,
+  body.immersive .hint{display:none}
+  body.immersive .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
   body.is-diy .toast{bottom:calc(186px + env(safe-area-inset-bottom))}
 
   @media (max-width:760px){
@@ -411,9 +432,12 @@
       <button class="chip" id="delBtn" type="button" disabled>拿走</button>
       <button class="chip" id="clearBtn" type="button">清空</button>
       <button class="chip" id="savePng" type="button">存成图</button>
+      <button class="chip done-chip" id="diyDone" type="button">搭好了 ✓</button>
       <span class="saved-tag" id="savedTag">已保存</span>
     </div>
   </div>
+
+  <button class="restore-btn" id="diyRestore" type="button" hidden>✎ 继续搭</button>
 
   <div class="sill">
     <p class="caption" id="fedCount">今天还没喂鱼</p>
@@ -2113,7 +2137,11 @@ function setSheet(open){
 $id('openTasks').addEventListener('click', () => setSheet(true));
 $id('closeTasks').addEventListener('click', () => setSheet(false));
 scrim.addEventListener('click', () => setSheet(false));
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && sheetOpen) setSheet(false); });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (sheetOpen) setSheet(false);
+  else if (immersive) setImmersive(false);
+});
 if ('inert' in sheet) sheet.inert = true;
 
 /* ---------- 今天喂了几次 ---------- */
@@ -2141,12 +2169,14 @@ let mode = 'watch';
 let brush = null;
 let selected = null;
 let diyDrag = null;
+let immersive = false;
 const undoStack = [];
 let saveTimer = 0, savedTagT = 0;
 
 const modeWatchBtn = $id('modeWatch'), modeDiyBtn = $id('modeDiy');
 const diyBar = $id('diyBar'), brushRow = $id('brushRow');
 const undoBtn = $id('undoBtn'), delBtn = $id('delBtn'), savedTag = $id('savedTag');
+const diyRestoreBtn = $id('diyRestore'), diyDoneBtn = $id('diyDone');
 
 const countPads = () => pads.reduce((n, p) => n + (p.flower > 0 ? 0 : 1), 0);
 const countLotus = () => pads.reduce((n, p) => n + (p.flower > 0 ? 1 : 0), 0);
@@ -2423,9 +2453,11 @@ function syncUi(){
   const diy = isDiy();
   document.body.classList.toggle('is-diy', diy);
   document.body.classList.toggle('is-placing', isPlacing());
+  document.body.classList.toggle('immersive', immersive);
   if (modeWatchBtn) modeWatchBtn.setAttribute('aria-pressed', String(!diy));
   if (modeDiyBtn) modeDiyBtn.setAttribute('aria-pressed', String(diy));
-  if (diyBar) diyBar.hidden = !diy;
+  if (diyBar) diyBar.hidden = !diy || immersive;
+  if (diyRestoreBtn) diyRestoreBtn.hidden = !(diy && immersive);
   if (brushRow){
     const bs = brushRow.querySelectorAll('.brush');
     for (let i = 0; i < bs.length; i++){
@@ -2480,6 +2512,7 @@ function clearPool(){
 function setMode(next){
   if (next === mode) return;
   if (isDiy()) saveDoc();
+  if (immersive) setImmersive(false);
   mode = next;
   clearPool();
   undoStack.length = 0;
@@ -2505,6 +2538,27 @@ function setSeason(name){
   toast('换成了' + SEASONS[name].name + '天');
 }
 
+/* ---------- 搭好了：把工具收起来，只剩一池水 ---------- */
+function setImmersive(on){
+  if (on === immersive) return;
+  if (on && !isDiy()) return;
+  if (on && !fish.length && !pads.length){ toast('池子里还空着，先放一条鱼吧'); return; }
+  immersive = on;
+  if (on){
+    brush = null; selected = null; diyDrag = null; playHit = null;
+    hideHint();
+    if (sheetOpen) setSheet(false);
+    saveDoc();
+    try { cv.focus({ preventScroll: true }); } catch (e) { /* 焦点给不了就算了 */ }
+    toast('搭好啦，点水面、按住撒食，慢慢移逗鱼');
+  } else {
+    showHint('接着搭：挑一样放下 · 拖动可以挪位置', 9000);
+    syncUi();
+    try { diyDoneBtn.focus({ preventScroll: true }); } catch (e) { /* 同上 */ }
+  }
+  syncUi();
+}
+
 /* ---------- 接线 ---------- */
 if (modeWatchBtn) modeWatchBtn.addEventListener('click', () => setMode('watch'));
 if (modeDiyBtn) modeDiyBtn.addEventListener('click', () => setMode('diy'));
@@ -2525,6 +2579,8 @@ if (undoBtn) undoBtn.addEventListener('click', undo);
 if (delBtn) delBtn.addEventListener('click', removeSelected);
 if ($id('clearBtn')) $id('clearBtn').addEventListener('click', clearAll);
 if ($id('savePng')) $id('savePng').addEventListener('click', savePng);
+if (diyDoneBtn) diyDoneBtn.addEventListener('click', () => setImmersive(true));
+if (diyRestoreBtn) diyRestoreBtn.addEventListener('click', () => setImmersive(false));
 
 
 /* =====================================================================
