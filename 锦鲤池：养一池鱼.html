@@ -28,8 +28,8 @@
     position:absolute; inset:0; width:100%; height:100%; display:block;
     touch-action:none; cursor:none; outline:none;
   }
-  /* 观赏池用自绘的小水圈当指针；搭池塘要点得准，就用系统的十字光标 */
-  body.is-diy #pond{cursor:crosshair}
+  /* 观赏池用自绘的小水圈当指针；拿着画笔、要点得准时，用系统的十字光标 */
+  body.is-placing #pond{cursor:crosshair}
   #pond:focus-visible{outline:2px solid rgba(246,243,230,.85); outline-offset:-8px}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;margin:0}
 
@@ -1831,24 +1831,36 @@ function doFeed(x, y){
 
 cv.addEventListener('pointerdown', e => {
   if (e.button && e.button !== 0) return;
-  if (isDiy()){ diyDown(e); return; }
+  if (isPlacing()){ diyDown(e); return; }
+  /* 观赏池，或者 DIY 里空着手：都是"玩"这一套 */
   ptr.x = e.clientX; ptr.y = e.clientY; ptr.inside = true; ptr.mouse = e.pointerType === 'mouse';
   ptr.down = true; ptr.dx = ptr.x; ptr.dy = ptr.y; ptr.dt = 0; ptr.held = false; ptr.id = e.pointerId; ptr.hdt = performance.now(); ptr.slowT = 0;
+  playHit = isPlaying() ? diyHit(e.clientX, e.clientY) : null;
   try { cv.setPointerCapture(e.pointerId); } catch (err) { /* 抓不住就算了 */ }
 });
 cv.addEventListener('pointermove', e => {
-  if (isDiy()){ diyMove(e); return; }
+  if (isPlacing()){ diyMove(e); return; }
   ptr.x = e.clientX; ptr.y = e.clientY; ptr.inside = true; ptr.mouse = e.pointerType === 'mouse';
   ptr.moved += Math.hypot(ptr.x - ptr.lx, ptr.y - ptr.ly);
   ptr.lx = ptr.x; ptr.ly = ptr.y;
   ptr.lastMove = performance.now();
+  /* 玩耍态：手指在鱼/荷叶上拖开一段，就变成"挪位置" */
+  if (isPlaying() && ptr.down && !diyDrag && !ptr.held && playHit &&
+      Math.hypot(ptr.x - ptr.dx, ptr.y - ptr.dy) > TAPMAX()){
+    beginDrag(playHit, e);
+    ptr.hdt = -1;
+    diyMove(e);
+    return;
+  }
+  if (diyDrag){ diyMove(e); return; }
   /* 一动就不算按住了：在事件里当场取消，不等下一帧 */
   if (ptr.down && !ptr.held && Math.hypot(ptr.x - ptr.dx, ptr.y - ptr.dy) > DRAG()) ptr.hdt = -1;
 });
 function release(e, cancelled){
-  if (isDiy()){ diyUp(e); return; }
+  if (diyDrag){ ptr.down = false; playHit = null; diyUp(e); return; }
   if (!ptr.down) return;
   ptr.down = false;
+  playHit = null;
   if (cancelled || ptr.held) return;
   if (Math.hypot(e.clientX - ptr.dx, e.clientY - ptr.dy) > TAPMAX()) return;
   const now = performance.now() / 1000;
@@ -1856,6 +1868,11 @@ function release(e, cancelled){
     doFeed(e.clientX, e.clientY);
     lastTap.t = -9;
   } else {
+    /* 玩耍态点一下：选中点到的东西（没有就取消选中），再照观赏池的规矩玩 */
+    if (isPlaying()){
+      selected = diyHit(e.clientX, e.clientY);
+      syncUi();
+    }
     doTap(e.clientX, e.clientY);
     lastTap.t = now; lastTap.x = e.clientX; lastTap.y = e.clientY;
   }
@@ -1873,21 +1890,21 @@ cv.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') ptr.in
 cv.addEventListener('contextmenu', e => e.preventDefault());
 window.addEventListener('blur', () => { ptr.down = false; });
 cv.addEventListener('keydown', e => {
-  if (isDiy()){
+  const x = W * (0.3 + rnd() * 0.4), y = H * (0.3 + rnd() * 0.4);
+  if (isDiy() && brush){
     if (e.key === 'Enter'){
-      if (brush) placeAt(W * 0.5 + (Math.random() - 0.5) * W * 0.4, H * 0.5 + (Math.random() - 0.5) * H * 0.4);
-      else if (selected) toast('已经选中了，按删除拿走它');
+      placeAt(W * 0.5 + (Math.random() - 0.5) * W * 0.4, H * 0.5 + (Math.random() - 0.5) * H * 0.4);
       e.preventDefault();
     } else if (e.key === 'Delete' || e.key === 'Backspace'){ removeSelected(); e.preventDefault(); }
     return;
   }
-  const x = W * (0.3 + rnd() * 0.4), y = H * (0.3 + rnd() * 0.4);
   if (e.key === 'Enter'){ doTap(x, y); e.preventDefault(); }
   else if (e.key === ' ' || e.key === 'f' || e.key === 'F'){ doFeed(x, y); e.preventDefault(); }
+  else if ((e.key === 'Delete' || e.key === 'Backspace') && isDiy()){ removeSelected(); e.preventDefault(); }
 });
 
 function updatePointer(dt){
-  if (isDiy()) return;
+  if (isPlacing() || diyDrag) return;
   const inst = ptr.moved / Math.max(dt, 0.001);
   ptr.moved = 0;
   ptr.spd += (inst - ptr.spd) * Math.min(1, dt * 6);
@@ -1929,7 +1946,7 @@ function updatePointer(dt){
   } else followClock = 0;
 }
 function drawPointer(){
-  if (isDiy() || !ptr.inside || (!ptr.mouse && !ptr.down)) return;
+  if (isPlacing() || !ptr.inside || (!ptr.mouse && !ptr.down)) return;
   const c = ctx, x = ptr.x, y = ptr.y, r = 9;
   if (ptr.mouse){
     /* 深色垫一圈、白色描一道、中间一个小点：浅水亮水上都看得见 */
@@ -2134,6 +2151,10 @@ const undoBtn = $id('undoBtn'), delBtn = $id('delBtn'), savedTag = $id('savedTag
 const countPads = () => pads.reduce((n, p) => n + (p.flower > 0 ? 0 : 1), 0);
 const countLotus = () => pads.reduce((n, p) => n + (p.flower > 0 ? 1 : 0), 0);
 const isDiy = () => mode === 'diy';
+/* 手里拿着画笔＝放置态；空着手＝玩耍态（和观赏池一样能敲水、喂鱼、逗鱼） */
+const isPlacing = () => isDiy() && !!brush;
+const isPlaying = () => isDiy() && !brush;
+let playHit = null;
 
 function spawnFishAt(variety, x, y, size, h){
   const f = newFish(variety, size);
@@ -2312,24 +2333,23 @@ function diyHit(x, y){
 }
 
 /* ---------- 手指：点＝放，拖＝挪 ---------- */
+function beginDrag(hit, e){
+  const o = hit.obj;
+  selected = hit;
+  diyDrag = {
+    type: hit.type, obj: o, id: e.pointerId, moved: false,
+    ox: e.clientX - (hit.type === 'fish' ? o.x : o.ax),
+    oy: e.clientY - (hit.type === 'fish' ? o.y : o.ay),
+    pre: snapshotStr()
+  };
+  try { cv.setPointerCapture(e.pointerId); } catch (err) { /* 抓不住就算了 */ }
+  syncUi();
+}
 function diyDown(e){
-  const x = e.clientX, y = e.clientY;
-  const hit = diyHit(x, y);
-  if (hit){
-    selected = hit;
-    const o = hit.obj;
-    diyDrag = {
-      type: hit.type, obj: o, id: e.pointerId, moved: false,
-      ox: x - (hit.type === 'fish' ? o.x : o.ax),
-      oy: y - (hit.type === 'fish' ? o.y : o.ay),
-      pre: snapshotStr()
-    };
-    try { cv.setPointerCapture(e.pointerId); } catch (err) { /* 抓不住就算了 */ }
-    syncUi();
-    return;
-  }
+  const hit = diyHit(e.clientX, e.clientY);
+  if (hit){ beginDrag(hit, e); return; }
   diyDrag = null;
-  placeAt(x, y);
+  placeAt(e.clientX, e.clientY);
 }
 function diyMove(e){
   if (!diyDrag) return;
@@ -2402,6 +2422,7 @@ function syncSeasonUi(){
 function syncUi(){
   const diy = isDiy();
   document.body.classList.toggle('is-diy', diy);
+  document.body.classList.toggle('is-placing', isPlacing());
   if (modeWatchBtn) modeWatchBtn.setAttribute('aria-pressed', String(!diy));
   if (modeDiyBtn) modeDiyBtn.setAttribute('aria-pressed', String(diy));
   if (diyBar) diyBar.hidden = !diy;
@@ -2418,7 +2439,9 @@ function syncUi(){
   if (delBtn) delBtn.disabled = !selected;
   if (undoBtn) undoBtn.disabled = !undoStack.length;
   cv.setAttribute('aria-label', diy
-    ? '我的池塘：先从下面挑一条鱼、一片荷叶或一朵荷花，再点水面放下；已经放下的可以直接拖动，点一下可以选中它。'
+    ? (brush
+      ? '我的池塘：手里拿着' + (NAME[brush] || brush) + '，点水面放下；已经放下的可以拖动。再点一下同一个按钮就放开手。'
+      : '我的池塘：空着手可以像观赏池那样玩——点水有波纹，按住撒鱼食，慢慢移动手指鱼会跟着，点鱼会报名字；拖动鱼或荷叶可以挪位置。想放东西就先在下面挑一样。')
     : '一池锦鲤，从上往下看。点一下水面会有波纹，按住会撒鱼食，鱼会围过来；手指慢慢移动，会有鱼跟着你。点一条鱼，它会告诉你它是什么锦鲤。键盘：回车敲水面，空格撒鱼食。');
   syncSeasonUi();
 }
@@ -2450,6 +2473,7 @@ function clearPool(){
   fish.length = 0; pads.length = 0; leaves.length = 0;
   pellets.length = 0; ripples.length = 0;
   follower = null; selected = null; brush = null; diyDrag = null;
+  playHit = null;
   tagFish = null;
   if (tagEl) tagEl.classList.remove('on');
 }
@@ -2463,7 +2487,7 @@ function setMode(next){
     const doc = readSaved();
     if (doc) restoreDoc(doc);
     else applySeason(season, true);
-    showHint('先挑一样，<b>点水面</b>放下 · 拖动可以挪位置', 11000);
+    showHint('不挑东西时：敲水 · 按住撒食 · 慢移逗鱼；挑一样就能放', 12000);
   } else {
     buildPads(); buildLeaves(); buildMotes();
     buildWatchFish();
