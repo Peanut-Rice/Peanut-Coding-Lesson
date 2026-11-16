@@ -254,10 +254,18 @@
   }
   .toast.show{opacity:1; transform:translate(-50%,0)}
 
+  /* 左边那一条：模式 + 季节，都收在池子边上 */
+  .rail{
+    position:absolute; left:calc(12px + env(safe-area-inset-left)); top:60px; z-index:9;
+    display:flex; flex-direction:column; align-items:flex-start; gap:6px;
+    pointer-events:none;
+  }
+  .rail .mode, .rail .seasons{box-shadow:0 6px 18px rgba(3,18,20,.22)}
+
   /* ---------- 模式 / 季节 / DIY 托盘 ---------- */
   .mode{
     pointer-events:auto; display:inline-flex; gap:2px; padding:3px; border-radius:999px;
-    background:rgba(6,28,30,.62); border:1px solid rgba(246,243,230,.2);
+    background:rgba(6,28,30,.82); border:1px solid rgba(246,243,230,.24);
   }
   .mode button{
     border:0; background:transparent; color:rgba(246,243,230,.72); font-family:var(--ui);
@@ -271,11 +279,11 @@
 
   .seasons{
     pointer-events:auto; display:inline-flex; gap:4px; padding:3px; border-radius:999px;
-    background:rgba(6,28,30,.5); border:1px solid rgba(246,243,230,.16);
+    background:rgba(6,28,30,.76); border:1px solid rgba(246,243,230,.2);
   }
   .seasons button{
     width:34px; height:32px; border:0; border-radius:999px; background:transparent;
-    color:rgba(246,243,230,.66); font-family:var(--ui); font-size:13px; font-weight:600; cursor:pointer;
+    color:rgba(246,243,230,.82); font-family:var(--ui); font-size:13px; font-weight:600; cursor:pointer;
     transition:background .28s var(--settle), color .28s var(--settle), transform .2s var(--settle);
   }
   .seasons button:hover{color:#fff}
@@ -312,13 +320,16 @@
   .diy-ops .chip:disabled{opacity:.4; cursor:not-allowed}
   .saved-tag{font-size:11px; letter-spacing:.06em; color:rgba(246,243,230,.6); opacity:0; transition:opacity .4s var(--settle)}
   .saved-tag.on{opacity:1}
-  body.diy .toast{bottom:calc(186px + env(safe-area-inset-bottom))}
+  body.is-diy .toast{bottom:calc(186px + env(safe-area-inset-bottom))}
 
   @media (max-width:760px){
     .diy{left:8px; right:8px; bottom:calc(72px + env(safe-area-inset-bottom)); gap:6px}
     .diy-row{max-width:100%; flex-wrap:wrap; justify-content:center;
       padding:0 2px 2px; pointer-events:auto}
     .topbar{gap:7px}
+    .rail{top:108px; gap:5px}
+    .rail .mode{flex-direction:column; border-radius:20px}
+    .rail .mode button{border-radius:16px; padding:5px 9px 6px; font-size:11.5px}
     .seasons button{width:30px; height:30px; font-size:12px}
     .mode button{padding:5px 10px 6px; font-size:11.5px}
   }
@@ -326,6 +337,7 @@
     .diy-label{display:none}
     .brush{font-size:11.5px; padding:5px 10px 6px; min-height:36px}
     .diy-ops .chip{font-size:11.5px; padding:5px 10px}
+    .rail{top:100px}
     .seasons button{width:28px; height:28px; font-size:11.5px}
   }
 
@@ -356,9 +368,8 @@
 
   <a class="back-home" href="奇趣阁：六件小玩具.html"><i aria-hidden="true">←</i>奇趣阁</a>
 
-  <div class="topbar">
-    <h1>锦鲤池</h1>
-    <p class="hint" id="hint"><span class="dot" aria-hidden="true"></span>敲敲水面 · <b>按住撒鱼食</b></p>
+  <!-- 模式和季节都收在左边这一列，别挡着水面 -->
+  <div class="rail">
     <div class="mode" role="group" aria-label="选择模式">
       <button id="modeWatch" type="button" aria-pressed="true">观赏池</button>
       <button id="modeDiy" type="button" aria-pressed="false">我的池塘</button>
@@ -369,6 +380,11 @@
       <button type="button" data-season="autumn" aria-pressed="false" aria-label="秋天">秋</button>
       <button type="button" data-season="winter" aria-pressed="false" aria-label="冬天">冬</button>
     </div>
+  </div>
+
+  <div class="topbar">
+    <h1>锦鲤池</h1>
+    <p class="hint" id="hint"><span class="dot" aria-hidden="true"></span>敲敲水面 · <b>按住撒鱼食</b></p>
   </div>
 
   <button class="tasks-btn" id="openTasks" type="button" aria-haspopup="dialog">四件小事 <b id="taskCount">0/4</b></button>
@@ -2372,7 +2388,7 @@ function syncSeasonUi(){
 }
 function syncUi(){
   const diy = isDiy();
-  document.body.classList.toggle('diy', diy);
+  document.body.classList.toggle('is-diy', diy);
   if (modeWatchBtn) modeWatchBtn.setAttribute('aria-pressed', String(!diy));
   if (modeDiyBtn) modeDiyBtn.setAttribute('aria-pressed', String(diy));
   if (diyBar) diyBar.hidden = !diy;
