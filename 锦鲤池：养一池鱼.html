@@ -28,6 +28,8 @@
     position:absolute; inset:0; width:100%; height:100%; display:block;
     touch-action:none; cursor:none; outline:none;
   }
+  /* 观赏池用自绘的小水圈当指针；搭池塘要点得准，就用系统的十字光标 */
+  body.is-diy #pond{cursor:crosshair}
   #pond:focus-visible{outline:2px solid rgba(246,243,230,.85); outline-offset:-8px}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;margin:0}
 
@@ -1860,6 +1862,13 @@ function release(e, cancelled){
 }
 cv.addEventListener('pointerup', e => { release(e, false); });
 cv.addEventListener('pointercancel', e => { release(e, true); });
+/* 鼠标一进水就先把自绘的小水圈点亮，不必等它先动一下 */
+cv.addEventListener('pointerenter', e => {
+  if (e.pointerType !== 'mouse') return;
+  ptr.inside = true; ptr.mouse = true;
+  ptr.x = e.clientX; ptr.y = e.clientY;
+  ptr.lx = e.clientX; ptr.ly = e.clientY;
+});
 cv.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') ptr.inside = false; });
 cv.addEventListener('contextmenu', e => e.preventDefault());
 window.addEventListener('blur', () => { ptr.down = false; });
@@ -1921,15 +1930,19 @@ function updatePointer(dt){
 }
 function drawPointer(){
   if (isDiy() || !ptr.inside || (!ptr.mouse && !ptr.down)) return;
-  const c = ctx, x = ptr.x, y = ptr.y, r = 8;
+  const c = ctx, x = ptr.x, y = ptr.y, r = 9;
   if (ptr.mouse){
-    c.lineWidth = 1.2;
-    c.strokeStyle = 'rgba(8,32,34,.35)';
-    c.beginPath(); c.arc(x + 0.7, y + 1, r + 0.8, 0, TAU); c.stroke();
-    c.strokeStyle = 'rgba(255,252,240,.92)';
+    /* 深色垫一圈、白色描一道、中间一个小点：浅水亮水上都看得见 */
+    c.lineWidth = 2.4;
+    c.strokeStyle = 'rgba(6,26,28,.45)';
+    c.beginPath(); c.arc(x + 0.8, y + 1.1, r + 1.3, 0, TAU); c.stroke();
+    c.lineWidth = 1.4;
+    c.strokeStyle = 'rgba(255,253,244,.96)';
     c.beginPath(); c.arc(x, y, r, 0, TAU); c.stroke();
-    c.fillStyle = 'rgba(255,252,240,.9)';
-    c.beginPath(); c.arc(x, y, 1.4, 0, TAU); c.fill();
+    c.fillStyle = 'rgba(6,26,28,.5)';
+    c.beginPath(); c.arc(x, y, 2.7, 0, TAU); c.fill();
+    c.fillStyle = 'rgba(255,253,244,.98)';
+    c.beginPath(); c.arc(x, y, 1.5, 0, TAU); c.fill();
   }
   if (ptr.down && !ptr.held && ptr.dt > 0.12){
     const k = clamp((ptr.dt - 0.12) / (HOLD - 0.12), 0, 1), e2 = 1 - Math.pow(1 - k, 2), R = 18 + (ptr.mouse ? 0 : 14);
