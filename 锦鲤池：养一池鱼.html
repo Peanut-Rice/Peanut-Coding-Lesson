@@ -254,6 +254,81 @@
   }
   .toast.show{opacity:1; transform:translate(-50%,0)}
 
+  /* ---------- 模式 / 季节 / DIY 托盘 ---------- */
+  .mode{
+    pointer-events:auto; display:inline-flex; gap:2px; padding:3px; border-radius:999px;
+    background:rgba(6,28,30,.62); border:1px solid rgba(246,243,230,.2);
+  }
+  .mode button{
+    border:0; background:transparent; color:rgba(246,243,230,.72); font-family:var(--ui);
+    font-size:12px; font-weight:600; letter-spacing:.04em; white-space:nowrap;
+    min-height:32px; padding:6px 12px 7px; border-radius:999px; cursor:pointer;
+    transition:background .28s var(--settle), color .28s var(--settle);
+  }
+  .mode button:hover{color:#fff}
+  .mode button[aria-pressed="true"]{background:rgba(242,196,107,.92); color:#2A1B02}
+  .mode button[aria-pressed="true"]:hover{color:#2A1B02}
+
+  .seasons{
+    pointer-events:auto; display:inline-flex; gap:4px; padding:3px; border-radius:999px;
+    background:rgba(6,28,30,.5); border:1px solid rgba(246,243,230,.16);
+  }
+  .seasons button{
+    width:34px; height:32px; border:0; border-radius:999px; background:transparent;
+    color:rgba(246,243,230,.66); font-family:var(--ui); font-size:13px; font-weight:600; cursor:pointer;
+    transition:background .28s var(--settle), color .28s var(--settle), transform .2s var(--settle);
+  }
+  .seasons button:hover{color:#fff}
+  .seasons button[aria-pressed="true"]{background:rgba(255,250,232,.92); color:#1D3436; transform:scale(1.04)}
+
+  .diy{
+    position:absolute; left:calc(10px + env(safe-area-inset-left)); right:calc(10px + env(safe-area-inset-right));
+    bottom:calc(76px + env(safe-area-inset-bottom)); z-index:8;
+    display:flex; flex-direction:column; align-items:center; gap:7px;
+    pointer-events:none;
+  }
+  .diy[hidden]{display:none}
+  .diy-row{
+    display:flex; align-items:center; gap:6px; justify-content:center; flex-wrap:wrap;
+    width:max-content; max-width:min(96vw,760px);
+  }
+  .diy-label{flex:0 0 auto; font-size:11px; font-weight:600; letter-spacing:.14em; color:rgba(246,243,230,.55)}
+  .brush{
+    pointer-events:auto; display:inline-flex; align-items:center; gap:5px; cursor:pointer;
+    flex:0 0 auto;
+    min-height:38px; padding:6px 12px 7px; border-radius:999px;
+    border:1px solid rgba(246,243,230,.26); background:rgba(6,28,30,.7); color:rgba(246,243,230,.9);
+    font-family:var(--ui); font-size:12.5px; font-weight:600; letter-spacing:.04em;
+    transition:border-color .25s var(--settle), background .25s var(--settle), transform .18s var(--settle);
+  }
+  .brush .sw{width:11px; height:11px; border-radius:50%; flex:none; box-shadow:inset 0 0 0 1px rgba(0,0,0,.2)}
+  .brush:hover,.brush:focus-visible{background:rgba(18,56,58,.86); border-color:rgba(246,243,230,.5)}
+  .brush[aria-pressed="true"]{border-color:rgba(242,196,107,.9); background:rgba(242,196,107,.2); color:#FFF3D2; transform:translateY(-1px)}
+  .brush:disabled{opacity:.38; cursor:not-allowed}
+
+  .brush-group{display:inline-flex; align-items:center; gap:6px; flex:0 0 auto}
+  .diy-ops{display:flex; align-items:center; gap:6px}
+  .diy-ops .chip{min-height:38px; padding:6px 12px; font-size:12px}
+  .diy-ops .chip:disabled{opacity:.4; cursor:not-allowed}
+  .saved-tag{font-size:11px; letter-spacing:.06em; color:rgba(246,243,230,.6); opacity:0; transition:opacity .4s var(--settle)}
+  .saved-tag.on{opacity:1}
+  body.diy .toast{bottom:calc(186px + env(safe-area-inset-bottom))}
+
+  @media (max-width:760px){
+    .diy{left:8px; right:8px; bottom:calc(72px + env(safe-area-inset-bottom)); gap:6px}
+    .diy-row{max-width:100%; flex-wrap:wrap; justify-content:center;
+      padding:0 2px 2px; pointer-events:auto}
+    .topbar{gap:7px}
+    .seasons button{width:30px; height:30px; font-size:12px}
+    .mode button{padding:5px 10px 6px; font-size:11.5px}
+  }
+  @media (max-width:400px){
+    .diy-label{display:none}
+    .brush{font-size:11.5px; padding:5px 10px 6px; min-height:36px}
+    .diy-ops .chip{font-size:11.5px; padding:5px 10px}
+    .seasons button{width:28px; height:28px; font-size:11.5px}
+  }
+
   @media (max-width:520px){
     .sheet{padding-top:20px}
     .sheet h2{font-size:16px; margin-bottom:10px}
@@ -284,11 +359,43 @@
   <div class="topbar">
     <h1>锦鲤池</h1>
     <p class="hint" id="hint"><span class="dot" aria-hidden="true"></span>敲敲水面 · <b>按住撒鱼食</b></p>
+    <div class="mode" role="group" aria-label="选择模式">
+      <button id="modeWatch" type="button" aria-pressed="true">观赏池</button>
+      <button id="modeDiy" type="button" aria-pressed="false">我的池塘</button>
+    </div>
+    <div class="seasons" id="seasons" role="group" aria-label="选择季节">
+      <button type="button" data-season="spring" aria-pressed="false" aria-label="春天">春</button>
+      <button type="button" data-season="summer" aria-pressed="true" aria-label="夏天">夏</button>
+      <button type="button" data-season="autumn" aria-pressed="false" aria-label="秋天">秋</button>
+      <button type="button" data-season="winter" aria-pressed="false" aria-label="冬天">冬</button>
+    </div>
   </div>
 
   <button class="tasks-btn" id="openTasks" type="button" aria-haspopup="dialog">四件小事 <b id="taskCount">0/4</b></button>
 
   <div class="fish-tag" id="fishTag" aria-hidden="true"><span class="sw" id="tagSw"></span><b id="tagName">红白</b><span class="sub">锦鲤</span></div>
+
+  <div class="diy" id="diyBar" hidden>
+    <div class="diy-row" id="brushRow" role="group" aria-label="挑一样放进池塘">
+      <span class="diy-label">放鱼</span>
+      <button class="brush" type="button" data-brush="kohaku" aria-pressed="false"><span class="sw" style="background:linear-gradient(135deg,#ffffff 0 46%,#F26B21 46% 100%)"></span>红白</button>
+      <button class="brush" type="button" data-brush="showa" aria-pressed="false"><span class="sw" style="background:linear-gradient(135deg,#1B1B1B 0 58%,#ffffff 58% 100%)"></span>昭和</button>
+      <button class="brush" type="button" data-brush="ogon" aria-pressed="false"><span class="sw" style="background:#F2B33D"></span>黄金</button>
+      <button class="brush" type="button" data-brush="tancho" aria-pressed="false"><span class="sw" style="background:radial-gradient(circle at 50% 42%,#E23B2E 0 34%,#ffffff 36% 100%)"></span>丹顶</button>
+      <span class="diy-label">放荷</span>
+      <span class="brush-group">
+        <button class="brush" type="button" data-brush="pad" aria-pressed="false">荷叶</button>
+        <button class="brush" type="button" data-brush="lotus" aria-pressed="false">荷花</button>
+      </span>
+    </div>
+    <div class="diy-row diy-ops">
+      <button class="chip" id="undoBtn" type="button" disabled>撤销</button>
+      <button class="chip" id="delBtn" type="button" disabled>拿走</button>
+      <button class="chip" id="clearBtn" type="button">清空</button>
+      <button class="chip" id="savePng" type="button">存成图</button>
+      <span class="saved-tag" id="savedTag">已保存</span>
+    </div>
+  </div>
 
   <div class="sill">
     <p class="caption" id="fedCount">今天还没喂鱼</p>
@@ -359,6 +466,11 @@ function mix(a, b, t, al){
   const s = Math.round(lerp(A[0], B[0], t)) + ',' + Math.round(lerp(A[1], B[1], t)) + ',' + Math.round(lerp(A[2], B[2], t));
   return al === undefined ? 'rgb(' + s + ')' : 'rgba(' + s + ',' + al + ')';
 }
+/* 两色取中间值，返回 [r,g,b] —— 调色板用 */
+function mixHex(a, b, t){
+  const A = hex(a), B = hex(b);
+  return [Math.round(lerp(A[0], B[0], t)), Math.round(lerp(A[1], B[1], t)), Math.round(lerp(A[2], B[2], t))];
+}
 function angd(a, b){
   let d = (a - b) % TAU;
   if (d > Math.PI) d -= TAU;
@@ -389,9 +501,52 @@ const SWATCH = {
   tancho: 'radial-gradient(circle at 50% 42%,#E23B2E 0 34%,#ffffff 36% 100%)'
 };
 
+/* =====================================================================
+   四季：一套参数表，四张脸
+   水色、池底、水光、石头上的苔和霜、荷叶荷花、飘落物、鱼的劲儿，
+   全都从这里取；切换季节只重画一次底图，不逐帧换色。
+   ===================================================================== */
+const SEASONS = {
+  spring: {
+    name: '春', jade: '#DCEFDF', teal: '#3E8C84', deep: '#1C4A4B',
+    padA: '#4C9B62', padB: '#7CC48A', lotus: '#FAD6E1',
+    moss: 1, frost: 0, caustic: [255, 252, 232], causticA: 0.5, light: 'rgba(255,248,220,.24)',
+    flowerK: 0.45, fishK: 1.06, motes: 'petal'
+  },
+  summer: {
+    name: '夏', jade: '#BFE3D0', teal: '#2C7A7B', deep: '#14323A',
+    padA: '#3E8E5A', padB: '#6DB37C', lotus: '#F7C6D0',
+    moss: 1, frost: 0, caustic: [255, 255, 236], causticA: 0.58, light: 'rgba(255,255,255,.2)',
+    flowerK: 1, fishK: 1, motes: 'none'
+  },
+  autumn: {
+    name: '秋', jade: '#E7DCB8', teal: '#7A6843', deep: '#33291C',
+    padA: '#8A7A3C', padB: '#B7A05A', lotus: '#EFC6B0',
+    moss: 0.55, frost: 0, caustic: [255, 232, 188], causticA: 0.46, light: 'rgba(255,224,170,.26)',
+    flowerK: 0.35, fishK: 0.95, motes: 'leaf'
+  },
+  winter: {
+    name: '冬', jade: '#DDE9EE', teal: '#4A707B', deep: '#1C3138',
+    padA: '#7C6B50', padB: '#9A8A6E', lotus: '#E6DBE4',
+    moss: 0.05, frost: 1, caustic: [226, 240, 255], causticA: 0.34, light: 'rgba(212,232,246,.22)',
+    flowerK: 0, fishK: 0.55, pull: 0.9, motes: 'snow'
+  }
+};
+const SEASON_ORDER = ['spring', 'summer', 'autumn', 'winter'];
+let season = 'summer';
+/* P 是"这一季的水和植物"的颜色，C 留给鱼身上那些不会随季节变的墨色 */
+const P = {
+  jade: '#BFE3D0', teal: '#2C7A7B', deep: '#14323A',
+  padA: '#3E8E5A', padB: '#6DB37C', lotus: '#F7C6D0',
+  moss: 1, frost: 0, caustic: [255, 255, 236], causticA: 0.58, light: 'rgba(255,255,255,.2)'
+};
+let seasonFade = 0, seasonTint = 'rgba(44,122,123,.5)';
+const motes = [];
+
 /* ---------- 离屏图层 ---------- */
 const floorCv = document.createElement('canvas');
 const stoneCv = document.createElement('canvas');
+let pebbleCv = null, pebbleW = 0, pebbleH = 0;
 let bgCv = null;
 const causCv = document.createElement('canvas');
 const causCtx = causCv.getContext('2d');
@@ -456,9 +611,9 @@ function paintStones(){
     c.shadowOffsetX = (5 + s.r * 0.04) * DPR; c.shadowOffsetY = (8 + s.r * 0.06) * DPR;
     stonePath(c, s);
     const g = c.createLinearGradient(s.x - s.r, s.y - s.r, s.x + s.r, s.y + s.r);
-    g.addColorStop(0, mix(C.white, C.deep, Math.max(0.03, s.tone - 0.1)));
-    g.addColorStop(0.5, mix(C.white, C.deep, s.tone + 0.06));
-    g.addColorStop(1, mix(C.white, C.deep, s.tone + 0.34));
+    g.addColorStop(0, mix('#FFFFFF', P.deep, Math.max(0.03, s.tone - 0.1)));
+    g.addColorStop(0.5, mix('#FFFFFF', P.deep, s.tone + 0.06));
+    g.addColorStop(1, mix('#FFFFFF', P.deep, s.tone + 0.34));
     c.fillStyle = g;
     c.fill();
     c.restore();
@@ -498,26 +653,39 @@ function paintStones(){
     c.translate(-1.5, -2.5); stonePath(c, s); c.stroke();
     c.translate(3, 5); c.strokeStyle = 'rgba(255,255,255,.4)'; stonePath(c, s); c.stroke();
     c.translate(-1.5, -2.5);
-    /* 苔藓 */
-    if (s.r > 12 && s.moss > 0.18){
+    /* 苔藓：春天最旺，秋天发干，冬天几乎没有 */
+    if (s.r > 12 && s.moss > 0.18 && P.moss > 0.08){
       const patches = 2 + Math.floor(s.moss * 3);
       for (let m = 0; m < patches; m++){
         const ma = r() * TAU, mr = s.r * (0.55 + r() * 0.4), ms = s.r * (0.22 + r() * 0.3);
         const mx = s.x + Math.cos(ma) * mr, my = s.y + Math.sin(ma) * mr;
-        const dots = Math.round(30 + ms * 2.2);
+        const dots = Math.round((30 + ms * 2.2) * P.moss);
         for (let k = 0; k < dots; k++){
           const da = r() * TAU, dd = Math.pow(r(), 0.7) * ms, dr = (1.2 + r() * 3.4) * S * (1 - dd / ms * 0.55);
           const px = mx + Math.cos(da) * dd, py = my + Math.sin(da) * dd;
           c.fillStyle = 'rgba(20,50,58,.2)';
           c.beginPath(); c.arc(px + 0.8, py + 1.2, dr, 0, TAU); c.fill();
-          c.fillStyle = mix(C.padA, C.padB, r() * 0.6, 0.92);
+          c.fillStyle = mix(P.padA, P.padB, r() * 0.6, 0.92);
           c.beginPath(); c.arc(px, py, dr, 0, TAU); c.fill();
           if (r() > 0.45){
-            c.fillStyle = mix(C.padB, C.jade, r() * 0.5, 0.85);
+            c.fillStyle = mix(P.padB, P.jade, r() * 0.5, 0.85);
             c.beginPath(); c.arc(px - dr * 0.3, py - dr * 0.35, dr * 0.45, 0, TAU); c.fill();
           }
         }
       }
+    }
+    /* 冬天的薄霜：石头朝光的那一半压一层白 */
+    if (P.frost > 0.05){
+      c.save();
+      stonePath(c, s);
+      c.clip();
+      const fg = c.createLinearGradient(s.x - s.r, s.y - s.r, s.x + s.r * 0.5, s.y + s.r);
+      fg.addColorStop(0, 'rgba(255,255,255,' + (0.6 * P.frost) + ')');
+      fg.addColorStop(0.55, 'rgba(255,255,255,' + (0.22 * P.frost) + ')');
+      fg.addColorStop(1, 'rgba(255,255,255,0)');
+      c.fillStyle = fg;
+      c.fillRect(s.x - s.r * 1.3, s.y - s.r * 1.3, s.r * 2.6, s.r * 2.6);
+      c.restore();
     }
     c.restore();
   });
@@ -542,7 +710,16 @@ function depthAt(x, y){
   }
   return clamp(e, 0, 1);
 }
-const RAMP = [[0, hex(C.jade)], [0.19, [116, 186, 170]], [0.52, hex(C.teal)], [1, [22, 60, 70]]];
+let RAMP = [];
+function buildRamp(){
+  RAMP = [
+    [0, hex(P.jade)],
+    [0.19, mixHex(P.jade, P.teal, 0.45)],
+    [0.52, hex(P.teal)],
+    [1, hex(P.deep)]
+  ];
+}
+buildRamp();
 function ramp(e, out){
   e = Math.pow(e, 1.12);
   for (let i = 1; i < RAMP.length; i++){
@@ -572,22 +749,30 @@ function paintFloor(){
   tc.putImageData(img, 0, 0);
   c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high';
   c.drawImage(t, 0, 0, gw * q, gh * q);
-  /* 池底的小石子：浅处清楚，深处糊掉 */
-  const count = Math.round(W * H / 1250);
-  for (let i = 0; i < count; i++){
-    const px = r() * W, py = r() * H, e = depthAt(px, py);
-    const vis = Math.pow(1 - e, 1.6) + 0.12;
-    const rad = (1.6 + r() * r() * 7.5) * S, rot = r() * Math.PI, sq = 0.6 + r() * 0.4;
-    const light = r() > 0.45;
-    c.fillStyle = 'rgba(20,50,58,' + (0.10 * vis) + ')';
-    c.beginPath(); c.ellipse(px + rad * 0.25, py + rad * 0.4, rad, rad * sq, rot, 0, TAU); c.fill();
-    c.fillStyle = light ? 'rgba(255,255,255,' + ((0.10 + r() * 0.16) * vis) + ')' : 'rgba(20,50,58,' + ((0.07 + r() * 0.12) * vis) + ')';
-    c.beginPath(); c.ellipse(px, py, rad, rad * sq, rot, 0, TAU); c.fill();
-    if (light && rad > 3 * S){
-      c.fillStyle = 'rgba(255,255,255,' + (0.16 * vis) + ')';
-      c.beginPath(); c.ellipse(px - rad * 0.25, py - rad * 0.25, rad * 0.45, rad * sq * 0.4, rot, 0, TAU); c.fill();
+  /* 池底的小石子：浅处清楚，深处糊掉。画一次存起来，换季只要换水色 */
+  if (!pebbleCv || pebbleW !== Math.round(W) || pebbleH !== Math.round(H)){
+    pebbleW = Math.round(W); pebbleH = Math.round(H);
+    pebbleCv = document.createElement('canvas');
+    pebbleCv.width = pebbleW; pebbleCv.height = pebbleH;
+    const pc = pebbleCv.getContext('2d');
+    const pr = rngf(7741);
+    const count = Math.round(W * H / 1250);
+    for (let i = 0; i < count; i++){
+      const px = pr() * W, py = pr() * H, e = depthAt(px, py);
+      const vis = Math.pow(1 - e, 1.6) + 0.12;
+      const rad = (1.6 + pr() * pr() * 7.5) * S, rot = pr() * Math.PI, sq = 0.6 + pr() * 0.4;
+      const light = pr() > 0.45;
+      pc.fillStyle = 'rgba(20,50,58,' + (0.10 * vis) + ')';
+      pc.beginPath(); pc.ellipse(px + rad * 0.25, py + rad * 0.4, rad, rad * sq, rot, 0, TAU); pc.fill();
+      pc.fillStyle = light ? 'rgba(255,255,255,' + ((0.10 + pr() * 0.16) * vis) + ')' : 'rgba(20,50,58,' + ((0.07 + pr() * 0.12) * vis) + ')';
+      pc.beginPath(); pc.ellipse(px, py, rad, rad * sq, rot, 0, TAU); pc.fill();
+      if (light && rad > 3 * S){
+        pc.fillStyle = 'rgba(255,255,255,' + (0.16 * vis) + ')';
+        pc.beginPath(); pc.ellipse(px - rad * 0.25, py - rad * 0.25, rad * 0.45, rad * sq * 0.4, rot, 0, TAU); pc.fill();
+      }
     }
   }
+  c.drawImage(pebbleCv, 0, 0);
 }
 
 /* ---------- 池底和石头合成为一张底图，每帧只贴一次 ---------- */
@@ -598,9 +783,9 @@ function composeBackground(){
   b.setTransform(DPR, 0, 0, DPR, 0, 0);
   b.drawImage(floorCv, 0, 0, W, H);
   b.drawImage(stoneCv, 0, 0, W, H);
-  /* 水面上斜斜的一片天光，一次画进底图 */
+  /* 水面上斜斜的一片天光，一次画进底图（每个季节的色温不一样） */
   const sg = b.createLinearGradient(0, 0, W * 0.75, H);
-  sg.addColorStop(0, 'rgba(255,255,255,.2)'); sg.addColorStop(0.45, 'rgba(255,255,255,.03)'); sg.addColorStop(1, 'rgba(255,255,255,0)');
+  sg.addColorStop(0, P.light); sg.addColorStop(0.45, 'rgba(255,255,255,.03)'); sg.addColorStop(1, 'rgba(255,255,255,0)');
   b.fillStyle = sg; b.fillRect(0, 0, W, H);
   b.setTransform(1, 0, 0, 1, 0, 0);
   floorCv.width = 1; floorCv.height = 1;
@@ -608,36 +793,55 @@ function composeBackground(){
 }
 
 /* ---------- 水光：低分辨率算一次，再放大 ---------- */
-function setupCaustics(){
+/* 花纹和蒙版只跟池子的形状有关：换季时只把 RGB 换成新水色，不重算几何 */
+let causMaskImg = null, causTexImg = null;
+function setupCaustics(rebuild){
   const cell = Math.max(W, H) / 224;
   const cw = Math.max(8, Math.round(W / cell)), ch = Math.max(8, Math.round(H / cell));
-  causCv.width = cw; causCv.height = ch;
-  causTexCv.width = Math.ceil(cw * 1.5); causTexCv.height = Math.ceil(ch * 1.5);
-  causMaskCv.width = cw; causMaskCv.height = ch;
-  causScale = TAU * (Math.max(W, H) / (S * 250)) / Math.max(cw, ch);
-  causMask = new Float32Array(cw * ch);
+  if (rebuild || !causMaskImg || causCv.width !== cw || causCv.height !== ch){
+    causCv.width = cw; causCv.height = ch;
+    causTexCv.width = Math.ceil(cw * 1.5); causTexCv.height = Math.ceil(ch * 1.5);
+    causMaskCv.width = cw; causMaskCv.height = ch;
+    causScale = TAU * (Math.max(W, H) / (S * 250)) / Math.max(cw, ch);
+    causMask = new Float32Array(cw * ch);
 
-  /* 深的地方水光弱一点；这张蒙版一直贴在屏幕上不动 */
-  const mctx = causMaskCv.getContext('2d');
-  const mimg = mctx.createImageData(cw, ch), md = mimg.data;
-  for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++){
-    const me = depthAt((x + 0.5) * W / cw, (y + 0.5) * H / ch);
-    const a = (1 - 0.62 * me * me) * (0.7 + 0.3 * Math.min(1, me * 4));
-    const q = y * cw + x;
-    causMask[q] = a;
-    md[q * 4] = 255; md[q * 4 + 1] = 255; md[q * 4 + 2] = 236; md[q * 4 + 3] = Math.round(a * 255);
+    /* 深的地方水光弱一点；这张蒙版一直贴在屏幕上不动 */
+    const mctx = causMaskCv.getContext('2d');
+    causMaskImg = mctx.createImageData(cw, ch);
+    const md = causMaskImg.data;
+    for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++){
+      const me = depthAt((x + 0.5) * W / cw, (y + 0.5) * H / ch);
+      const a = (1 - 0.62 * me * me) * (0.7 + 0.3 * Math.min(1, me * 4));
+      const q = y * cw + x;
+      causMask[q] = a;
+      md[q * 4 + 3] = Math.round(a * 255);
+    }
+    /* 水光的花纹只在换尺寸时算一次，之后每帧只是把这张图挪一挪 */
+    paintCausticTexture(3.1);
   }
-  mctx.putImageData(mimg, 0, 0);
-
-  /* 水光的花纹只在换尺寸时算一次，之后每帧只是把这张图挪一挪 */
-  paintCausticTexture(3.1);
+  tintCaustics();
   updateCaustics(0);
+}
+/* 只换颜色：把水光的 RGB 抹成这一季的水色 */
+function tintCaustics(){
+  const col = P.caustic;
+  if (causMaskImg){
+    const md = causMaskImg.data;
+    for (let q = 0; q < causMask.length; q++){ const k = q * 4; md[k] = col[0]; md[k + 1] = col[1]; md[k + 2] = col[2]; }
+    causMaskCv.getContext('2d').putImageData(causMaskImg, 0, 0);
+  }
+  if (causTexImg){
+    const td = causTexImg.data;
+    for (let k = 0; k < td.length; k += 4){ td[k] = col[0]; td[k + 1] = col[1]; td[k + 2] = col[2]; }
+    causTexCv.getContext('2d').putImageData(causTexImg, 0, 0);
+  }
 }
 
 function paintCausticTexture(time){
   const cw = causTexCv.width, ch = causTexCv.height;
   const tctx = causTexCv.getContext('2d');
-  const img = tctx.createImageData(cw, ch), d = img.data;
+  causTexImg = tctx.createImageData(cw, ch);
+  const d = causTexImg.data;
   const sc = causScale, inten = 0.005;
   let q = 0;
   for (let y = 0; y < ch; y++){
@@ -657,12 +861,12 @@ function paintCausticTexture(time){
       c = 1.17 - Math.pow(c, 1.4);
       let v = c * c; v = v * v; v = v * v;
       const k = q * 4;
-      d[k] = 255; d[k + 1] = 255; d[k + 2] = 236;
+      d[k] = P.caustic[0]; d[k + 1] = P.caustic[1]; d[k + 2] = P.caustic[2];
       d[k + 3] = Math.round((v > 1 ? 1 : v) * 255);
       q++;
     }
   }
-  tctx.putImageData(img, 0, 0);
+  tctx.putImageData(causTexImg, 0, 0);
 }
 
 /* 两层同样的水光，错开速度挪动，看起来就一直在晃 */
@@ -728,39 +932,51 @@ function makePattern(f, r){
   }
   f.blobs = b;
 }
-function makeFish(i){
-  const r = rngf(7001 + i * 131);
-  const f = { variety: ORDER[i % ORDER.length] };
-  let size = 0.25 + r() * 0.75;
-  if (i === 0) size = 1;
-  if (i === 3) size = 0.9;
-  if (i === 5) size = 0.3;
-  f.size = size;
-  f.B = (58 + size * 80) * S;
+/* 造一条鱼：品种和大小可以指定，花纹用传进来的随机源（好看又稳定） */
+function newFish(variety, size, r){
+  if (!r) r = rngf(7001 + Math.floor(Math.random() * 99991));
+  const f = { variety: NAME[variety] ? variety : 'kohaku' };
+  f.size = clamp(size == null ? 0.25 + r() * 0.75 : size, 0.18, 1.35);
+  f.B = (58 + f.size * 80) * S;
   f.cruise = f.B * (0.5 + r() * 0.2);
   f.swirl = r() > 0.2 ? 1 : -1;
   f.tailK = 0.9 + r() * 0.3;
   makePattern(f, r);
-  /* 从池子边上游进来，避开石头角 */
-  const side = i % 4, u = 0.3 + r() * 0.4, out = f.B * (1.1 + r() * 0.9);
-  if (side === 0){ f.x = -out; f.y = H * u; }
-  else if (side === 1){ f.x = W * u; f.y = -out; }
-  else if (side === 2){ f.x = W + out; f.y = H * u; }
-  else { f.x = W * u; f.y = H + out; }
-  f.h = Math.atan2(H * (0.3 + r() * 0.4) - f.y, W * (0.3 + r() * 0.4) - f.x);
+  f.x = 0; f.y = 0; f.h = 0;
   f.speed = f.cruise * 2.6; f.thrust = 1; f.phase = r() * TAU; f.paddle = r() * TAU;
   f.wander = 0; f.fleeT = 0; f.fleeA = 0; f.retT = 0; f.retD = 0; f.retX = 0; f.retY = 0;
-  f.notice = 0; f.chew = 0; f.mouth = 0; f.enter = 1; f.gulp = 6 + r() * 30; f.bloopT = 0;
+  f.notice = 0; f.chew = 0; f.mouth = 0; f.enter = 0; f.gulp = 6 + r() * 30; f.bloopT = 0;
   f.nodes = new Float32Array(NSEG * 2);
   f.px = new Float32Array(NSEG); f.py = new Float32Array(NSEG);
   f.nx = new Float32Array(NSEG); f.ny = new Float32Array(NSEG);
   f.out = new Float32Array(46);
+  return f;
+}
+function placeFish(f, x, y, h){
+  f.x = x; f.y = y; f.h = h;
   const seg = f.B / (NSEG - 1);
   for (let k = 0; k < NSEG; k++){
     f.nodes[k * 2] = f.x - Math.cos(f.h) * seg * k;
     f.nodes[k * 2 + 1] = f.y - Math.sin(f.h) * seg * k;
   }
   return f;
+}
+function makeFish(i){
+  const r = rngf(7001 + i * 131);
+  let size = 0.25 + r() * 0.75;
+  if (i === 0) size = 1;
+  if (i === 3) size = 0.9;
+  if (i === 5) size = 0.3;
+  const f = newFish(ORDER[i % ORDER.length], size, r);
+  /* 从池子边上游进来，避开石头角 */
+  const side = i % 4, u = 0.3 + r() * 0.4, out = f.B * (1.1 + r() * 0.9);
+  let x, y;
+  if (side === 0){ x = -out; y = H * u; }
+  else if (side === 1){ x = W * u; y = -out; }
+  else if (side === 2){ x = W + out; y = H * u; }
+  else { x = W * u; y = H + out; }
+  f.enter = 1;
+  return placeFish(f, x, y, Math.atan2(H * (0.3 + r() * 0.4) - y, W * (0.3 + r() * 0.4) - x));
 }
 
 function updateFish(f, dt){
@@ -769,6 +985,9 @@ function updateFish(f, dt){
   f.wander += (rnd() - 0.5) * dt * 5; f.wander *= 1 - dt * 0.3;
   f.wander = clamp(f.wander, -1.1, 1.1);
   fx += Math.cos(f.h + f.wander); fy += Math.sin(f.h + f.wander);
+  /* 冬天的鱼懒得动，也爱往深水（池子中间）待着 */
+  const fs = SEASONS[season];
+  if (fs.pull){ fx += (W * 0.5 - f.x) / W * fs.pull; fy += (H * 0.5 - f.y) / H * fs.pull; }
 
   const m = f.B * 0.45 + 56 * S;
   if (f.x < m) fx += (m - f.x) / m * 3.2;
@@ -877,8 +1096,9 @@ function updateFish(f, dt){
   }
   const dh = angd(Math.atan2(fy, fx), f.h);
   f.h += clamp(dh * 3, -turn, turn) * dt;
-  f.x += Math.cos(f.h) * f.speed * dt;
-  f.y += Math.sin(f.h) * f.speed * dt;
+  const sp = f.speed * fs.fishK;
+  f.x += Math.cos(f.h) * sp * dt;
+  f.y += Math.sin(f.h) * sp * dt;
   f.phase += dt * (2.0 + 7.5 * f.thrust + f.speed / f.B * 3);
   f.paddle += dt * (2.6 + f.thrust);
 
@@ -1142,8 +1362,8 @@ function paintPadContent(c, p, rad){
   c.arc(0, 0, rad, n0 + 0.16, n0 + TAU - 0.16);
   c.closePath();
   const g = c.createRadialGradient(-rad * 0.25, -rad * 0.3, rad * 0.05, 0, 0, rad);
-  if (p.kind){ g.addColorStop(0, C.padB); g.addColorStop(0.7, mix(C.padB, C.padA, 0.55)); g.addColorStop(1, C.padA); }
-  else { g.addColorStop(0, mix(C.padB, C.padA, 0.4)); g.addColorStop(0.75, C.padA); g.addColorStop(1, mix(C.padA, C.deep, 0.22)); }
+  if (p.kind){ g.addColorStop(0, P.padB); g.addColorStop(0.7, mix(P.padB, P.padA, 0.55)); g.addColorStop(1, P.padA); }
+  else { g.addColorStop(0, mix(P.padB, P.padA, 0.4)); g.addColorStop(0.75, P.padA); g.addColorStop(1, mix(P.padA, P.deep, 0.22)); }
   c.fillStyle = g; c.fill();
   c.save(); c.clip();
   c.strokeStyle = 'rgba(191,227,208,.34)'; c.lineWidth = Math.max(0.6, rad * 0.018);
@@ -1167,7 +1387,9 @@ function paintPadContent(c, p, rad){
     c.fillStyle = 'rgba(214,240,226,.8)'; c.beginPath(); c.arc(bx, by, dr, 0, TAU); c.fill();
     c.fillStyle = '#fff'; c.beginPath(); c.arc(bx - dr * 0.3, by - dr * 0.35, dr * 0.4, 0, TAU); c.fill();
   }
-  if (p.flower) paintLotusContent(c, p, rad);
+  /* 荷花按季节开：春天花苞、夏天盛开、秋天残花、冬天只剩叶子 */
+  const bloom = p.flower * SEASONS[season].flowerK;
+  if (bloom > 0.02) paintLotusContent(c, p, rad, bloom);
 }
 function petal(c, x, y, a, len, wid){
   const dx = Math.cos(a), dy = Math.sin(a), nx = -dy, ny = dx;
@@ -1177,8 +1399,8 @@ function petal(c, x, y, a, len, wid){
   c.quadraticCurveTo(x + dx * len * 0.5 - nx * wid, y + dy * len * 0.5 - ny * wid, x, y);
   c.closePath();
 }
-function paintLotusContent(c, p, rad){
-  const R = rad * 0.6 * p.flower, x = Math.cos(p.notch + 2.6) * rad * 0.2, y = Math.sin(p.notch + 2.6) * rad * 0.2;
+function paintLotusContent(c, p, rad, bloom){
+  const R = rad * 0.6 * bloom, x = Math.cos(p.notch + 2.6) * rad * 0.2, y = Math.sin(p.notch + 2.6) * rad * 0.2;
   let i, a;
   c.fillStyle = 'rgba(20,50,58,.2)';
   c.beginPath(); c.arc(x + R * 0.12, y + R * 0.2, R * 0.8, 0, TAU); c.fill();
@@ -1189,9 +1411,9 @@ function paintLotusContent(c, p, rad){
       a = L[3] + i / L[0] * TAU;
       const len = R * L[1], tipx = x + Math.cos(a) * len, tipy = y + Math.sin(a) * len;
       const g = c.createLinearGradient(x, y, tipx, tipy);
-      g.addColorStop(0, mix(C.lotus, C.white, 0.75 + L[4] * 0.2));
-      g.addColorStop(0.55, mix(C.lotus, C.white, 0.35 + L[4] * 0.4));
-      g.addColorStop(1, mix(C.lotus, C.orange, 0.1 - L[4] * 0.1));
+      g.addColorStop(0, mix(P.lotus, C.white, 0.75 + L[4] * 0.2));
+      g.addColorStop(0.55, mix(P.lotus, C.white, 0.35 + L[4] * 0.4));
+      g.addColorStop(1, mix(P.lotus, C.orange, 0.1 - L[4] * 0.1));
       petal(c, x, y, a, len, R * L[2]);
       c.fillStyle = g; c.fill();
       c.strokeStyle = 'rgba(190,110,130,.26)'; c.lineWidth = 0.6; c.stroke();
@@ -1241,13 +1463,86 @@ const LEAF = (() => {
   return { pts: p, lobes };
 })();
 function buildLeaves(){
-  const r = rngf(58);
   leaves.length = 0;
+  /* 枫叶只在秋天落；其他季节水面是干净的 */
+  if (season !== 'autumn') return;
+  const r = rngf(58);
   const spots = W < 620 ? [[0.7, 0.28], [0.44, 0.6], [0.8, 0.9]] : [[0.43, 0.2], [0.5, 0.78], [0.9, 0.42], [0.33, 0.44]];
   const cols = [C.orange, mix(C.orange, C.yolk, 0.7), mix(C.orange, C.black, 0.22), mix(C.yolk, C.orange, 0.35)];
   spots.forEach((s, i) => {
     leaves.push({ x: s[0] * W, y: s[1] * H, a: r() * TAU, va: (r() > 0.5 ? 1 : -1) * (0.05 + r() * 0.07), vx: (r() - 0.5) * 3, vy: (r() - 0.5) * 3, r: (21 + r() * 10) * S, col: cols[i % 4], lastRip: -1 });
   });
+}
+
+/* ---------- 换季：只改调色和配景，不动你放的鱼和荷 ---------- */
+function setPalette(name){
+  const s = SEASONS[name] ? SEASONS[name] : SEASONS.summer;
+  season = SEASONS[name] ? name : 'summer';
+  P.jade = s.jade; P.teal = s.teal; P.deep = s.deep;
+  P.padA = s.padA; P.padB = s.padB; P.lotus = s.lotus;
+  P.moss = s.moss; P.frost = s.frost;
+  P.caustic = s.caustic.slice(); P.causticA = s.causticA; P.light = s.light;
+  buildRamp();
+}
+function applySeason(name, silent){
+  const prev = season;
+  setPalette(name);
+  paintStones(); paintFloor(); composeBackground(); setupCaustics(false);
+  for (let i = 0; i < pads.length; i++) makePadSprite(pads[i]);
+  buildLeaves(); buildMotes();
+  if (!silent && prev !== season){ seasonFade = 1; seasonTint = SEASONS[prev].teal; }
+  syncSeasonUi();
+}
+
+/* ---------- 漂在水面上的小东西：樱花瓣、雪 ---------- */
+function buildMotes(){
+  motes.length = 0;
+  const kind = SEASONS[season].motes;
+  if (kind === 'none') return;
+  const r = rngf(kind === 'snow' ? 90210 : 5511);
+  const n = kind === 'snow' ? Math.round(clamp(W * H / 26000, 26, 54))
+                           : Math.round(clamp(W * H / 90000, 7, 14));
+  for (let i = 0; i < n; i++){
+    motes.push({
+      k: kind, x: r() * W, y: r() * H,
+      r: (kind === 'snow' ? 1.3 + r() * 2.4 : 3.4 + r() * 4) * S,
+      a: r() * TAU, va: (r() - 0.5) * 0.6,
+      vx: (r() - 0.5) * (kind === 'snow' ? 6 : 14),
+      vy: (r() - 0.5) * (kind === 'snow' ? 5 : 11),
+      ph: r() * TAU, hue: r()
+    });
+  }
+}
+function updateMotes(dt){
+  const mt = calm ? 0.4 : 1;
+  for (let i = 0; i < motes.length; i++){
+    const m = motes[i];
+    m.a += m.va * dt * mt;
+    m.x += (m.vx + Math.sin(T * 0.3 + m.ph) * 4) * dt * mt;
+    m.y += (m.vy + Math.cos(T * 0.24 + m.ph) * 3 + (m.k === 'snow' ? 5 : 0)) * dt * mt;
+    const pad = 30;
+    if (m.x < -pad) m.x = W + pad; else if (m.x > W + pad) m.x = -pad;
+    if (m.y < -pad) m.y = H + pad; else if (m.y > H + pad) m.y = -pad;
+  }
+}
+function drawMotes(){
+  if (!motes.length) return;
+  const c = ctx;
+  for (let i = 0; i < motes.length; i++){
+    const m = motes[i];
+    if (m.k === 'petal'){
+      c.save(); c.translate(m.x, m.y); c.rotate(m.a);
+      c.fillStyle = 'rgba(250,206,220,' + (0.72 + m.hue * 0.2) + ')';
+      c.beginPath(); c.ellipse(0, 0, m.r, m.r * 0.58, 0, 0, TAU); c.fill();
+      c.strokeStyle = 'rgba(255,255,255,.38)'; c.lineWidth = 0.6; c.stroke();
+      c.restore();
+    } else {
+      c.fillStyle = 'rgba(255,255,255,.2)';
+      c.beginPath(); c.arc(m.x, m.y, m.r * 2.1, 0, TAU); c.fill();
+      c.fillStyle = 'rgba(255,255,255,' + (0.52 + m.hue * 0.36) + ')';
+      c.beginPath(); c.arc(m.x, m.y, m.r, 0, TAU); c.fill();
+    }
+  }
 }
 function leafPath(c, lf){
   c.beginPath();
@@ -1518,11 +1813,13 @@ function doFeed(x, y){
 
 cv.addEventListener('pointerdown', e => {
   if (e.button && e.button !== 0) return;
+  if (isDiy()){ diyDown(e); return; }
   ptr.x = e.clientX; ptr.y = e.clientY; ptr.inside = true; ptr.mouse = e.pointerType === 'mouse';
   ptr.down = true; ptr.dx = ptr.x; ptr.dy = ptr.y; ptr.dt = 0; ptr.held = false; ptr.id = e.pointerId; ptr.hdt = performance.now(); ptr.slowT = 0;
   try { cv.setPointerCapture(e.pointerId); } catch (err) { /* 抓不住就算了 */ }
 });
 cv.addEventListener('pointermove', e => {
+  if (isDiy()){ diyMove(e); return; }
   ptr.x = e.clientX; ptr.y = e.clientY; ptr.inside = true; ptr.mouse = e.pointerType === 'mouse';
   ptr.moved += Math.hypot(ptr.x - ptr.lx, ptr.y - ptr.ly);
   ptr.lx = ptr.x; ptr.ly = ptr.y;
@@ -1531,6 +1828,7 @@ cv.addEventListener('pointermove', e => {
   if (ptr.down && !ptr.held && Math.hypot(ptr.x - ptr.dx, ptr.y - ptr.dy) > DRAG()) ptr.hdt = -1;
 });
 function release(e, cancelled){
+  if (isDiy()){ diyUp(e); return; }
   if (!ptr.down) return;
   ptr.down = false;
   if (cancelled || ptr.held) return;
@@ -1550,12 +1848,21 @@ cv.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') ptr.in
 cv.addEventListener('contextmenu', e => e.preventDefault());
 window.addEventListener('blur', () => { ptr.down = false; });
 cv.addEventListener('keydown', e => {
+  if (isDiy()){
+    if (e.key === 'Enter'){
+      if (brush) placeAt(W * 0.5 + (Math.random() - 0.5) * W * 0.4, H * 0.5 + (Math.random() - 0.5) * H * 0.4);
+      else if (selected) toast('已经选中了，按删除拿走它');
+      e.preventDefault();
+    } else if (e.key === 'Delete' || e.key === 'Backspace'){ removeSelected(); e.preventDefault(); }
+    return;
+  }
   const x = W * (0.3 + rnd() * 0.4), y = H * (0.3 + rnd() * 0.4);
   if (e.key === 'Enter'){ doTap(x, y); e.preventDefault(); }
   else if (e.key === ' ' || e.key === 'f' || e.key === 'F'){ doFeed(x, y); e.preventDefault(); }
 });
 
 function updatePointer(dt){
+  if (isDiy()) return;
   const inst = ptr.moved / Math.max(dt, 0.001);
   ptr.moved = 0;
   ptr.spd += (inst - ptr.spd) * Math.min(1, dt * 6);
@@ -1597,7 +1904,7 @@ function updatePointer(dt){
   } else followClock = 0;
 }
 function drawPointer(){
-  if (!ptr.inside || (!ptr.mouse && !ptr.down)) return;
+  if (isDiy() || !ptr.inside || (!ptr.mouse && !ptr.down)) return;
   const c = ctx, x = ptr.x, y = ptr.y, r = 8;
   if (ptr.mouse){
     c.lineWidth = 1.2;
@@ -1780,6 +2087,394 @@ $id('feedBtn').addEventListener('click', () => {
 });
 
 /* =====================================================================
+   我的池塘：空池 → 放鱼放荷 → 换季 → 存住
+   ===================================================================== */
+const DIY_KEY = 'koi-pond-v1', PREF_MODE = 'koi-mode', PREF_SEASON = 'koi-season';
+const LIMIT_FISH = 16, LIMIT_PAD = 20, LIMIT_LOTUS = 8;
+let mode = 'watch';
+let brush = null;
+let selected = null;
+let diyDrag = null;
+const undoStack = [];
+let saveTimer = 0, savedTagT = 0;
+
+const modeWatchBtn = $id('modeWatch'), modeDiyBtn = $id('modeDiy');
+const diyBar = $id('diyBar'), brushRow = $id('brushRow');
+const undoBtn = $id('undoBtn'), delBtn = $id('delBtn'), savedTag = $id('savedTag');
+
+const countPads = () => pads.reduce((n, p) => n + (p.flower > 0 ? 0 : 1), 0);
+const countLotus = () => pads.reduce((n, p) => n + (p.flower > 0 ? 1 : 0), 0);
+const isDiy = () => mode === 'diy';
+
+function spawnFishAt(variety, x, y, size, h){
+  const f = newFish(variety, size);
+  placeFish(f, x, y, h == null ? Math.random() * TAU : h);
+  f.speed = f.cruise * 0.9; f.thrust = 0.5; f.enter = 0;
+  fish.push(f);
+  return f;
+}
+function makePlantAt(kind, x, y, s, notch, seed, veins){
+  const size = clamp(s == null ? 0.7 + Math.random() * 0.7 : s, 0.55, 1.7);
+  const p = {
+    ax: x, ay: y, r: (44 + size * 12) * S, x, y,
+    notch: notch == null ? Math.random() * TAU : notch, rot: 0,
+    ph1: Math.random() * TAU, ph2: Math.random() * TAU,
+    kind: Math.random() > 0.5 ? 0 : 1,
+    bob: 0, bobV: 0, ox: 0, oy: 0, vx: 0, vy: 0, lastRip: -1,
+    flower: kind === 'lotus' ? 1 : 0,
+    seed: seed == null ? Math.floor(Math.random() * 1e5) : seed,
+    veins: veins || 9 + Math.floor(Math.random() * 5),
+    nx: x / W, ny: y / H, vs: size
+  };
+  makePadSprite(p);
+  return p;
+}
+/* 尺寸变了：按记下来的比例把植物摆回原处 */
+function layoutDiyPlants(){
+  for (let i = 0; i < pads.length; i++){
+    const p = pads[i];
+    if (p.nx == null) continue;
+    p.ax = p.nx * W; p.ay = p.ny * H;
+    p.r = (44 + clamp(p.vs == null ? 1 : p.vs, 0.55, 1.7) * 12) * S;
+    p.x = p.ax; p.y = p.ay;
+    makePadSprite(p);
+  }
+}
+
+/* ---------- 存 / 读 ---------- */
+function diyDoc(){
+  return {
+    v: 1, season, name: '我的池塘',
+    fish: fish.map(f => ({
+      k: f.variety,
+      x: +(f.x / Math.max(1, W)).toFixed(4), y: +(f.y / Math.max(1, H)).toFixed(4),
+      s: +clamp((f.B / S - 58) / 80, 0.18, 1.35).toFixed(3),
+      h: +f.h.toFixed(3)
+    })),
+    plants: pads.map(p => ({
+      k: p.flower > 0 ? 'lotus' : 'pad',
+      x: +(p.ax / Math.max(1, W)).toFixed(4), y: +(p.ay / Math.max(1, H)).toFixed(4),
+      s: +clamp((p.r / S - 44) / 12, 0.55, 1.7).toFixed(3),
+      n: +p.notch.toFixed(3), v: p.veins, sd: p.seed
+    }))
+  };
+}
+function snapshotStr(){
+  try { return JSON.stringify(diyDoc()); } catch (e) { return null; }
+}
+function readSaved(){
+  try {
+    const d = JSON.parse(localStorage.getItem(DIY_KEY) || 'null');
+    return d && d.v === 1 ? d : null;
+  } catch (e) { return null; }
+}
+function restoreDoc(doc){
+  fish.length = 0; pads.length = 0; leaves.length = 0;
+  selected = null; brush = null;
+  const fs = (doc && doc.fish) || [], ps = (doc && doc.plants) || [];
+  fs.slice(0, LIMIT_FISH).forEach(o => spawnFishAt(o.k, clamp(o.x, 0.02, 0.98) * W, clamp(o.y, 0.02, 0.98) * H,
+    clamp(o.s == null ? 0.8 : o.s, 0.18, 1.35), o.h));
+  ps.slice(0, LIMIT_PAD + LIMIT_LOTUS).forEach(o => {
+    pads.push(makePlantAt(o.k === 'lotus' ? 'lotus' : 'pad',
+      clamp(o.x, 0.02, 0.98) * W, clamp(o.y, 0.02, 0.98) * H, o.s, o.n, o.sd, o.v));
+  });
+  /* 季节是"看风景"的设置，不进作品内容：进来是什么季节就还是什么季节 */
+  applySeason(season, true);
+}function saveDoc(){
+  clearTimeout(saveTimer);
+  if (!isDiy()) return;
+  try {
+    localStorage.setItem(DIY_KEY, JSON.stringify(diyDoc()));
+    if (savedTag){
+      savedTag.textContent = '已保存';
+      savedTag.classList.add('on');
+      clearTimeout(savedTagT);
+      savedTagT = setTimeout(() => savedTag.classList.remove('on'), 1700);
+    }
+  } catch (e) {
+    if (savedTag){ savedTag.textContent = '这台设备不让保存'; savedTag.classList.add('on'); }
+  }
+}
+function markSaved(){
+  if (!isDiy()) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveDoc, 550);
+}
+function savePrefs(){
+  try {
+    localStorage.setItem(PREF_MODE, mode);
+    localStorage.setItem(PREF_SEASON, season);
+  } catch (e) { /* 存不了就算了 */ }
+}
+
+/* ---------- 改 / 撤 / 清 ---------- */
+function pushUndo(){
+  const s = snapshotStr();
+  if (!s) return;
+  undoStack.push(s);
+  if (undoStack.length > 12) undoStack.shift();
+  if (undoBtn) undoBtn.disabled = false;
+}
+function undo(){
+  const s = undoStack.pop();
+  if (!s) return;
+  try { restoreDoc(JSON.parse(s)); } catch (e) {}
+  selected = null;
+  markSaved(); syncUi(); toast('回到上一步');
+}
+function removeSelected(){
+  if (!selected) return;
+  pushUndo();
+  if (selected.type === 'fish'){
+    const i = fish.indexOf(selected.obj);
+    if (i >= 0) fish.splice(i, 1);
+  } else {
+    const i = pads.indexOf(selected.obj);
+    if (i >= 0) pads.splice(i, 1);
+  }
+  selected = null;
+  markSaved(); syncUi(); toast('拿走了');
+}
+function clearAll(){
+  if (!fish.length && !pads.length) return;
+  if (!window.confirm('把池子清空，重新搭一个？')) return;
+  pushUndo();
+  fish.length = 0; pads.length = 0; selected = null;
+  markSaved(); syncUi(); toast('池子空出来了');
+}
+
+/* ---------- 放东西 ---------- */
+function canPlace(x, y){
+  if (x < 26 || y < 26 || x > W - 26 || y > H - 26) return false;
+  return !onStone(x, y);
+}
+function placeAt(x, y){
+  if (!isDiy()) return;
+  if (!brush){ selected = null; syncUi(); return; }
+  if (!canPlace(x, y)){ toast('这里放不下，往水里一点'); return; }
+  if (brush === 'pad' || brush === 'lotus'){
+    if (brush === 'pad' && countPads() >= LIMIT_PAD){ toast('荷叶够多啦（最多 ' + LIMIT_PAD + ' 片）'); return; }
+    if (brush === 'lotus' && countLotus() >= LIMIT_LOTUS){ toast('荷花够多啦（最多 ' + LIMIT_LOTUS + ' 朵）'); return; }
+    pushUndo();
+    const jx = (Math.random() - 0.5) * 8, jy = (Math.random() - 0.5) * 8;
+    const p = makePlantAt(brush, x + jx, y + jy, 0.7 + Math.random() * 0.7);
+    pads.push(p);
+    selected = { type: 'plant', obj: p };
+    markSaved(); syncUi();
+    toast(brush === 'lotus' ? '种下一朵荷花' : '放进一片荷叶');
+  } else {
+    if (fish.length >= LIMIT_FISH){ toast('池子里已经很热闹啦（最多 ' + LIMIT_FISH + ' 条）'); return; }
+    pushUndo();
+    const jx = (Math.random() - 0.5) * 16, jy = (Math.random() - 0.5) * 16;
+    const f = spawnFishAt(brush, clamp(x + jx, 40, W - 40), clamp(y + jy, 40, H - 40));
+    selected = { type: 'fish', obj: f };
+    markSaved(); syncUi();
+    toast('放下一条' + NAME[brush]);
+  }
+}
+function diyHit(x, y){
+  for (let i = pads.length - 1; i >= 0; i--){
+    const p = pads[i];
+    if (Math.hypot(x - p.x, y - p.y) < p.r * 0.92) return { type: 'plant', obj: p };
+  }
+  const f = fishAt(x, y);
+  if (f) return { type: 'fish', obj: f };
+  return null;
+}
+
+/* ---------- 手指：点＝放，拖＝挪 ---------- */
+function diyDown(e){
+  const x = e.clientX, y = e.clientY;
+  const hit = diyHit(x, y);
+  if (hit){
+    selected = hit;
+    const o = hit.obj;
+    diyDrag = {
+      type: hit.type, obj: o, id: e.pointerId, moved: false,
+      ox: x - (hit.type === 'fish' ? o.x : o.ax),
+      oy: y - (hit.type === 'fish' ? o.y : o.ay),
+      pre: snapshotStr()
+    };
+    try { cv.setPointerCapture(e.pointerId); } catch (err) { /* 抓不住就算了 */ }
+    syncUi();
+    return;
+  }
+  diyDrag = null;
+  placeAt(x, y);
+}
+function diyMove(e){
+  if (!diyDrag) return;
+  const o = diyDrag.obj;
+  const tx = e.clientX - diyDrag.ox, ty = e.clientY - diyDrag.oy;
+  if (!canPlace(tx, ty)) return;
+  if (diyDrag.type === 'fish'){
+    const dx = tx - o.x, dy = ty - o.y;
+    if (Math.abs(dx) + Math.abs(dy) < 0.4) return;
+    o.x = tx; o.y = ty;
+    for (let i = 0; i < NSEG; i++){ o.nodes[i * 2] += dx; o.nodes[i * 2 + 1] += dy; }
+  } else {
+    o.ax = tx; o.ay = ty; o.x = tx; o.y = ty;
+    o.nx = tx / W; o.ny = ty / H;
+    o.vx = 0; o.vy = 0; o.bob = 0; o.bobV = 0;
+  }
+  diyDrag.moved = true;
+}
+function diyUp(){
+  if (!diyDrag) return;
+  if (diyDrag.moved && diyDrag.pre){
+    undoStack.push(diyDrag.pre);
+    if (undoStack.length > 12) undoStack.shift();
+    markSaved();
+  }
+  if (diyDrag.type === 'plant'){ /* 挪完把归一化位置记准 */ diyDrag.obj.nx = diyDrag.obj.ax / W; diyDrag.obj.ny = diyDrag.obj.ay / H; }
+  diyDrag = null;
+  syncUi();
+}
+
+/* ---------- 存成一张图 ---------- */
+function savePng(){
+  try {
+    const t = document.createElement('canvas');
+    /* 导出不跟屏幕 DPR 走：最长边 1600 就够了，发群里也小 */
+    const k = Math.min(1, 1600 / Math.max(cv.width, cv.height));
+    t.width = Math.max(320, Math.round(cv.width * k));
+    t.height = Math.max(240, Math.round(cv.height * k));
+    const g = t.getContext('2d');
+    g.drawImage(cv, 0, 0, t.width, t.height);
+    const scale = Math.max(0.6, t.width / 1200);
+    const barH = Math.round(104 * scale), pad = Math.round(30 * scale);
+    const lg = g.createLinearGradient(0, t.height - barH, 0, t.height);
+    lg.addColorStop(0, 'rgba(4,22,24,0)'); lg.addColorStop(0.45, 'rgba(4,22,24,.5)'); lg.addColorStop(1, 'rgba(4,22,24,.78)');
+    g.fillStyle = lg; g.fillRect(0, t.height - barH, t.width, barH);
+    g.textBaseline = 'middle';
+    g.fillStyle = '#FFF6E0';
+    g.font = '600 ' + Math.round(30 * scale) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    g.fillText('我的池塘 · ' + SEASONS[season].name, pad, t.height - barH * 0.62);
+    g.fillStyle = 'rgba(246,243,230,.72)';
+    g.font = '500 ' + Math.round(16 * scale) + 'px "PingFang SC","Microsoft YaHei",sans-serif';
+    g.fillText('Peanut 的奇趣阁 · 锦鲤池', pad, t.height - barH * 0.25);
+    const name = '我的池塘·' + SEASONS[season].name + '.png';
+    t.toBlob(b => {
+      if (!b){ toast('存图没成功'); return; }
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(b); a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 6000);
+      toast('存好啦，可以发给别人看');
+    }, 'image/png');
+  } catch (e) { toast('存图没成功'); }
+}
+
+/* ---------- 界面同步 ---------- */
+function syncSeasonUi(){
+  const bs = document.querySelectorAll('#seasons button');
+  for (let i = 0; i < bs.length; i++) bs[i].setAttribute('aria-pressed', String(bs[i].dataset.season === season));
+}
+function syncUi(){
+  const diy = isDiy();
+  document.body.classList.toggle('diy', diy);
+  if (modeWatchBtn) modeWatchBtn.setAttribute('aria-pressed', String(!diy));
+  if (modeDiyBtn) modeDiyBtn.setAttribute('aria-pressed', String(diy));
+  if (diyBar) diyBar.hidden = !diy;
+  if (brushRow){
+    const bs = brushRow.querySelectorAll('.brush');
+    for (let i = 0; i < bs.length; i++){
+      const b = bs[i], k = b.dataset.brush;
+      b.setAttribute('aria-pressed', String(diy && k === brush));
+      if (k === 'pad') b.disabled = countPads() >= LIMIT_PAD;
+      else if (k === 'lotus') b.disabled = countLotus() >= LIMIT_LOTUS;
+      else b.disabled = fish.length >= LIMIT_FISH;
+    }
+  }
+  if (delBtn) delBtn.disabled = !selected;
+  if (undoBtn) undoBtn.disabled = !undoStack.length;
+  cv.setAttribute('aria-label', diy
+    ? '我的池塘：先从下面挑一条鱼、一片荷叶或一朵荷花，再点水面放下；已经放下的可以直接拖动，点一下可以选中它。'
+    : '一池锦鲤，从上往下看。点一下水面会有波纹，按住会撒鱼食，鱼会围过来；手指慢慢移动，会有鱼跟着你。点一条鱼，它会告诉你它是什么锦鲤。键盘：回车敲水面，空格撒鱼食。');
+  syncSeasonUi();
+}
+
+/* ---------- 换模式 / 换季 ---------- */
+function buildWatchFish(){
+  const n = W * H < 480000 ? 9 : 11;
+  for (let i = 0; i < n; i++) fish.push(makeFish(i));
+  for (let i = 0; i < fish.length; i++){
+    const f = fish[i];
+    let px = W * 0.5, py = H * 0.5;
+    for (let tries = 0; tries < 24; tries++){
+      px = W * (0.16 + rnd() * 0.68);
+      py = H * (0.16 + rnd() * 0.68);
+      if (onStone(px, py)) continue;
+      let ok = true;
+      for (let j = 0; j < i; j++){
+        const o = fish[j];
+        if (Math.hypot(o.x - px, o.y - py) < (o.B + f.B) * 0.6){ ok = false; break; }
+      }
+      if (ok) break;
+    }
+    placeFish(f, px, py, rnd() * TAU);
+    f.enter = 0; f.speed = f.cruise * (calm ? 0.6 : 1.2); f.thrust = 0.4;
+  }
+  for (let i = 0; i < fish.length; i++) poseFish(fish[i]);
+}
+function clearPool(){
+  fish.length = 0; pads.length = 0; leaves.length = 0;
+  pellets.length = 0; ripples.length = 0;
+  follower = null; selected = null; brush = null; diyDrag = null;
+  tagFish = null;
+  if (tagEl) tagEl.classList.remove('on');
+}
+function setMode(next){
+  if (next === mode) return;
+  if (isDiy()) saveDoc();
+  mode = next;
+  clearPool();
+  undoStack.length = 0;
+  if (isDiy()){
+    const doc = readSaved();
+    if (doc) restoreDoc(doc);
+    else applySeason(season, true);
+    showHint('先挑一样，<b>点水面</b>放下 · 拖动可以挪位置', 11000);
+  } else {
+    buildPads(); buildLeaves(); buildMotes();
+    buildWatchFish();
+    showHint('敲敲水面 · <b>按住撒鱼食</b>', 12000);
+  }
+  syncUi();
+  savePrefs();
+}
+function setSeason(name){
+  if (!SEASONS[name] || name === season) return;
+  applySeason(name, false);
+  try { localStorage.setItem(PREF_SEASON, name); } catch (e) {}
+  if (isDiy()) markSaved();
+  syncUi();
+  toast('换成了' + SEASONS[name].name + '天');
+}
+
+/* ---------- 接线 ---------- */
+if (modeWatchBtn) modeWatchBtn.addEventListener('click', () => setMode('watch'));
+if (modeDiyBtn) modeDiyBtn.addEventListener('click', () => setMode('diy'));
+document.querySelectorAll('#seasons button').forEach(b => {
+  b.addEventListener('click', () => setSeason(b.dataset.season));
+});
+if (brushRow){
+  brushRow.querySelectorAll('.brush').forEach(b => {
+    b.addEventListener('click', () => {
+      if (b.disabled) return;
+      brush = brush === b.dataset.brush ? null : b.dataset.brush;
+      selected = null;
+      syncUi();
+    });
+  });
+}
+if (undoBtn) undoBtn.addEventListener('click', undo);
+if (delBtn) delBtn.addEventListener('click', removeSelected);
+if ($id('clearBtn')) $id('clearBtn').addEventListener('click', clearAll);
+if ($id('savePng')) $id('savePng').addEventListener('click', savePng);
+
+
+/* =====================================================================
    一帧
    ===================================================================== */
 function update(dt){
@@ -1787,7 +2482,8 @@ function update(dt){
   updatePointer(dt);
   for (let i = 0; i < fish.length; i++) updateFish(fish[i], fdt);
   for (let i = 0; i < fish.length; i++) poseFish(fish[i]);
-  updatePads(dt); updateLeaves(dt); updateSurface(dt); updateTag(dt);
+  updatePads(dt); updateLeaves(dt); updateSurface(dt); updateTag(dt); updateMotes(dt);
+  if (seasonFade > 0) seasonFade = Math.max(0, seasonFade - dt / 0.75);
   if (soundOn){
     trickle -= dt;
     if (trickle <= 0){
@@ -1833,6 +2529,25 @@ function drawSoftShadow(x, y, ang, len, wid, alpha){
   c.restore();
 }
 
+/* 选中：一圈会呼吸的金线 */
+function drawSelection(){
+  if (!isDiy() || !selected || !selected.obj) return;
+  const o = selected.obj, c = ctx;
+  const pulse = 0.5 + 0.22 * Math.sin(performance.now() / 320);
+  c.save();
+  c.strokeStyle = 'rgba(242,196,107,' + pulse + ')';
+  c.lineWidth = 2;
+  c.setLineDash([7, 7]);
+  c.lineDashOffset = -performance.now() / 60;
+  if (selected.type === 'fish'){
+    c.translate(o.x, o.y); c.rotate(o.h);
+    c.beginPath(); c.ellipse(0, 0, o.B * 0.78, o.B * 0.56, 0, 0, TAU); c.stroke();
+  } else {
+    c.beginPath(); c.arc(o.x, o.y, o.r + 7, 0, TAU); c.stroke();
+  }
+  c.restore();
+}
+
 function render(){
   const c = ctx;
   let i, f;
@@ -1861,7 +2576,7 @@ function render(){
 
   /* 水光在池底和鱼背上一起晃 */
   c.globalCompositeOperation = 'lighter';
-  c.globalAlpha = 0.58;
+  c.globalAlpha = P.causticA;
   c.drawImage(causCv, 0, 0, W, H);
   c.globalCompositeOperation = 'source-over';
   c.globalAlpha = 1;
@@ -1870,9 +2585,19 @@ function render(){
   drawRipples();
   for (i = 0; i < leaves.length; i++) drawLeaf(leaves[i]);
   for (i = 0; i < pads.length; i++) drawPad(pads[i]);
+  drawMotes();
   drawPellets();
+  drawSelection();
 
   drawPointer();
+
+  /* 换季时先压一层旧季节的水色，再慢慢退掉 */
+  if (seasonFade > 0){
+    c.globalAlpha = seasonFade * 0.42;
+    c.fillStyle = seasonTint;
+    c.fillRect(0, 0, W, H);
+    c.globalAlpha = 1;
+  }
 
   /* 一进来水面白得晃眼，像眼睛慢慢习惯太阳（按真实时间退，掉帧也不会拖很久） */
   const since = (performance.now() - bootAt) / 1000;
@@ -1900,50 +2625,37 @@ function frame(now){
 }
 
 function resize(){
-  const first = W === 0, ow = W, oh = H;
+  const first = W === 0, ow = W, oh = H, oldS = S;
   W = Math.max(280, window.innerWidth);
   H = Math.max(280, window.innerHeight);
   DPR = Math.min(2, window.devicePixelRatio || 1);
   M = Math.min(W, H);
   S = clamp(M / 820, 0.6, 1.3);
   cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
-  buildStones(); paintStones(); paintFloor(); composeBackground(); setupCaustics();
-  buildPads(); buildLeaves();
+  buildStones(); paintStones(); paintFloor(); composeBackground(); setupCaustics(true);
+  if (isDiy()){
+    layoutDiyPlants();
+    buildLeaves();
+  } else {
+    buildPads(); buildLeaves();
+  }
+  buildMotes();
   if (first){
-    const n = W * H < 480000 ? 9 : 11;
-    for (let i = 0; i < n; i++) fish.push(makeFish(i));
-    /* 一打开就该是一池活鱼，而不是先看见一片空水 */
-    for (let i = 0; i < fish.length; i++){
-      const f = fish[i];
-      let px = W * 0.5, py = H * 0.5;
-      for (let tries = 0; tries < 24; tries++){
-        px = W * (0.16 + rnd() * 0.68);
-        py = H * (0.16 + rnd() * 0.68);
-        if (onStone(px, py)) continue;
-        let ok = true;
-        for (let j = 0; j < i; j++){
-          const o = fish[j];
-          if (Math.hypot(o.x - px, o.y - py) < (o.B + f.B) * 0.6){ ok = false; break; }
-        }
-        if (ok) break;
-      }
-      f.x = px; f.y = py;
-      f.h = rnd() * TAU;
-      f.enter = 0;
-      f.speed = f.cruise * (calm ? 0.6 : 1.2);
-      f.thrust = 0.4;
-      const seg = f.B / (NSEG - 1);
-      for (let k = 0; k < NSEG; k++){
-        f.nodes[k * 2] = f.x - Math.cos(f.h) * seg * k;
-        f.nodes[k * 2 + 1] = f.y - Math.sin(f.h) * seg * k;
-      }
-    }
-    for (let i = 0; i < fish.length; i++) poseFish(fish[i]);
+    /* 一打开就该是一池活鱼，而不是先看见一片空水（DIY 模式除外） */
+    if (!isDiy()) buildWatchFish();
   } else {
     for (let k = 0; k < fish.length; k++){
       const f = fish[k], nx = f.x / ow * W, ny = f.y / oh * H, dx = nx - f.x, dy = ny - f.y;
       f.x = nx; f.y = ny;
       for (let j = 0; j < NSEG; j++){ f.nodes[j * 2] += dx; f.nodes[j * 2 + 1] += dy; }
+    }
+    /* 池子变大变小，鱼也得跟着长：按 S 的变化等比缩放 */
+    const ratio = oldS > 0 ? S / oldS : 1;
+    if (ratio !== 1){
+      for (let k = 0; k < fish.length; k++){
+        const f = fish[k];
+        f.B *= ratio; f.cruise *= ratio; f.speed *= ratio;
+      }
     }
     pellets.length = 0; ripples.length = 0; follower = null;
   }
@@ -1971,18 +2683,47 @@ function motionChanged(){
 }
 if (mq.addEventListener) mq.addEventListener('change', motionChanged);
 else if (mq.addListener) mq.addListener(motionChanged);
+/* 关页面/切后台时把没落盘的改动补存一次 */
+addEventListener('pagehide', () => { if (isDiy()) saveDoc(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden && isDiy()) saveDoc(); });
+
+/* ---------- 出发：先看上次是哪个模式、哪个季节 ---------- */
+let prefMode = null, prefSeason = null, savedDoc = null;
+try {
+  prefMode = localStorage.getItem(PREF_MODE);
+  prefSeason = localStorage.getItem(PREF_SEASON);
+} catch (e) { /* 存不了就算了 */ }
+savedDoc = readSaved();
+if (SEASONS[prefSeason]) season = prefSeason;
+else if (savedDoc && SEASONS[savedDoc.season]) season = savedDoc.season;
+setPalette(season);
 
 makeSoftShadow();
 makePelletSprite();
 renderTasks();
 resize();
+syncUi();
+if (prefMode === 'diy') setMode('diy');
 last = performance.now();
 raf = requestAnimationFrame(frame);
 
 /* 留给自动化测试看的一点点窗口（不参与画面） */
 /* 只在 ?debug 时暴露一点内部状态给自动化测试，孩子看到的页面里没有 */
 if (location.search.indexOf('debug') >= 0){
-  window.__koi = { fish, doneTasks, found, fishAt, feedSpot, ptr, get sheetOpen(){ return sheetOpen; }, get fed(){ return fedCount; }, get follower(){ return follower; }, get followClock(){ return followClock; }, get running(){ return !!raf; } };
+  window.__koi = {
+    fish, pads, motes, doneTasks, found, fishAt, feedSpot, ptr,
+    get sheetOpen(){ return sheetOpen; }, get fed(){ return fedCount; },
+    get follower(){ return follower; }, get followClock(){ return followClock; },
+    get running(){ return !!raf; },
+    get mode(){ return mode; }, get season(){ return season; },
+    get brush(){ return brush; }, get selected(){ return selected; },
+    get counts(){ return { fish: fish.length, pads: countPads(), lotus: countLotus() }; },
+    get undoDepth(){ return undoStack.length; },
+    setMode, setSeason, placeAt, undo, removeSelected, clearAll, savePng, diyDoc,
+    setBrush(k){ brush = k; selected = null; syncUi(); },
+    _bench: { paintStones, paintFloor, composeBackground, setupCaustics, buildMotes },
+    canvas: cv
+  };
 }
 })();
 </script>

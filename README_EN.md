@@ -138,6 +138,7 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 - A single-file, offline noon koi pond: each fish swims on a segmented spine, pectoral fins paddling and tail fanning; caustics on the floor, lily pads and fallen leaves on the surface
 - Tap the water for ripples — nearby fish dart away and drift back; press and hold (or tap 「喂一把」) to scatter food and the whole pond converges into a jostling knot
 - Move a finger slowly across the surface and the nearest curious fish follows it; tap a fish to hear its variety (kohaku / showa / ogon / tancho)
+- **「我的池塘」 (My Pond)**: start from bare water, pick fish (four varieties), plant lily pads and lotus, drag anything to move it; switch spring / summer / autumn / winter (water colour, pads, petals, snow and how lazy the fish are all follow). The pond saves itself on the device, and「存成图」exports a picture
 - No goal, no score — keep it as a pet; **four small missions**; best in phone portrait
 
 ## 🚀 Quick Start
@@ -194,7 +195,7 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 - **Pin screen**: push with a finger; 「印手」 for a handprint, 「按个字」 for a word, 「翻板」 to drop the board
 - **Wheel**: hold 「转起来」 (or the pedal), then drag on the clay; if it slumps, tap 「再团一团」, then glaze and fire
 - **Marbling**: drop ink, drag the comb, stir with the fan, then 「拉一张纸」; tap a print on the rack to see it large
-- **Koi pond**: tap the water, hold to feed, move a finger slowly; tap a fish for its name
+- **Koi pond**: tap the water, hold to feed, move a finger slowly; tap a fish for its name. Switch to 「我的池塘」 to build your own: pick fish, plant pads and lotus, drag things around, change the season — saved on the device, and exportable as a picture
 - **Zoetrope**: see the section above
 
 ## 🎨 Features
