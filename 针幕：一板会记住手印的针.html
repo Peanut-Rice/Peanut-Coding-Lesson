@@ -3,13 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0B0C0E">
+<meta name="theme-color" content="#140B10">
 <title>针幕 · 一板会记住手印的针</title>
 <meta name="description" content="一板密密麻麻的钢针：按住，针就被顶出来，靠摩擦停住、不会自己弹回去；印手、按字、印花、两根手指一起按、橡皮抹平、翻板清空，还能把整块板留成一张图。单文件离线可用，触摸屏最好玩。">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='88'>🪡</text></svg>">
 <style>
   :root{
-    --black:#0B0C0E; --steel:#C9CED6; --mid:#6C7480; --white:#fff; --warm:#EFBE84;
+    /* 默认是「樱花糖」：暖粉的针、莓果色的板框。配色按钮可以换另外三套 */
+    --black:#140B10; --steel:#C9CED6; --mid:#6C7480; --white:#fff; --warm:#F7A8C4;
+    --acc:247,168,196; --acc-ink:#2A0F1B;
+    --glow1:rgba(247,168,196,.16); --glow2:rgba(167,139,250,.10);
+    --frame1:#4A2C3C; --frame2:#2A1722; --frame3:#1A0E16; --frame4:#100810;
+    --well1:#241521; --well2:#1A0F18; --well3:#120A10; --wellglow:rgba(247,168,196,.08);
+    --sw1:#F7A8C4; --sw2:#FFD9E6; --sw3:#C9B0FF;
     --ui:"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei UI","Microsoft YaHei","Noto Sans SC","Hiragino Sans GB",system-ui,sans-serif;
     --settle:cubic-bezier(.16,.84,.24,1);
   }
@@ -19,8 +25,8 @@
     position:fixed; inset:0; overflow:hidden;
     color:var(--steel); font-family:var(--ui);
     background:
-      radial-gradient(120% 80% at 20% -12%, rgba(108,116,128,.20), transparent 58%),
-      radial-gradient(90% 60% at 82% 116%, rgba(108,116,128,.10), transparent 60%),
+      radial-gradient(120% 80% at 20% -12%, var(--glow1), transparent 58%),
+      radial-gradient(90% 60% at 82% 116%, var(--glow2), transparent 60%),
       var(--black);
     -webkit-font-smoothing:antialiased; -webkit-text-size-adjust:100%;
     -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent;
@@ -68,7 +74,7 @@
     color:rgba(214,222,232,.82);font-size:clamp(11.5px,1.6vw,13px);letter-spacing:.02em;
     transition:opacity .8s var(--settle),transform .8s var(--settle);
   }
-  .hint .dot{width:6px;height:6px;border-radius:50%;background:var(--warm);box-shadow:0 0 9px rgba(239,190,132,.9);animation:pulse 2.6s ease-in-out infinite}
+  .hint .dot{width:6px;height:6px;border-radius:50%;background:var(--warm);box-shadow:0 0 9px rgba(var(--acc),.9);animation:pulse 2.6s ease-in-out infinite}
   @keyframes pulse{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
   .hint.gone{opacity:0;transform:translateY(-6px)}
 
@@ -80,7 +86,7 @@
     background:
       radial-gradient(120% 90% at 16% -8%, rgba(255,255,255,.10), transparent 55%),
       repeating-linear-gradient(96deg, rgba(255,255,255,.018) 0 .7px, rgba(0,0,0,.05) .7px 1.8px),
-      linear-gradient(158deg,#31363d 0%,#1d2127 22%,#12151a 58%,#080a0d 100%);
+      linear-gradient(158deg,var(--frame1) 0%,var(--frame2) 22%,var(--frame3) 58%,var(--frame4) 100%);
     box-shadow:
       inset 0 1px 0 rgba(255,255,255,.24), inset 0 -1px 0 rgba(0,0,0,.5),
       inset 0 0 0 1px rgba(255,255,255,.03),
@@ -99,9 +105,9 @@
     border-radius:clamp(8px,1.1vw,12px);
     background:
       radial-gradient(130% 95% at 18% -14%, rgba(255,255,255,.07), transparent 62%),
-      radial-gradient(90% 80% at 74% 118%, rgba(239,190,132,.045), transparent 62%),
+      radial-gradient(90% 80% at 74% 118%, var(--wellglow), transparent 62%),
       repeating-linear-gradient(92deg, rgba(255,255,255,.016) 0 .6px, rgba(0,0,0,.03) .6px 2px),
-      linear-gradient(164deg,#191e25 0%,#12161c 44%,#0b0e12 100%);
+      linear-gradient(164deg,var(--well1) 0%,var(--well2) 44%,var(--well3) 100%);
     box-shadow:0 0 0 1px #000, inset 0 1px 0 rgba(201,206,214,.10);
   }
   #field{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:none;cursor:none}
@@ -129,12 +135,12 @@
   #cursor{
     position:fixed;left:0;top:0;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;z-index:9;
     pointer-events:none;opacity:0;transition:opacity .25s var(--settle),width .22s var(--settle),height .22s var(--settle),margin .22s var(--settle);
-    border:1px solid rgba(201,206,214,.5);
+    border:1px solid rgba(var(--acc),.62);
     background:radial-gradient(circle,rgba(255,255,255,.14),transparent 62%);
-    box-shadow:0 0 16px rgba(201,206,214,.18);
+    box-shadow:0 0 16px rgba(var(--acc),.24);
   }
-  #cursor.handmode{width:74px;height:74px;margin:-37px 0 0 -37px;border-style:dashed;border-color:rgba(239,190,132,.6)}
-  #cursor.erase{width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:12px;border-color:rgba(242,181,107,.6)}
+  #cursor.handmode{width:74px;height:74px;margin:-37px 0 0 -37px;border-style:dashed;border-color:rgba(var(--acc),.6)}
+  #cursor.erase{width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:12px;border-color:rgba(var(--acc),.6)}
   #cursor.show{opacity:1}
 
   /* ---------------- 控制台 ---------------- */
@@ -173,7 +179,7 @@
   }
   .word:hover{border-color:#4a5058;color:#fff}
   .word:active{transform:translateY(2px);box-shadow:inset 0 2px 5px rgba(0,0,0,.9),0 1px 0 #000}
-  .word.pressed{color:var(--warm);border-color:rgba(239,190,132,.55)}
+  .word.pressed{color:var(--warm);border-color:rgba(var(--acc),.55)}
 
   .rail{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 8px;min-height:40px}
   .chip{
@@ -187,12 +193,20 @@
   .chip svg.sq{width:16px;height:16px}
   .chip svg .w{transition:opacity .25s var(--settle)}
   .chip svg .x{opacity:0;transition:opacity .25s var(--settle)}
-  .chip[aria-pressed="true"]{color:var(--warm);border-color:rgba(239,190,132,.45);background:rgba(239,190,132,.08)}
-  .chip.on{color:var(--warm);border-color:rgba(239,190,132,.45);background:rgba(239,190,132,.08)}
+  .chip[aria-pressed="true"]{color:var(--warm);border-color:rgba(var(--acc),.45);background:rgba(var(--acc),.08)}
+  .chip.on{color:var(--warm);border-color:rgba(var(--acc),.45);background:rgba(var(--acc),.08)}
   .chip[aria-pressed="true"] svg .w{opacity:0}
   .chip[aria-pressed="true"] svg .x{opacity:1}
   .chip[disabled]{opacity:.34;pointer-events:none}
   .chip .kbd{font-size:10px;opacity:.5;letter-spacing:0}
+  /* 配色：点一下换下一套，圆点就是这一套的颜色 */
+  .swatch{
+    width:15px;height:15px;border-radius:50%;flex:none;
+    background:conic-gradient(from 210deg,var(--sw1),var(--sw2),var(--sw3),var(--sw1));
+    box-shadow:0 0 0 1px rgba(255,255,255,.45),0 0 10px rgba(var(--acc),.55);
+    transition:box-shadow .25s var(--settle);
+  }
+  .palette-chip:hover .swatch{box-shadow:0 0 0 1px #fff,0 0 13px rgba(var(--acc),.8)}
   .foot{margin:0;text-align:center;font-size:11.5px;line-height:1.6;color:rgba(201,206,214,.62)}
   .foot a{color:rgba(201,206,214,.7);text-decoration:none;border-bottom:1px dotted rgba(201,206,214,.32);padding-bottom:1px}
   .foot a:hover,.foot a:focus-visible{color:#fff;border-color:var(--warm)}
@@ -232,8 +246,8 @@
     color:transparent;font-size:12px;line-height:1;transition:all .3s var(--settle)}
   .task p{margin:0;font-size:13px;line-height:1.55;color:rgba(220,229,238,.88)}
   .task small{display:block;margin-top:2px;font-size:11.5px;line-height:1.5;color:rgba(196,208,222,.55);letter-spacing:.01em}
-  .task.done{background:rgba(239,190,132,.09);border-color:rgba(239,190,132,.28)}
-  .task.done .tick{background:var(--warm);border-color:var(--warm);color:#191307}
+  .task.done{background:rgba(var(--acc),.09);border-color:rgba(var(--acc),.28)}
+  .task.done .tick{background:var(--warm);border-color:var(--warm);color:var(--acc-ink)}
   .task.done p{color:#fff}
   .sheet .foot-home{margin:20px 0 0;padding-top:16px;border-top:1px solid rgba(201,206,214,.14);text-align:center;font-size:13px}
   .sheet .foot-home a{color:rgba(201,206,214,.72);text-decoration:none;border-bottom:1px dotted rgba(201,206,214,.35);padding-bottom:2px}
@@ -251,13 +265,13 @@
     color:#EEF4FB;font:inherit;font-size:16px;letter-spacing:.06em;outline:none;
   }
   .write-row input::placeholder{color:rgba(201,206,214,.4);letter-spacing:.02em}
-  .write-row input:focus{border-color:rgba(239,190,132,.55);background:rgba(201,206,214,.09)}
+  .write-row input:focus{border-color:rgba(var(--acc),.55);background:rgba(201,206,214,.09)}
   .write-row .go{
     flex:none;height:46px;padding:0 16px;border-radius:12px;
-    background:linear-gradient(180deg,#3a3427,#241f17);border:1px solid rgba(239,190,132,.42);
-    color:#FFE9CC;font-size:13px;font-weight:600;letter-spacing:.06em;
+    background:linear-gradient(180deg,rgba(var(--acc),.26),rgba(var(--acc),.08));border:1px solid rgba(var(--acc),.5);
+    color:var(--warm);font-size:13px;font-weight:600;letter-spacing:.06em;
   }
-  .write-row .go:hover{background:linear-gradient(180deg,#4a4131,#2b241a)}
+  .write-row .go:hover{background:linear-gradient(180deg,rgba(var(--acc),.38),rgba(var(--acc),.14))}
   .tpls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0}
   .tpl{height:62px;border-radius:12px;border:1px solid rgba(201,206,214,.16);
     background:rgba(201,206,214,.045);color:rgba(226,234,242,.78);
@@ -271,7 +285,7 @@
     position:fixed;left:50%;bottom:calc(208px + env(safe-area-inset-bottom));z-index:21;
     transform:translate(-50%,14px);opacity:0;pointer-events:none;
     padding:9px 17px;border-radius:999px;background:rgba(16,18,22,.94);
-    border:1px solid rgba(239,190,132,.42);color:#FFF3E2;font-size:13px;letter-spacing:.02em;white-space:nowrap;
+    border:1px solid rgba(var(--acc),.42);color:#FFF3E2;font-size:13px;letter-spacing:.02em;white-space:nowrap;
     box-shadow:0 14px 40px rgba(0,0,0,.55);max-width:90vw;
     transition:opacity .3s var(--settle),transform .4s var(--settle);
   }
@@ -364,7 +378,6 @@
       <i class="screw tl" aria-hidden="true"></i><i class="screw tr" aria-hidden="true"></i>
       <i class="screw bl" aria-hidden="true"></i><i class="screw br" aria-hidden="true"></i>
     </div>
-    <div id="cursor" aria-hidden="true"></div>
   </section>
 
   <div class="dock">
@@ -400,6 +413,10 @@
         <svg class="sq" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.6" y="6.4" width="16.8" height="13" rx="2.6"/><path d="M8.4 6.4 9.8 3.8h4.4l1.4 2.6"/><circle cx="12" cy="12.8" r="3.4"/></svg>
         <span>留一张</span>
       </button>
+      <button class="chip palette-chip" id="palette" type="button" aria-label="换一套配色，现在是樱花糖">
+        <span class="swatch" aria-hidden="true"></span>
+        <span>配色</span>
+      </button>
       <button class="chip" id="snd" type="button" aria-pressed="false" aria-label="声音：针的沙沙声">
         <svg viewBox="0 0 24 18" aria-hidden="true"><path d="M2.5 6.6h3.2l4.4-3.9v12.6l-4.4-3.9H2.5z"/><path class="w" d="M13.6 5.6a4.4 4.4 0 0 1 0 6.8M16.2 3.2a8 8 0 0 1 0 11.6"/><path class="x" d="M14 6.6l5 4.8M19 6.6l-5 4.8"/></svg>
         <span id="sndLabel">声音</span>
@@ -410,6 +427,10 @@
     <p class="foot"><a href="奇趣阁：六件小玩具.html">← 回到 Peanut 的奇趣阁</a><span class="keys">键盘：F 翻板 · H 印手 · 1–4 压字 · Ctrl+Z 退回</span></p>
   </div>
 </main>
+
+<!-- 光标跟着鼠标走，必须挂在 body 下：.rig 上有 perspective，会把 position:fixed 的参照系
+     从视口换成 .rig 自己，圆圈就会整体偏掉一大截（电脑上偏，手机不显示反而看不出来）。 -->
+<div id="cursor" aria-hidden="true"></div>
 
 <div class="scrim" id="scrim"></div>
 <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="true">
@@ -465,6 +486,83 @@ let lastPoint = { x: 0, y: 0 };
 let undoKEEP = null;                   /* 翻板/盖章之前压的一层针高（Uint8，约 15KB） */
 let savedField = null;                 /* 上一次的针高：缩放窗口 / 刷新时接着用 */
 const FIELD_KEY = 'pinscreen-field-v2';
+const THEME_KEY = 'pinscreen-theme-v1';
+
+/* ------------------------------------------------------------------ 配色 */
+/* 四套配色：针头的金属反光、板框、页面氛围、强调色一起换。
+   粉 / 薄荷 / 紫都是给小朋友挑的，最后一套是最早的钢灰金。 */
+const THEMES = {
+  sakura: {
+    name: '樱花糖', bg: '#140B10', warm: '#F7A8C4', acc: '247,168,196', ink: '#2A0F1B',
+    glow1: 'rgba(247,168,196,.16)', glow2: 'rgba(167,139,250,.10)',
+    frame: ['#4A2C3C', '#2A1722', '#1A0E16', '#100810'],
+    well: ['#241521', '#1A0F18', '#120A10'], wellglow: 'rgba(247,168,196,.08)',
+    sw: ['#F7A8C4', '#FFD9E6', '#C9B0FF'],
+    ramp: [[20, 12, 16], [85, 52, 68], [165, 110, 132], [232, 188, 204], [255, 244, 249]]
+  },
+  mint: {
+    name: '薄荷汽水', bg: '#0A1412', warm: '#8FE3C7', acc: '143,227,199', ink: '#062018',
+    glow1: 'rgba(143,227,199,.15)', glow2: 'rgba(142,197,255,.10)',
+    frame: ['#2E4B44', '#1A2C28', '#101E1B', '#08110F'],
+    well: ['#14211E', '#0F1916', '#0A1210'], wellglow: 'rgba(143,227,199,.08)',
+    sw: ['#8FE3C7', '#CFF7E8', '#8EC5FF'],
+    ramp: [[10, 18, 16], [46, 82, 72], [112, 166, 150], [194, 234, 222], [247, 255, 252]]
+  },
+  lavender: {
+    name: '星河紫', bg: '#0F0C1E', warm: '#C9B0FF', acc: '201,176,255', ink: '#1E1233',
+    glow1: 'rgba(201,176,255,.16)', glow2: 'rgba(247,168,196,.10)',
+    frame: ['#3B3258', '#241D3A', '#171226', '#0C0917'],
+    well: ['#1B1730', '#141125', '#0D0A18'], wellglow: 'rgba(201,176,255,.09)',
+    sw: ['#C9B0FF', '#EADFFF', '#F7A8C4'],
+    ramp: [[16, 12, 26], [68, 56, 104], [134, 118, 180], [208, 196, 238], [252, 248, 255]]
+  },
+  star: {
+    name: '星夜', bg: '#0B0C0E', warm: '#EFBE84', acc: '239,190,132', ink: '#191307',
+    glow1: 'rgba(108,116,128,.20)', glow2: 'rgba(108,116,128,.10)',
+    frame: ['#31363d', '#1d2127', '#12151a', '#080a0d'],
+    well: ['#191e25', '#12161c', '#0b0e12'], wellglow: 'rgba(239,190,132,.05)',
+    sw: ['#EFBE84', '#FFF0D2', '#C9CED6'],
+    ramp: [[14, 15, 18], [74, 80, 90], [139, 148, 159], [200, 208, 218], [244, 247, 251]]
+  }
+};
+const THEME_ORDER = ['sakura', 'mint', 'lavender', 'star'];
+let themeId = 'sakura';
+function theme() { return THEMES[themeId]; }
+
+function applyTheme(id, quiet) {
+  themeId = THEMES[id] ? id : 'sakura';
+  const t = THEMES[themeId], s = document.documentElement.style;
+  s.setProperty('--black', t.bg);
+  s.setProperty('--warm', t.warm);
+  s.setProperty('--acc', t.acc);
+  s.setProperty('--acc-ink', t.ink);
+  s.setProperty('--glow1', t.glow1);
+  s.setProperty('--glow2', t.glow2);
+  s.setProperty('--frame1', t.frame[0]); s.setProperty('--frame2', t.frame[1]);
+  s.setProperty('--frame3', t.frame[2]); s.setProperty('--frame4', t.frame[3]);
+  s.setProperty('--well1', t.well[0]); s.setProperty('--well2', t.well[1]); s.setProperty('--well3', t.well[2]);
+  s.setProperty('--wellglow', t.wellglow);
+  s.setProperty('--sw1', t.sw[0]); s.setProperty('--sw2', t.sw[1]); s.setProperty('--sw3', t.sw[2]);
+  document.documentElement.dataset.theme = themeId;
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', t.bg);
+  const btn = $('palette');
+  if (btn) {
+    btn.title = '配色：' + t.name;
+    btn.setAttribute('aria-label', '换一套配色，现在是' + t.name);
+  }
+  if (W > 0 && typeof renderer !== 'undefined' && renderer && renderer.resize) renderer.resize();
+  awake = true; lightDirty = true;
+  if (!quiet) toast('配色：' + t.name);
+  try { localStorage.setItem(THEME_KEY, themeId); } catch (e) { /* file:// 下可能被禁用 */ }
+}
+function loadTheme() {
+  try {
+    const v = localStorage.getItem(THEME_KEY);
+    if (THEMES[v]) return v;
+  } catch (e) { /* 忽略 */ }
+  return 'sakura';
+}
 
 /* 把「针要停在哪儿」（KEEP）拍成一张快照，量化到 0..255 */
 function captureField() {
@@ -941,6 +1039,7 @@ void main(){
 const FS = `
 precision mediump float;
 uniform vec3 uL;
+uniform vec3 uC0, uC1, uC2, uC3, uC4;
 uniform highp float uPass;
 varying vec4 vD; varying float vR; varying float vPx; varying vec2 vUv;
 void main(){
@@ -977,12 +1076,10 @@ void main(){
   b *= 1. - .55 * smoothstep(.55, 1.02, r);
   b *= .84 + .24 * (1. - smoothstep(.35, .72, length(vUv - .5)));
   b = max(b, .02);
-  vec3 c0 = vec3(.055, .06, .07), c1 = vec3(.29, .314, .353),
-       c2 = vec3(.545, .58, .624), c3 = vec3(.784, .816, .855), c4 = vec3(.957, .969, .984);
-  vec3 col = b < .25 ? mix(c0, c1, b / .25)
-           : b < .55 ? mix(c1, c2, (b - .25) / .30)
-           : b < .80 ? mix(c2, c3, (b - .55) / .25)
-           : mix(c3, c4, clamp((b - .80) / .20, 0., 1.));
+  vec3 col = b < .25 ? mix(uC0, uC1, b / .25)
+           : b < .55 ? mix(uC1, uC2, (b - .25) / .30)
+           : b < .80 ? mix(uC2, uC3, (b - .55) / .25)
+           : mix(uC3, uC4, clamp((b - .80) / .20, 0., 1.));
   gl_FragColor = vec4(col * a, a);
 }`;
 
@@ -1009,7 +1106,7 @@ function makeGL() {
     prog = gl.createProgram(); gl.attachShader(prog, v); gl.attachShader(prog, f); gl.linkProgram(prog);
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.warn('pinscreen link', gl.getProgramInfoLog(prog)); return false; }
     gl.useProgram(prog);
-    for (const n of ['uRes', 'uPitch', 'uDpr', 'uL', 'uPass']) u[n] = gl.getUniformLocation(prog, n);
+    for (const n of ['uRes', 'uPitch', 'uDpr', 'uL', 'uPass', 'uC0', 'uC1', 'uC2', 'uC3', 'uC4']) u[n] = gl.getUniformLocation(prog, n);
     aP = gl.getAttribLocation(prog, 'aP'); aD = gl.getAttribLocation(prog, 'aD');
     bS = gl.createBuffer(); bD = gl.createBuffer();
     gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
@@ -1031,6 +1128,10 @@ function makeGL() {
     draw() {
       if (api.lost) return;
       gl.uniform3f(u.uL, -0.62, -0.62, 0.469);
+      const R = theme().ramp;               /* 针头的金属色：跟着配色走 */
+      for (let k = 0; k < 5; k++) {
+        gl.uniform3f(u['uC' + k], R[k][0] / 255, R[k][1] / 255, R[k][2] / 255);
+      }
       gl.bindBuffer(gl.ARRAY_BUFFER, bD); gl.bufferSubData(gl.ARRAY_BUFFER, 0, DYN);
       gl.clear(gl.COLOR_BUFFER_BIT);
       /* 三层：针孔 → 影子 → 针头 */
@@ -1069,7 +1170,8 @@ function make2D() {
   const LV = 22;
   let sprites = [], sz = 0, shadowSprite = null, shadowSize = 0, holesC = null;
   const ramp = b => {
-    const c0 = [14, 15, 18], c1 = [74, 80, 90], c2 = [139, 148, 159], c3 = [200, 208, 218], c4 = [244, 247, 251];
+    const R = theme().ramp;
+    const c0 = R[0], c1 = R[1], c2 = R[2], c3 = R[3], c4 = R[4];
     let a, c, t;
     if (b < 0.25) { a = c0; c = c1; t = b / 0.25; }
     else if (b < 0.55) { a = c1; c = c2; t = (b - 0.25) / 0.30; }
@@ -1201,6 +1303,11 @@ function showCursor(e) {
   }
 }
 const used = () => { hints.classList.add('gone'); };
+/* 圆圈只跟鼠标 / 笔走；手指一碰就收起来，别让上一动鼠标留下的圈停在别处 */
+function trackCursor(e) {
+  if (e.pointerType === 'touch') cursor.classList.remove('show');
+  else showCursor(e);
+}
 
 function onDown(e) {
   if (e.button > 0 || flip.on) return;
@@ -1208,7 +1315,7 @@ function onDown(e) {
   const p = localPt(e);
   lastPoint = { x: p.x, y: p.y };
   used();
-  if (e.pointerType === 'mouse') showCursor(e);
+  trackCursor(e);
   if (mode === 'hand') { stampHandAt(p.x, p.y); e.preventDefault(); return; }
   const erase = mode === 'erase';
   if (!POINTERS.size) pushUndo();
@@ -1221,7 +1328,7 @@ function onDown(e) {
 }
 
 function onMove(e) {
-  if (e.pointerType === 'mouse') showCursor(e);
+  trackCursor(e);
   const st = POINTERS.get(e.pointerId);
   if (!st) return;
   const p = localPt(e);
@@ -1412,7 +1519,7 @@ function keep() {
   out.width = bw + pad * 2; out.height = bh + pad * 2 + foot;
   const g = out.getContext('2d');
   const ow = out.width, oh = out.height;
-  g.fillStyle = '#0b0d11'; g.fillRect(0, 0, ow, oh);
+  g.fillStyle = theme().bg; g.fillRect(0, 0, ow, oh);
 
   /* 板子：圆角 + 深色底 + 一层顶光，再把 canvas 盖上去 */
   const r = Math.round(14 * dpr);
@@ -1422,7 +1529,7 @@ function keep() {
   if (g.roundRect) g.roundRect(bx, by, bw, bh, r);
   else g.rect(bx, by, bw, bh);
   g.clip();
-  g.fillStyle = '#14181e'; g.fillRect(bx, by, bw, bh);
+  g.fillStyle = theme().well[0]; g.fillRect(bx, by, bw, bh);
   const light = g.createRadialGradient(bx + bw * 0.2, by - bh * 0.12, 0, bx + bw * 0.5, by + bh * 0.5, bw * 0.85);
   light.addColorStop(0, 'rgba(255,255,255,.08)');
   light.addColorStop(0.55, 'rgba(255,255,255,.02)');
@@ -1461,6 +1568,11 @@ function keep() {
   }, 'image/png');
 }
 $('keep').addEventListener('click', () => { used(); keep(); });
+$('palette').addEventListener('click', () => {
+  used();
+  const i = THEME_ORDER.indexOf(themeId);
+  applyTheme(THEME_ORDER[(i + 1) % THEME_ORDER.length]);
+});
 
 /* ------------------------------------------------------------------ loop */
 let last = 0, raf = 0;
@@ -1518,6 +1630,7 @@ addEventListener('resize', () => {
 const onRM = () => { RM = mq.matches; awake = true; };
 if (mq.addEventListener) mq.addEventListener('change', onRM); else if (mq.addListener) mq.addListener(onRM);
 
+applyTheme(loadTheme(), true);
 savedField = loadField();
 build();
 start();

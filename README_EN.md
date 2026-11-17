@@ -106,6 +106,7 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 - A working thermometer on the left stile: **tap it to make the night colder** (−11 → −17 → −24 °C, then back round to a thaw at −4 °C). The colder it gets, the faster, finer and denser the frost grows; the warmer, the sparser the ferns and the thicker the fog
 - In a hurry, 「快进」 squeezes eight seconds of frost into one and a half; when it looks right, 「留住」 saves a dated PNG with a small watermark
 - No score, no timer, quiet enough for bedtime; works in phone portrait
+- Four palettes — **Sakura Night** (default), Dusk, Aurora and Ice Blue — cycled with the 「配色」 chip in the sill and remembered on this device; the frost itself stays ice-coloured
 
 ### 3. 🪡 The Pin Screen
 **File:** `针幕：一板会记住手印的针.html`
@@ -115,6 +116,7 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 - 「印手」 presses a handprint; 「按个字」 presses a word (花生 / 你好 / 王 / 哈哈), and the drawer lets you press your own text or one of four stamps; 「留住」 saves the board as a PNG
 - Your drawing is kept on the device and survives refreshes, rotation and window resizes; two fingers can draw at once, and Ctrl/⌘+Z steps back one move
 - Best on a touchscreen, fine with a mouse
+- Four palettes — **Sakura Candy** (default), Mint Soda, Starlight Purple and Starry Night — cycled with 「配色」, which retints the metal pins, the frame and the ambient light together and is remembered on this device
 
 ### 4. 🏺 The Wheel · Throw a Pot
 **File:** `陶轮：一团会塌的泥.html`
