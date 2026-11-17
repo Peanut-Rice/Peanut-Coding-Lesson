@@ -183,7 +183,7 @@
     .caption{font-size:10px; padding:4px 9px 5px}
   }
 
-  /* ---------- 小抽屉：为什么、四件小事 ---------- */
+  /* ---------- 小抽屉：为什么 ---------- */
   .scrim{
     position:fixed; inset:0; z-index:18; background:rgba(3,18,20,.66);
     opacity:0; pointer-events:none; transition:opacity .45s var(--settle);
@@ -410,7 +410,7 @@
     <p class="hint" id="hint"><span class="dot" aria-hidden="true"></span>敲敲水面 · <b>按住撒鱼食</b></p>
   </div>
 
-  <button class="tasks-btn" id="openTasks" type="button" aria-haspopup="dialog">四件小事 <b id="taskCount">0/4</b></button>
+  <button class="tasks-btn" id="openTasks" type="button" aria-haspopup="dialog">为什么</button>
 
   <div class="fish-tag" id="fishTag" aria-hidden="true"><span class="sw" id="tagSw"></span><b id="tagName">红白</b><span class="sub">锦鲤</span></div>
 
@@ -468,8 +468,6 @@
   <p>可是它对<b>动的东西</b>特别敏感——水一晃，它就知道有谁来了。</p>
   <p>所以它跟着你，一半是好奇，一半是等你撒吃的。</p>
   <p>先到它身边的，其实是水波；你还没碰到它，它已经转过身了。</p>
-  <div class="tasks-head">顺手做四件小事 <span id="taskCount2">0 / 4</span></div>
-  <div class="tasks" id="tasks"></div>
   <p style="margin-top:16px;font-size:12.5px;color:rgba(210,220,208,.6)">小提示：不用做什么，坐着看一会儿也很好。鱼自己会游、会打哈欠似的张嘴喝水。</p>
   <p class="foot-home"><a href="奇趣阁：六件小玩具.html">← 回到 Peanut 的奇趣阁</a></p>
 </section>
@@ -1818,8 +1816,7 @@ function showTag(f){
   tagEl.classList.add('on');
   if (!found.has(f.variety)){
     found.add(f.variety);
-    if (found.size >= 4) finish('four');
-    else toast('认识了一条 ' + NAME[f.variety]);
+    toast('认识了一条 ' + NAME[f.variety]);
   }
 }
 function updateTag(dt){
@@ -1841,16 +1838,14 @@ function doTap(x, y){
     hit.fleeA = Math.atan2(hit.y - y, hit.x - x) + (rnd() - 0.5);
     hit.fleeT = 0.26 + rnd() * 0.18;
     plip(0.07, 620 + rnd() * 240);
-    finish('knock');
     return true;
   }
   if (onStone(x, y)) return false;
   const ok = tapWater(x, y);
-  if (ok) finish('knock');
   return ok;
 }
 function doFeed(x, y){
-  if (feed(x, y)) finish('feed');
+  feed(x, y);
 }
 
 cv.addEventListener('pointerdown', e => {
@@ -1954,7 +1949,6 @@ function updatePointer(dt){
       follower = null; followClock = 0;
     } else {
       followClock += dt;
-      if (followClock > 0.9) finish('follow');
     }
   } else if (ptr.slowT > 0.45){
     /* 手指慢下来一小会儿，最近的那条好奇的鱼就过来看看 */
@@ -2055,39 +2049,9 @@ function setSound(on){
 sBtn.addEventListener('click', () => setSound(!soundOn));
 
 /* =====================================================================
-   孩子的那一层：提示、四件小事、小抽屉、计数器
+   孩子的那一层：提示、小抽屉
    ===================================================================== */
 const $id = id => document.getElementById(id);
-const TASKS = [
-  { id: 'knock', t: '敲一下水面，看波纹散开', h: '轻轻点一下就好' },
-  { id: 'feed', t: '撒一把鱼食，看鱼围过来', h: '按住水面，或者按右下角的「喂一把」' },
-  { id: 'follow', t: '让一条鱼跟着你的手指游', h: '手指贴着水面慢慢移，别太快' },
-  { id: 'four', t: '找齐四种锦鲤（红白、昭和、黄金、丹顶）', h: '点一点鱼背，它会告诉你名字' }
-];
-const doneTasks = new Set();
-try { JSON.parse(localStorage.getItem('koi-tasks') || '[]').forEach(k => doneTasks.add(k)); } catch (e) { /* 存不了也没关系 */ }
-const tasksEl = $id('tasks'), taskCountEl = $id('taskCount'), taskCountEl2 = $id('taskCount2');
-
-function renderTasks(){
-  if (!tasksEl) return;
-  tasksEl.innerHTML = TASKS.map(t => '<div class="task' + (doneTasks.has(t.id) ? ' done' : '') + '" data-id="' + t.id + '">' +
-    '<span class="tick" aria-hidden="true">✓</span><p>' + t.t + '<small>' + t.h + '</small></p></div>').join('');
-  if (taskCountEl) taskCountEl.textContent = doneTasks.size + '/4';
-  if (taskCountEl2) taskCountEl2.textContent = doneTasks.size + ' / 4';
-}
-let followHintShown = false;
-function finish(id){
-  if (doneTasks.has(id) || !TASKS.some(t => t.id === id)) return;
-  doneTasks.add(id);
-  renderTasks();
-  try { localStorage.setItem('koi-tasks', JSON.stringify([...doneTasks])); } catch (e) { /* 存不了也没关系 */ }
-  toast('✓ ' + TASKS.find(t => t.id === id).t);
-  if (id === 'knock' && !followHintShown && !doneTasks.has('follow')){
-    followHintShown = true;
-    setTimeout(() => { if (!sheetOpen) showHint('慢慢移动手指，<b>鱼会跟着你</b>', 13000); }, 1500);
-  }
-  if (id === 'four') hideHint();
-}
 let toastTimer = 0;
 function toast(msg){
   const el = $id('toast');
@@ -2809,7 +2773,6 @@ setPalette(season);
 
 makeSoftShadow();
 makePelletSprite();
-renderTasks();
 resize();
 syncUi();
 if (prefMode === 'diy') setMode('diy');
@@ -2820,7 +2783,7 @@ raf = requestAnimationFrame(frame);
 /* 只在 ?debug 时暴露一点内部状态给自动化测试，孩子看到的页面里没有 */
 if (location.search.indexOf('debug') >= 0){
   window.__koi = {
-    fish, pads, motes, doneTasks, found, fishAt, feedSpot, ptr,
+    fish, pads, motes, found, fishAt, feedSpot, ptr,
     get sheetOpen(){ return sheetOpen; }, get fed(){ return fedCount; },
     get follower(){ return follower; }, get followClock(){ return followClock; },
     get running(){ return !!raf; },

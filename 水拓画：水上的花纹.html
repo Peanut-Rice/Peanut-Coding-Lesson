@@ -405,7 +405,7 @@ h1{
       <h1>水拓画</h1>
       <p class="hint" id="hint"><span class="dot" aria-hidden="true"></span>点一下水，<b>滴一滴墨</b></p>
     </div>
-    <button class="tasks-btn" id="openTasks" type="button" aria-haspopup="dialog">四件小事 <b id="taskCount">0/4</b></button>
+    <button class="tasks-btn" id="openTasks" type="button" aria-haspopup="dialog">为什么</button>
   </header>
 
   <section class="tray" aria-label="水拓画画盘">
@@ -514,8 +514,6 @@ h1{
   <p>墨里有一点点像肥皂的东西，让它摊在水面上、不肯沉下去。</p>
   <p>你一碰水，墨就跟着水走；墨被推着走、挤着走，花纹就出来了。</p>
   <p>真正的水拓画，也是这么做的。</p>
-  <div class="tasks-head">顺手做四件小事 <span id="taskCount2">0 / 4</span></div>
-  <div class="tasks" id="tasks"></div>
   <p class="tip">小提示：拉纸的时候，图案会反过来——那才是印出来的样子。</p>
   <p class="foot-home"><a href="奇趣阁：六件小玩具.html">← 回到 Peanut 的奇趣阁</a></p>
 </section>
@@ -818,7 +816,6 @@ function tapDrop(x, y, inkIdx, R, user){
   if (!g) return null;
   if (typeof R === 'number' && R > 0) g.R = R; else g.R = (26 + Math.random()*10)*u;
   g.mode = 'anim';
-  if (user && inkIdx < 4) noteColor(inkIdx);
   plink(g.R);
   return g;
 }
@@ -941,7 +938,6 @@ function endPtr(e){
   } else if (p.ptool === 'comb'){
     if (p.state === 'stroke'){
       p.s.done = true;
-      if (p.travel > 24) finish('comb');
     }
   } else if (p.ptool === 'fan'){
     if (p.state === 'fan'){
@@ -960,7 +956,7 @@ function stepPointers(now){
     const p = ptrs[id];
     if (p.state === 'pending' && p.ptool === 'drip' && now - p.t0 > 130){
       const g = newDrop(p.x0, p.y0, p.pinks);
-      if (g){ g.mode = 'hold'; g.t0 = now; p.g = g; p.state = 'grow'; noteColor(p.pinks); }
+      if (g){ g.mode = 'hold'; g.t0 = now; p.g = g; p.state = 'grow'; }
       else p.state = 'void';
     }
   }
@@ -1009,7 +1005,6 @@ function doFan(user, dir){
   if (!liveCount()){ whisper('水里还没有墨，先滴一滴'); nudge(fanBtn); return; }
   fanDir = dir || -fanDir;
   swirl = { t0: performance.now(), dur: calm ? 1 : 2200, dir: fanDir, m2: (Math.random() < .5 ? -1 : 1)*.28 };
-  if (user) finish('fan');
   swoosh(1.8, .5);
 }
 fanBtn.addEventListener('click', () => doFan(true));
@@ -1184,7 +1179,6 @@ function pullPrint(){
   renderRack();
   const el = printsEl.querySelector('[data-id="' + id + '"]');
 
-  if (prints.length >= 5) finish('prints');
   if (calm){
     ghostify(true);
     pendingId = 0;
@@ -1301,44 +1295,12 @@ scrim.addEventListener('click', () => setSheet(null, false));
 if ('inert' in sheet) sheet.inert = true;
 if ('inert' in rackSheet) rackSheet.inert = true;
 
-/* ---------- four small things ---------- */
-const TASKS = [
-  { id: 'colors', t: '滴三滴不同颜色的墨', h: '蓝、红、青、黄，各滴一滴' },
-  { id: 'comb',   t: '用梳子拉一次花', h: '选梳子，按在水上拖一下' },
-  { id: 'fan',    t: '用扇子搅一圈', h: '点一下扇子，整盘水就转起来' },
-  { id: 'prints', t: '拉满五张印挂在架子上', h: '每拉一张，晾架上就多一张' }
-];
-const doneTasks = new Set();
-try { JSON.parse(localStorage.getItem('marbling-tasks') || '[]').forEach(k => doneTasks.add(k)); } catch (e) {}
-const tasksEl = $('#tasks');
-function renderTasks(){
-  if (!tasksEl) return;
-  tasksEl.innerHTML = TASKS.map(t => '<div class="task' + (doneTasks.has(t.id) ? ' done' : '') + '">' +
-    '<span class="tick" aria-hidden="true">✓</span><p>' + t.t + '<small>' + t.h + '</small></p></div>').join('');
-  $('#taskCount').textContent = doneTasks.size + '/4';
-  $('#taskCount2').textContent = doneTasks.size + ' / 4';
-}
 let toastTimer = 0;
 function toast(msg){
   const el = $('#toast'); if (!el) return;
   el.textContent = msg; el.classList.add('show');
   clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2300);
 }
-function finish(id){
-  if (doneTasks.has(id) || !TASKS.some(t => t.id === id)) return;
-  doneTasks.add(id);
-  renderTasks();
-  try { localStorage.setItem('marbling-tasks', JSON.stringify([...doneTasks])); } catch (e) {}
-  toast('✓ ' + TASKS.find(t => t.id === id).t);
-  if (id === 'prints' && doneTasks.size === 4) setTimeout(() => toast('四件小事，全做完了！'), 2500);
-}
-const colorSet = new Set();
-function noteColor(i){
-  if (i < 0 || i > 3) return;
-  colorSet.add(i);
-  if (colorSet.size >= 3) finish('colors');
-}
-
 /* ---------- sound (silent until asked) ---------- */
 let AC = null, soundOn = false, noiseBuf = null;
 const sBtn = $('#soundBtn'), sLbl = $('#soundLbl');
@@ -1476,7 +1438,6 @@ size(false);
 setInk(0); setTool('drip');
 loadPrints();
 renderRack();
-renderTasks();
 if (calm) buildInstant(); else intro = { t0: performance.now(), i: 0, s: null };
 render();
 start();

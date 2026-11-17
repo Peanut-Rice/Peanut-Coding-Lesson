@@ -83,7 +83,7 @@ It is not a syntax lesson; it is a playful entry point to 3D graphics, best used
 
 ## 🎪 The Cabinet · Six Little Toys
 
-The atelier is where you take a lesson; the Cabinet is where you play. Six single-file toys, no scores and no winning; most have four or six small missions, and each one has a "why" written for kids.
+The atelier is where you take a lesson; the Cabinet is where you play. Six single-file toys, no scores and no winning; each one has a "why" written for kids.
 
 ### 1. 🎠 The Living Zoetrope · A Little Picture Machine
 **File:** `会动的转筒：小小动画机.html`
@@ -95,7 +95,6 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 - The "why" for kids: lift the lid and the slits leave with it, leaving twelve perfectly still drawings — animation is only still pictures in a row
 - **Draw your own movie**: a 12-frame board with an onion-skin ghost of the previous frame, 5 colours, 3 brush sizes, an eraser, undo, clear frame, 「照抄上一格」 (copy the previous frame), a **zoomed frame editor**, a live preview, and **autosave to this device**; 「送进转筒」 drops it into the drum and starts the spin
 - **Show it off**: a full-screen 「首映」 (premiere) mode with a title card, **GIF export** and a 12-frame contact sheet — all generated offline in the single file
-- **Four small missions** to tick off: find "just right", lift the lid and count, fill all 12 frames, and join frame 12 back to frame 1
 - Fully Chinese interface, big buttons, bright colours, works on a phone in portrait
 
 ### 2. ❄️ Frost on the Window
@@ -105,7 +104,6 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 - Press and hold the glass to breathe on it: a patch of fog blooms, the frost turns to water, and now and then a heavy bead runs down leaving a clear track
 - Let go and the frost creeps back in from the rim with new patterns — which is exactly how a name written in the fog gets covered up again
 - A working thermometer on the left stile: **tap it to make the night colder** (−11 → −17 → −24 °C, then back round to a thaw at −4 °C). The colder it gets, the faster, finer and denser the frost grows; the warmer, the sparser the ferns and the thicker the fog
-- **Six small missions**: breathe a clear patch / write one character in the fog / watch the frost grow back / watch a bead run down / turn the night one notch colder / fast-forward a frost regrowth
 - In a hurry, 「快进」 squeezes eight seconds of frost into one and a half; when it looks right, 「留住」 saves a dated PNG with a small watermark
 - No score, no timer, quiet enough for bedtime; works in phone portrait
 
@@ -116,7 +114,7 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 - Press and drag: pins rise and **stay put**, held by friction like the real toy — higher pins throw longer shadows, so the imprint stands up. 「橡皮」 wipes a patch flat, 「翻板」 drops the whole board
 - 「印手」 presses a handprint; 「按个字」 presses a word (花生 / 你好 / 王 / 哈哈), and the drawer lets you press your own text or one of four stamps; 「留住」 saves the board as a PNG
 - Your drawing is kept on the device and survives refreshes, rotation and window resizes; two fingers can draw at once, and Ctrl/⌘+Z steps back one move
-- **Four small missions**; best on a touchscreen, fine with a mouse
+- Best on a touchscreen, fine with a mouse
 
 ### 4. 🏺 The Wheel · Throw a Pot
 **File:** `陶轮：一团会塌的泥.html`
@@ -135,7 +133,7 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 - A single-file, offline marbling tray: ink floats on the water, each drop pushes the rings before it into nested, squeezed bands
 - Drag the comb to pull feathers; tap the fan to set the whole tray turning; five inks — indigo, red, teal, yellow and clear water (which opens white holes)
 - Lay a sheet, lift it, and the pattern is printed (mirrored, as a real print is) and hung on the drying rack; re-ink and pull another — seven or eight in a row is normal
-- Prints persist in the browser; tap one to see it large; **four small missions**; in phone portrait your finger is the comb
+- Prints persist in the browser; tap one to see it large; in phone portrait your finger is the comb
 
 ### 6. 🐟 Koi Pond, Noon
 **File:** `锦鲤池：养一池鱼.html`
@@ -144,7 +142,7 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 - Tap the water for ripples — nearby fish dart away and drift back; press and hold (or tap 「喂一把」) to scatter food and the whole pond converges into a jostling knot
 - Move a finger slowly across the surface and the nearest curious fish follows it; tap a fish to hear its variety (kohaku / showa / ogon / tancho)
 - **「我的池塘」 (My Pond)**: start from bare water, pick fish (four varieties), plant lily pads and lotus, drag anything to move it; switch spring / summer / autumn / winter (water colour, pads, petals, snow and how lazy the fish are all follow). The pond saves itself on the device, and「存成图」exports a picture
-- No goal, no score — keep it as a pet; **four small missions**; best in phone portrait
+- No goal, no score — keep it as a pet; best in phone portrait
 
 ### Where these toys come from
 
@@ -210,7 +208,7 @@ The original repository does not include a licence file; this note is a credit a
 - Progress is stored in this computer's browser and does not sync across devices
 
 ### The Cabinet (six little toys: zoetrope / frost window / pin screen / wheel / marbling / koi)
-- Enter from the Cabinet door at the bottom of the home page, after the lessons (`奇趣阁：六件小玩具.html`); 「← 奇趣阁」 at the top-left of each toy goes back to the Cabinet. Most toys have a small mission list (four or six) to discover
+- Enter from the Cabinet door at the bottom of the home page, after the lessons (`奇趣阁：六件小玩具.html`); 「← 奇趣阁」 at the top-left of each toy goes back to the Cabinet
 - **Frost window**: press and hold to breathe, write in the fog; tap the thermometer on the left stile to change the weather; 「快进 / 留住 / 重新结霜」 sit on the sill
 - **Pin screen**: press and the pins stay up; 「印手」 for a handprint, 「按个字」 for a word, the drawer for your own text or a stamp; 「橡皮」 wipes pins back, 「翻板」 drops them all, 「留住」 saves a picture
 - **Wheel**: hold 「转起来」 (or the pedal), then drag on the clay; if it slumps, tap 「再团一团」, then glaze and fire. On the shelf, tap a pot to see it large, name it, take it down, or 「存成一张图」

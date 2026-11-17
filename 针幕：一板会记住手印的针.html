@@ -350,7 +350,7 @@
   <header class="top">
     <a class="back-home" href="奇趣阁：六件小玩具.html" title="回到 Peanut 的奇趣阁"><i aria-hidden="true">←</i>奇趣阁</a>
     <div class="headline"><h1>针 幕</h1></div>
-    <button class="tasks-btn" id="openTasks" type="button" aria-haspopup="dialog">四件小事 <b id="taskCount">0/4</b></button>
+    <button class="tasks-btn" id="openTasks" type="button" aria-haspopup="dialog">按字 / 印花</button>
   </header>
 
   <p class="hint" id="hint"><span class="dot" aria-hidden="true"></span>按住，针会被顶出来；松手就留在那儿</p>
@@ -414,10 +414,7 @@
 <div class="scrim" id="scrim"></div>
 <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="true">
   <button class="sheet-close" id="closeTasks" type="button" aria-label="关上">✕</button>
-  <h2 id="sheetTitle">四件小事</h2>
-  <p class="lead">做一件，就自动打个勾，记在这台电脑上。</p>
-  <div class="tasks-head">已经做到 <span id="taskCount2">0 / 4</span></div>
-  <div class="tasks" id="tasks"></div>
+  <h2 id="sheetTitle">按字 · 印花</h2>
 
   <div class="block-head">按自己的字 <em>最多八个</em></div>
   <div class="write-row">
@@ -638,7 +635,6 @@ function stampHandAt(px, py) {
   }
   startStamp();
   lastPoint = { x: px, y: py };
-  finish('hand');
   saveSoon();
   if (mode === 'hand') setMode('finger');   /* 盖完就回到手指，别让下一笔又是个手 */
 }
@@ -731,7 +727,6 @@ function stampWord(str) {
   pushUndo();
   stampMask(textMap(str));
   startStamp();
-  finish('word');
   saveSoon();
 }
 function stampShape(name) {
@@ -885,7 +880,6 @@ function doFlip() {
     const sw = $('sweep');
     sw.classList.remove('run'); void sw.offsetWidth; sw.classList.add('run');
   }
-  finish('flip');
 }
 
 /* ------------------------------------------------------------------ shading */
@@ -1222,7 +1216,6 @@ function onDown(e) {
     id: e.pointerId, x: p.x, y: p.y, lx: p.x, ly: p.y,
     want: pressBase(e), depth: 0.55, erase, drag: 0, moved: false, t: performance.now()
   });
-  if (POINTERS.size >= 2) finish('touch');
   try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
   e.preventDefault();
 }
@@ -1349,23 +1342,6 @@ function pinClick(level) {
   voices++; setTimeout(() => { voices--; }, 80);
 }
 
-/* ------------------------------------------------------------------ tasks */
-const TASKS = [
-  { id: 'hand', t: '推出一个手印', h: '按「印手」，或者在板上按一下' },
-  { id: 'word', t: '按出一个字', h: '下面四个字挑一个；也可以自己写一个' },
-  { id: 'touch', t: '两指一起按', h: '两根手指同时按在板上，会同时顶出两处针' },
-  { id: 'flip', t: '把整块板翻一次', h: '按「翻板」，针会一阵风似的全落回去' }
-];
-const doneTasks = new Set();
-try { JSON.parse(localStorage.getItem('pinscreen-tasks') || '[]').forEach(k => doneTasks.add(k)); } catch (e) {}
-function renderTasks() {
-  const box = $('tasks'); if (!box) return;
-  box.innerHTML = TASKS.map(t => '<div class="task' + (doneTasks.has(t.id) ? ' done' : '') + '" data-id="' + t.id + '">' +
-    '<span class="tick" aria-hidden="true">✓</span><p>' + t.t + '<small>' + t.h + '</small></p></div>').join('');
-  const c1 = $('taskCount'), c2 = $('taskCount2');
-  if (c1) c1.textContent = doneTasks.size + '/' + TASKS.length;
-  if (c2) c2.textContent = doneTasks.size + ' / ' + TASKS.length;
-}
 let toastTimer = 0;
 function toast(msg) {
   const el = $('toast'); if (!el) return;
@@ -1381,14 +1357,6 @@ function hideToast() {
   const el = $('toast'); if (!el) return;
   el.classList.remove('show'); clearTimeout(toastTimer);
 }
-function finish(id) {
-  if (doneTasks.has(id) || !TASKS.some(t => t.id === id)) return;
-  doneTasks.add(id); renderTasks();
-  try { localStorage.setItem('pinscreen-tasks', JSON.stringify([...doneTasks])); } catch (e) {}
-  toast('✓ ' + TASKS.find(t => t.id === id).t);
-}
-renderTasks();
-
 /* ------------------------------------------------------------------ sheet */
 const sheet = $('sheet'), scrim = $('scrim');
 let sheetOpen = false;

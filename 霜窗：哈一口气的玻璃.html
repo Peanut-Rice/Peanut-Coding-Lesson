@@ -242,7 +242,7 @@
     .chip.sound{padding:6px 8px; gap:4px}
   }
 
-  /* 小抽屉：为什么、四件小事 */
+  /* 小抽屉：为什么 */
   .scrim{
     position:fixed; inset:0; z-index:18; background:rgba(4,9,15,.55);
     opacity:0; pointer-events:none; transition:opacity .45s var(--settle);
@@ -341,7 +341,7 @@
     <p class="hint" id="hint"><span class="dot" aria-hidden="true"></span>按住玻璃，<b>哈一口气</b></p>
   </div>
 
-  <button class="tasks-btn" id="openTasks" type="button" aria-haspopup="dialog">六件小事 <b id="taskCount">0/6</b></button>
+  <button class="tasks-btn" id="openTasks" type="button" aria-haspopup="dialog">为什么结霜</button>
 
   <button class="thermo" type="button" aria-label="外面的温度：零下 11 度，现在。点一下更冷" aria-describedby="thermoTip">
     <svg viewBox="0 0 16 104" aria-hidden="true">
@@ -403,10 +403,6 @@
   <p>屋里暖暖的水汽，碰到冰冰的玻璃，会<b>跳过「水」这一步</b>，直接变成一朵朵小冰花贴在玻璃上。所以这层霜，其实是空气里的水汽在画画。</p>
   <p>你的手指是热的。按住玻璃，那一块就化成雾、化成水珠；手一拿开，霜又会从边上慢慢长回来——每次长出来的花纹都不一样。霜的粗细也看温度：外面越冷，冰晶长得越急，枝杈就排得越密、线越细。</p>
   <p>左边那支<b>温度计</b>能点：点一下，外面就冷一档（−11℃ → −17℃ → −24℃ → −4℃ 回暖，再点回 −11℃）。越冷，霜长得越急、星核越多；越暖，霜疏疏朗朗，雾更浓、水珠更多。等不及就按「快进」，画得满意就按「留住」。</p>
-  <div class="tasks-head">顺手做六件小事 <span id="taskCount2">0 / 6</span>
-    <button class="tasks-reset" id="resetTasks" type="button" aria-label="清空打勾的进度，重新玩一遍">重来一次</button>
-  </div>
-  <div class="tasks" id="tasks"></div>
   <p style="margin-top:16px;font-size:12.5px;color:rgba(196,218,232,.6)">小提示：名字写完别急着擦，等一会儿，看霜是怎么一点一点把它盖住的。</p>
   <p class="foot-home"><a href="奇趣阁：六件小玩具.html">← 回到 Peanut 的奇趣阁</a></p>
 </section>
@@ -1045,7 +1041,6 @@ function addDrop(x, y, r, life){
 }
 function addRunner(x, y, r){
   if (runners.length > 14) return;
-  finish('drip');
   if (reduced){
     // 减动效时不往下爬，就让一颗水珠安安静静地凝在玻璃上
     if (drops.length < 720) drops.push({x, y, r: Math.max(2.2, r * 1.05), age: 0, life: rr(7, 10)});
@@ -1074,7 +1069,6 @@ function moveBreath(x, y){
   P.drawn += d;
   P.dx = x - P.x; P.dy = y - P.y;
   // 写字：画出一个圈，或者真的画了好几笔；随手一抹不算
-  if (P.drawn > 150 && Math.hypot(x - P.sx, y - P.sy) < 30) finish('write');
   if (Math.hypot(x - P.ax, y - P.ay) > 7){
     if (P.patch && P.r > finger * 2 && !reduced && rnd() < .7) addRunner(P.ax + rr(-.4, .4) * P.r, P.ay + rr(0, .5) * P.r, rr(2.6, 3.8));
     settleBreath(); P.ax = x; P.ay = y; P.still = 0; P.r = finger; P.stampR = 0;
@@ -1086,12 +1080,6 @@ function moveBreath(x, y){
 function endBreath(){
   if (!P.down) return;
   if (P.patch && P.r > finger * 2.2 && P.runners < 6) addRunner(P.x + rr(-.5, .5) * P.r, P.y + rr(.1, .6) * P.r, rr(2.8, 4));
-  // 一笔一笔记下来：两笔以上、总长够长，才算写过字
-  if (P.drawn > 50){
-    if (rt - P.strokeAt > 12){ P.strokes = 0; P.strokeSum = 0; }
-    P.strokeAt = rt; P.strokes++; P.strokeSum += P.drawn;
-    if (P.strokes >= 2 && P.strokeSum >= 150) finish('write');
-  }
   settleBreath(); P.down = false; breathSound(false);
 }
 function warmth(x, y){
@@ -1178,7 +1166,6 @@ function updateDrops(dt){
   }
 }
 function regrow(w){
-  finish('regrow');
   const n = w.big ? clamp(Math.round(w.r / 10), 4, 9) : (rnd() < .7 ? 1 : 2);
   const a0 = rr(0, TAU), tries = n * 4; let made = 0;
   for (let k = 0; k < tries && made < n; k++){
@@ -1195,7 +1182,7 @@ function regrow(w){
   if (w.big && made < 2 && w.r > finger * 2.4 && tips.length < TIPCAP && rnd() < clamp(starMul() * .5, .12, .9)) makeStar(w.x + rr(-.3, .3) * w.r, w.y + rr(-.3, .3) * w.r, w.r * rr(.6, .9), true);
 }
 function tendWounds(){
-  // 减动效时不等：创口一出现就当作已经长回来了，任务照样能打勾
+  // 减动效时不等：创口一出现就当作已经长回来了
   if (reduced){
     if (wounds.length){
       for (const w of wounds) regrow(w);
@@ -1517,13 +1504,11 @@ function say(msg){
   sayTimer = setTimeout(() => tempSayEl.classList.remove('show'), 2600);
 }
 function cycleTemp(){
-  const before = tempI;
   tempI = (tempI + 3) % 4;           // 3→2→1→0→3：一路更冷，绕回最暖
   temp = TEMPS[tempI];
   tempTouched = true;
   applyTemp();
   say(TEMP_SAY[tempI]);
-  if (tempI < before) finish('temp');
   // 减动效时没有实时生长，就让这一档立刻长一点点，形态照样跟着温度变
   if (reduced) fastForward(simT + 4 * growthMul());
 }
@@ -1593,37 +1578,9 @@ function setSound(on){
 sBtn.addEventListener('click', () => setSound(!soundOn));
 
 /* =====================================================================
-   孩子的那一层：六件小事、小抽屉、「重新结霜」
+   孩子的那一层：小抽屉、「重新结霜」
    ===================================================================== */
 const $id = id => document.getElementById(id);
-const TASKS = [
-  { id: 'breath', t: '哈出一块透明的窗', h: '按住玻璃别松手，等雾散开' },
-  { id: 'write',  t: '在雾上写一个字',   h: '慢慢划两笔，或者画一个圈' },
-  { id: 'regrow', t: '等霜重新长回来',   h: '松手之后，看霜从旁边一点点补上来' },
-  { id: 'drip',   t: '看一颗水珠往下爬', h: '多哈一会儿，水珠会变重，然后往下溜' },
-  { id: 'temp',   t: '把外面调冷一档',   h: '点一下左边的温度计' },
-  { id: 'ff',     t: '快进看霜长回来',   h: '按「快进」，把八秒钟一口气看完' }
-];
-const doneTasks = new Set();
-try { JSON.parse(localStorage.getItem('frost-tasks') || '[]').forEach(k => doneTasks.add(k)); } catch (e) {}
-const tasksEl = $id('tasks'), taskCountEl = $id('taskCount'), taskCountEl2 = $id('taskCount2');
-
-function renderTasks(){
-  if (!tasksEl) return;
-  tasksEl.innerHTML = TASKS.map(t => '<div class="task' + (doneTasks.has(t.id) ? ' done' : '') + '" data-id="' + t.id + '">' +
-    '<span class="tick" aria-hidden="true">✓</span><p>' + t.t + '<small>' + t.h + '</small></p></div>').join('');
-  if (taskCountEl) taskCountEl.textContent = doneTasks.size + '/6';
-  if (taskCountEl2) taskCountEl2.textContent = doneTasks.size + ' / 6';
-}
-function finish(id){
-  const item = TASKS.find(t => t.id === id);
-  if (doneTasks.has(id) || !item) return;
-  doneTasks.add(id);
-  renderTasks();
-  try { localStorage.setItem('frost-tasks', JSON.stringify([...doneTasks])); } catch (e) {}
-  toast('✓ ' + item.t);
-  if (id === 'breath') setTimeout(() => showHint('现在，在雾上写个<b>名字</b>'), 1200);
-}
 let toastTimer = 0;
 function toast(msg){
   const el = $id('toast'); if (!el) return;
@@ -1631,13 +1588,8 @@ function toast(msg){
   clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2300);
 }
 
-/* 按住多久才算「哈了一口气」 */
-let breathTimer = 0;
-function noteBreathStart(){
-  P.drawn = 0;
-  clearTimeout(breathTimer);
-  breathTimer = setTimeout(() => { if (P.down) finish('breath'); }, 1500);
-}
+/* 每一笔从零开始算 */
+function noteBreathStart(){ P.drawn = 0; }
 
 /* 小抽屉 */
 const sheet = $id('sheet'), scrim = $id('scrim');
@@ -1659,7 +1611,7 @@ if ('inert' in sheet) sheet.inert = true;
 
 /* 换一扇新玻璃 */
 $id('resetFrost').addEventListener('click', () => {
-  endBreath(); clearTimeout(breathTimer); setSheet(false);
+  endBreath(); setSheet(false);
   endFF(false);
   entered = false; rt = 0;
   build(0);
@@ -1692,7 +1644,7 @@ function endFF(done){
     ffBtn.disabled = false; ffBtn.classList.remove('busy');
     const s = ffBtn.querySelector('span'); if (s) s.textContent = '快进';
   }
-  if (done){ toast('八秒钟的霜，一口气看完了'); finish('ff'); }
+  if (done) toast('八秒钟的霜，一口气看完了');
 }
 function startFF(){
   if (ff.on) return;
@@ -1756,14 +1708,6 @@ function showHint(html){
 }
 main.addEventListener('pointerdown', hideHint, { passive: true });
 
-renderTasks();
-const resetTasksBtn = $id('resetTasks');
-if (resetTasksBtn) resetTasksBtn.addEventListener('click', () => {
-  doneTasks.clear();
-  try { localStorage.removeItem('frost-tasks'); } catch (e) {}
-  renderTasks();
-  toast('打勾都擦掉了，再来一遍');
-});
 
 /* =====================================================================
    LIFECYCLE
@@ -1826,7 +1770,6 @@ const onMotion = () => {
   reduced = rmq.matches; entered = false; rt = 0;
   endFF(false);
   build(0);
-  renderTasks();
 };
 if (rmq.addEventListener) rmq.addEventListener('change', onMotion); else if (rmq.addListener) rmq.addListener(onMotion);
 

@@ -183,19 +183,6 @@ h1 span{display:inline-block;animation:lit .85s var(--spring) both;animation-del
 .tools{display:flex;flex-direction:column;gap:11px;margin-top:18px;padding-top:16px;border-top:2px dashed #F0DBB8}
 .tool-row{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:center}
 
-/* 四件小事 */
-.tasks-head{display:flex;align-items:center;gap:10px;margin:26px 0 12px;font-size:15px;font-weight:900;color:#7A5A38}
-.tasks-head span{font-size:13px;color:#B08F68;font-weight:800}
-.tasks{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:0 0 6px}
-.task{display:flex;align-items:flex-start;gap:10px;background:#fff;border-radius:16px;padding:12px 14px;box-shadow:0 3px 0 #F1DFC2;text-align:left}
-.task .tick{flex:0 0 auto;width:24px;height:24px;border-radius:50%;border:2px dashed #E2CBA6;display:grid;place-items:center;
-  font-size:13px;font-weight:900;color:transparent;transition:background .3s,color .3s,border-color .3s}
-.task.done .tick{background:var(--red);border-style:solid;border-color:var(--red);color:#fff}
-.tasks .task p{margin:0;font-size:13.5px;font-weight:800;color:#7A5A38;line-height:1.45;text-align:left}
-.tasks .task small{display:block;font-weight:600;color:#A89376;font-size:12px;margin-top:3px;line-height:1.5}
-.tasks .task.done p{color:#3E7A4B}
-.tasks .task.done small{color:#8FB08A}
-
 /* 提示条 */
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,18px);z-index:60;background:#2C2A45;color:#FFF6E4;
   padding:11px 20px;border-radius:999px;font-size:14px;font-weight:800;box-shadow:0 12px 28px rgba(40,30,60,.32);
@@ -373,8 +360,6 @@ body.premiere .stage{position:fixed;inset:0;height:auto;border-radius:0;z-index:
     <div class="step-card"><b>2</b><p>按「转起来」</p></div>
     <div class="step-card"><b>3</b><p>盯着小缝里的画看</p></div>
   </div>
-  <div class="tasks-head">顺手做四件小事 <span id="taskCount">0 / 4</span></div>
-  <div class="tasks" id="tasks"></div>
   <p>筒子里贴着 12 张画，每一张都只和上一张差<b>一点点</b>。转得快的时候，那些小缝隙就像一扇扇飞快开关的小窗户。我们的眼睛有点「偷懒」，会把刚看到的画多留一小会儿，于是十二张画连在一起，就变成了一部会动的小电影。</p>
   <small>这个小玩具叫「西洋镜」（Zoetrope），一百八十多年前就有了，是动画片的老祖宗。盖子一掀开，缝隙跟着盖子一起走开，就只剩下 12 张不会动的画啦——可以掀开看看。</small>
   <p class="foot-home"><a href="奇趣阁：六件小玩具.html">← 回到 Peanut 的奇趣阁</a></p>
@@ -975,7 +960,7 @@ function drawBrake(g) {
 /* ================= 主循环 ================= */
 const stateEl = $('state'), readoutEl = $('readout'), fpsEl = $('fps');
 const mainBtn = $('main'), mainTxt = $('mainTxt'), mainIco = $('mainIco');
-let lastFps = -1, lastTgt = -1, lastStatus = '', lastGov = null, wasAlive = false, taskT = 0;
+let lastFps = -1, lastTgt = -1, lastStatus = '', lastGov = null, wasAlive = false;
 
 function aliveNow(ar) { return lid <= .02 && ar >= 1.15 && ar <= 2.85; }
 function statusFor(ar, rps) {
@@ -1030,9 +1015,6 @@ function frame(now) {
     readoutEl.classList.toggle('alive', alive);
     if (alive) { readoutEl.classList.remove('pop'); void readoutEl.offsetWidth; readoutEl.classList.add('pop'); chime(); }
   }
-  if (alive && gov) finish('just');
-  if (lidT) finish('lid');
-  if (drawerOpen && now - taskT > 700) { taskT = now; checkDrawTasks(); }
   if (gov !== lastGov) {
     lastGov = gov;
     mainBtn.setAttribute('aria-pressed', gov);
@@ -1351,29 +1333,6 @@ const speedBtns = [...document.querySelectorAll('#speeds button')];
 function spinAt(rev) { touched = true; gov = true; govT = rev * TAU; stopUntil = 0; }
 speedBtns.forEach(b => b.addEventListener('click', () => spinAt(+b.dataset.r)));
 
-/* ================= 四件小事 ================= */
-const taskEl = $('tasks'), taskCount = $('taskCount');
-const TASKS = [
-  { id: 'just', t: '找到「刚好」', h: '让速度停在会动的那一段' },
-  { id: 'lid', t: '掀开盖子数一数', h: '看看筒里到底有几张画' },
-  { id: 'full', t: '12 格都画上东西', h: '在画板里一格一格填满' },
-  { id: 'loop', t: '第 12 格接回第 1 格', h: '首尾两张几乎一样，转起来才顺' }
-];
-const doneTasks = new Set();
-try { JSON.parse(localStorage.getItem('zoetrope-tasks') || '[]').forEach(k => doneTasks.add(k)); } catch (e) {}
-function renderTasks() {
-  taskEl.innerHTML = TASKS.map(t => '<div class="task' + (doneTasks.has(t.id) ? ' done' : '') + '" data-id="' + t.id + '">' +
-    '<span class="tick" aria-hidden="true">✓</span><p>' + t.t + '<small>' + t.h + '</small></p></div>').join('');
-  taskCount.textContent = doneTasks.size + ' / ' + TASKS.length;
-}
-function finish(id) {
-  if (doneTasks.has(id)) return;
-  doneTasks.add(id);
-  renderTasks();
-  try { localStorage.setItem('zoetrope-tasks', JSON.stringify([...doneTasks])); } catch (e) {}
-  toast('✓ 完成：' + TASKS.find(x => x.id === id).t);
-  chime();
-}
 function inkLevel(i) {
   const t = mk(32, 24), g = t.getContext('2d');
   g.drawImage(inks[i], 0, 0, 32, 24);
@@ -1386,17 +1345,6 @@ function sigOf(i) {
   g.fillStyle = '#fff'; g.fillRect(0, 0, 16, 12); g.drawImage(inks[i], 0, 0, 16, 12);
   return g.getImageData(0, 0, 16, 12).data;
 }
-function checkDrawTasks() {
-  let all = true;
-  for (let i = 0; i < N; i++) if (inkLevel(i) < 1.2) { all = false; break; }
-  if (all) finish('full');
-  if (inkLevel(0) > 1.2 && inkLevel(11) > 1.2) {
-    const a = sigOf(11), b = sigOf(0); let d = 0;
-    for (let k = 0; k < a.length; k += 4) d += Math.abs(a[k] - b[k]) + Math.abs(a[k + 1] - b[k + 1]) + Math.abs(a[k + 2] - b[k + 2]);
-    if (d / (a.length / 4) / 3 < 13) finish('loop');
-  }
-}
-
 /* ================= 导出：动图 & 长图 ================= */
 function paperBg(g, w, h) { g.fillStyle = CREAM; g.fillRect(0, 0, w, h); }
 function safeName() { return (nameEl.value.trim() || '我的小电影').replace(/[\\/:*?"<>|]/g, ''); }
@@ -1628,7 +1576,7 @@ addEventListener('resize', refit);
 addEventListener('orientationchange', refit);
 /* 不认 svh 的浏览器只能靠 visualViewport 才知道工具栏把可视高度抢走了多少 */
 if (window.visualViewport && !(window.CSS && CSS.supports && CSS.supports('height', '100svh'))) window.visualViewport.addEventListener('resize', refit);
-layout(); setStrip(0); setActive(0); cells.forEach((c, i) => paintCell(i)); renderTasks(); restoreSave(); start();
+layout(); setStrip(0); setActive(0); cells.forEach((c, i) => paintCell(i)); restoreSave(); start();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => layout());
 })();
 </script>
