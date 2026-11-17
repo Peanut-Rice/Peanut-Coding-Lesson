@@ -146,6 +146,21 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 - **「我的池塘」 (My Pond)**: start from bare water, pick fish (four varieties), plant lily pads and lotus, drag anything to move it; switch spring / summer / autumn / winter (water colour, pads, petals, snow and how lazy the fish are all follow). The pond saves itself on the device, and「存成图」exports a picture
 - No goal, no score — keep it as a pet; **four small missions**; best in phone portrait
 
+### Where these toys come from
+
+The six Cabinet toys began as studies in [MiaAI-Lab/Claude-Fable-5.2-HTML-Files](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files) ([the gallery](https://miaai-lab.github.io/Claude-Fable-5.2-HTML-Files/)), a collection of 76 HTML visual studies. We kept the subject matter and the mood and reworked everything else — play, interaction, offline packaging, accessibility and copy — into six single files you can open on their own for this class.
+
+| Cabinet | Original study |
+| --- | --- |
+| The Living Zoetrope | [073-zoetrope.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/073-zoetrope.html) |
+| Frost on the Window | [026-frost-on-the-window.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/026-frost-on-the-window.html) |
+| The Pin Screen | [051-pinscreen.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/051-pinscreen.html) |
+| The Wheel | [025-pottery-wheel.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/025-pottery-wheel.html) |
+| Suminagashi | [001-suminagashi-marbling-tray.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/001-suminagashi-marbling-tray.html) |
+| Koi Pond, Noon | [009-koi-pond-noon.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/009-koi-pond-noon.html) |
+
+The original repository does not include a licence file; this note is a credit and a pointer, not a licence grant.
+
 ## 🚀 Quick Start
 
 1. Clone or download this repository

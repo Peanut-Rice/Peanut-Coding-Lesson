@@ -147,6 +147,21 @@
 - **「我的池塘」**：给一片空水，自己挑鱼（四种）、放荷叶荷花，拖一拖挪位置；春夏秋冬随便换（水色、荷叶、落花、雪、鱼的懒劲儿都跟着变），作品自动存在本机，还能「存成图」
 - 没有目标、没有分数，当宠物养；「四件小事」；手机竖屏最好看
 
+### 这些玩具从哪来
+
+奇趣阁的六件小玩具，是在 [MiaAI-Lab/Claude-Fable-5.2-HTML-Files](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files)（[在线画廊](https://miaai-lab.github.io/Claude-Fable-5.2-HTML-Files/)）这组 HTML 视觉研究的基础上改写、重做的：题材和画面气质来自原作，玩法、交互、离线可用性和无障碍则按这堂课重新设计，做成了六个可以单独打开的单文件。
+
+| 奇趣阁 | 原作 |
+| --- | --- |
+| 会动的转筒 | [073-zoetrope.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/073-zoetrope.html) |
+| 霜窗 | [026-frost-on-the-window.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/026-frost-on-the-window.html) |
+| 针幕 | [051-pinscreen.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/051-pinscreen.html) |
+| 陶轮 | [025-pottery-wheel.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/025-pottery-wheel.html) |
+| 水拓画 | [001-suminagashi-marbling-tray.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/001-suminagashi-marbling-tray.html) |
+| 锦鲤池 | [009-koi-pond-noon.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/009-koi-pond-noon.html) |
+
+原作仓库目前没有附许可证文件；这里仅注明出处，供学习和致谢。
+
 ## 🚀 快速开始
 
 1. 克隆或下载本仓库
