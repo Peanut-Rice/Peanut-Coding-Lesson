@@ -3,12 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0A1522">
+<meta name="theme-color" content="#140C18">
 <title>霜窗 · 哈一口气的玻璃</title>
 <meta name="description" content="给孩子的霜窗玩具：按住玻璃哈一口气，霜化成水珠往下爬；用手指在雾上写字，过一会儿又被新的霜花盖住。单文件离线可用，安静，适合睡前玩。">
 <style>
   :root{
-    --night:#0A1522; --glass:#16304A; --ice:#CFE8F5; --white:#FFFFFF; --sodium:#F2B56B;
+    /* 默认「樱花夜」；右下角的「配色」按钮换另外三套 */
+    --night:#140C18; --glass:#3A1F33; --ice:#F6E7F2; --white:#FFFFFF; --sodium:#F7A8C4;
+    --acc:247,168,196;
+    --panel:18,10,20; --glass-rgb:58,31,53;
+    --halo1:rgba(247,168,196,.32); --halo2:rgba(255,194,209,.24); --halo3:rgba(247,168,196,.18);
+    --sw1:#F7A8C4; --sw2:#B087C8; --sw3:#FFD9E6;
     --side:40px; --sill:60px; --thy:60vh;
     --settle:cubic-bezier(.16,.84,.24,1);
     --breath:cubic-bezier(.3,.05,.15,1);
@@ -18,10 +23,10 @@
   body{
     position:fixed; inset:0; overflow:hidden;
     background:
-      radial-gradient(circle at 14% 31%, rgba(242,181,107,.34) 0 7vmax, transparent 7.6vmax),
-      radial-gradient(circle at 33% 41%, rgba(242,181,107,.30) 0 5vmax, transparent 5.5vmax),
-      radial-gradient(circle at 58% 52%, rgba(242,181,107,.26) 0 3vmax, transparent 3.4vmax),
-      linear-gradient(#0A1522 0%, #0A1522 38%, #16304A 68%, #0A1522 100%);
+      radial-gradient(circle at 14% 31%, var(--halo1) 0 7vmax, transparent 7.6vmax),
+      radial-gradient(circle at 33% 41%, var(--halo2) 0 5vmax, transparent 5.5vmax),
+      radial-gradient(circle at 58% 52%, var(--halo3) 0 3vmax, transparent 3.4vmax),
+      linear-gradient(var(--night) 0%, var(--night) 38%, var(--glass) 68%, var(--night) 100%);
     color:var(--ice);
     font-family:"Gill Sans","Gill Sans MT","Century Gothic","Trebuchet MS",system-ui,sans-serif;
     -webkit-user-select:none; user-select:none;
@@ -81,10 +86,10 @@
     opacity:0; animation:appear 2.4s var(--settle) 1.8s forwards;
   }
   .thermo svg{width:19px; height:124px; overflow:visible; flex:none}
-  .thermo .plate{fill:rgba(22,48,74,.5); stroke:rgba(207,232,245,.16); stroke-width:.6}
-  .thermo .tube{fill:rgba(10,21,34,.85); stroke:rgba(207,232,245,.5); stroke-width:.7}
+  .thermo .plate{fill:rgba(var(--glass-rgb),.5); stroke:rgba(207,232,245,.16); stroke-width:.6}
+  .thermo .tube{fill:rgba(var(--panel),.85); stroke:rgba(207,232,245,.5); stroke-width:.7}
   .thermo .tick{stroke:rgba(207,232,245,.42); stroke-width:.6}
-  .thermo .zero{stroke:rgba(242,181,107,.8); stroke-width:.8}
+  .thermo .zero{stroke:rgba(var(--acc),.8); stroke-width:.8}
   .thermo .mercury{fill:#CFE8F5; transition:fill .6s var(--settle)}
   .thermo .merc{transform-box:fill-box; transform-origin:50% 100%; transition:transform .7s var(--settle)}
   .thermo .glint{fill:#FFFFFF; opacity:.85}
@@ -96,7 +101,7 @@
     padding:9px 14px 10px; white-space:nowrap;
     font-family:Baskerville,"Baskerville Old Face","Hoefler Text",Palatino,Georgia,serif;
     font-style:italic; font-size:14px; letter-spacing:.02em; color:var(--ice);
-    background:rgba(10,21,34,.86); border:1px solid rgba(207,232,245,.2); border-radius:2px;
+    background:rgba(var(--panel),.86); border:1px solid rgba(207,232,245,.2); border-radius:2px;
     box-shadow:0 10px 30px rgba(0,0,0,.45);
     opacity:0; transform:translate(-8px,-50%); pointer-events:none;
     transition:opacity .45s var(--settle), transform .6s var(--settle);
@@ -114,7 +119,7 @@
     position:absolute; left:calc(var(--side) + 14px); top:calc(var(--thy) + 34px); z-index:8;
     padding:7px 12px 8px; white-space:nowrap; pointer-events:none;
     font-family:var(--ui); font-size:12.5px; letter-spacing:.03em; color:#FFF4E2;
-    background:rgba(10,21,34,.92); border:1px solid rgba(242,181,107,.42); border-radius:2px;
+    background:rgba(var(--panel),.92); border:1px solid rgba(var(--acc),.42); border-radius:2px;
     box-shadow:0 10px 26px rgba(0,0,0,.45);
     opacity:0; transform:translate(-6px,0); transition:opacity .3s var(--settle), transform .4s var(--settle);
   }
@@ -158,12 +163,12 @@
     position:absolute; left:12px; top:12px; z-index:9;
     display:inline-flex; align-items:center; gap:6px; min-height:40px;
     padding:8px 14px; border-radius:999px; text-decoration:none;
-    background:rgba(10,21,34,.6); border:1px solid rgba(207,232,245,.24);
+    background:rgba(var(--panel),.6); border:1px solid rgba(207,232,245,.24);
     color:rgba(224,240,250,.92); font-family:var(--ui); font-size:13px; font-weight:600;
     backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
     transition:background .3s var(--settle), border-color .3s var(--settle);
   }
-  .back-home:hover,.back-home:focus-visible{background:rgba(22,48,74,.8); border-color:rgba(207,232,245,.5)}
+  .back-home:hover,.back-home:focus-visible{background:rgba(var(--glass-rgb),.8); border-color:rgba(207,232,245,.5)}
   .back-home i{font-style:normal; font-size:15px; line-height:1}
 
   .topbar{
@@ -179,7 +184,7 @@
   .hint{
     display:inline-flex; align-items:center; gap:7px; margin:0;
     padding:6px 14px 7px; border-radius:999px;
-    background:rgba(10,21,34,.5); border:1px solid rgba(207,232,245,.18);
+    background:rgba(var(--panel),.5); border:1px solid rgba(207,232,245,.18);
     color:rgba(214,235,246,.82); font-family:var(--ui); font-size:clamp(11.5px,1.6vw,13.5px); letter-spacing:.04em;
     backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
     transition:opacity .8s var(--settle), transform .8s var(--settle);
@@ -188,7 +193,7 @@
   .hint.gone{opacity:0; transform:translateY(-8px)}
   .hint .dot{
     width:6px; height:6px; border-radius:50%; background:var(--sodium);
-    box-shadow:0 0 10px rgba(242,181,107,.9); animation:pulse 2.4s var(--breath) infinite;
+    box-shadow:0 0 10px rgba(var(--acc),.9); animation:pulse 2.4s var(--breath) infinite;
   }
   @keyframes pulse{0%,100%{opacity:.45; transform:scale(.8)}50%{opacity:1; transform:scale(1.15)}}
 
@@ -196,12 +201,12 @@
     position:absolute; right:12px; top:12px; z-index:9;
     display:inline-flex; align-items:center; gap:7px; min-height:40px;
     padding:8px 14px; border-radius:999px;
-    background:rgba(10,21,34,.6); border:1px solid rgba(207,232,245,.24);
+    background:rgba(var(--panel),.6); border:1px solid rgba(207,232,245,.24);
     color:rgba(224,240,250,.92); font-family:var(--ui); font-size:13px; font-weight:600;
     cursor:pointer; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
     transition:background .3s var(--settle), border-color .3s var(--settle);
   }
-  .tasks-btn:hover,.tasks-btn:focus-visible{background:rgba(22,48,74,.8); border-color:rgba(207,232,245,.5)}
+  .tasks-btn:hover,.tasks-btn:focus-visible{background:rgba(var(--glass-rgb),.8); border-color:rgba(207,232,245,.5)}
   .tasks-btn b{font-weight:600; color:var(--sodium); font-size:11.5px; letter-spacing:.06em}
 
   .top-fade{
@@ -220,16 +225,24 @@
   .chip{
     pointer-events:auto; display:inline-flex; align-items:center; gap:6px; min-height:38px;
     padding:6px 12px; border-radius:999px; border:1px solid rgba(207,232,245,.22);
-    background:rgba(10,21,34,.45); color:rgba(214,235,246,.82);
+    background:rgba(var(--panel),.45); color:rgba(214,235,246,.82);
     font-family:var(--ui); font-size:11.5px; letter-spacing:.06em; cursor:pointer;
     transition:background .3s var(--settle), color .3s var(--settle), border-color .3s var(--settle);
   }
-  .chip:hover,.chip:focus-visible{background:rgba(22,48,74,.75); color:#fff; border-color:rgba(207,232,245,.45)}
+  .chip:hover,.chip:focus-visible{background:rgba(var(--glass-rgb),.75); color:#fff; border-color:rgba(207,232,245,.45)}
   .chip svg{width:13px; height:13px; flex:none; overflow:visible}
   .chip.sound{animation:none; opacity:1; min-height:38px; padding:6px 12px; font-size:11.5px; letter-spacing:.06em; color:rgba(214,235,246,.82); justify-content:center}
   .chip.sound svg{width:18px; height:13px}
   .chip.sound .sound-label{min-width:0}
-  /* 手机上四颗胶囊要排得下，字不换行 */
+  /* 配色：点一下换下一套，圆点就是这一套的颜色 */
+  .swatch{
+    width:13px; height:13px; border-radius:50%; flex:none;
+    background:conic-gradient(from 210deg,var(--sw1),var(--sw2),var(--sw3),var(--sw1));
+    box-shadow:0 0 0 1px rgba(255,255,255,.42),0 0 9px rgba(var(--acc),.6);
+    transition:box-shadow .3s var(--settle);
+  }
+  .chip.palette-chip:hover .swatch{box-shadow:0 0 0 1px #fff,0 0 12px rgba(var(--acc),.85)}
+  /* 手机上五颗胶囊要排得下，字不换行 */
   @media (max-width:520px){
     .sill-actions{gap:5px}
     .chip{padding:6px 9px; font-size:10.5px; letter-spacing:.02em; gap:5px; white-space:nowrap}
@@ -237,9 +250,14 @@
     .chip.sound{padding:6px 9px; font-size:10.5px; letter-spacing:.02em; gap:5px}
     .chip.sound svg{width:16px; height:12px}
   }
-  @media (max-width:360px){
-    .chip{padding:6px 8px; gap:4px}
-    .chip.sound{padding:6px 8px; gap:4px}
+  /* 320 宽的小手机：再压一压，配色调成纯色点，别让第二排掉出窗台 */
+  @media (max-width:380px){
+    .sill-actions{gap:3px; row-gap:3px}
+    .chip{padding:5px 6px; font-size:9.5px; letter-spacing:0; gap:3px}
+    .chip svg{width:10px; height:10px}
+    .chip.sound{padding:5px 6px; font-size:9.5px; letter-spacing:0; gap:3px}
+    .palette-chip{padding:0 7px}
+    .palette-chip span:last-child{display:none}
   }
 
   /* 小抽屉：为什么 */
@@ -294,7 +312,7 @@
   }
   .task p{margin:0; font-size:13px; line-height:1.55; color:rgba(220,237,247,.88)}
   .task small{display:block; margin-top:2px; font-size:11.5px; line-height:1.5; color:rgba(196,218,232,.55); letter-spacing:.02em}
-  .task.done{background:rgba(242,181,107,.09); border-color:rgba(242,181,107,.3)}
+  .task.done{background:rgba(var(--acc),.09); border-color:rgba(var(--acc),.3)}
   .task.done .tick{background:var(--sodium); border-color:var(--sodium); color:#0A1522}
   .task.done p{color:#fff}
   .foot-home{
@@ -308,7 +326,7 @@
     position:fixed; left:50%; bottom:calc(80px + env(safe-area-inset-bottom)); z-index:21;
     transform:translate(-50%,16px); opacity:0; pointer-events:none;
     padding:10px 18px; border-radius:999px; background:rgba(12,26,41,.94);
-    border:1px solid rgba(242,181,107,.45); color:#FFF4E2;
+    border:1px solid rgba(var(--acc),.45); color:#FFF4E2;
     font-family:var(--ui); font-size:13px; letter-spacing:.03em; white-space:nowrap;
     box-shadow:0 14px 40px rgba(0,0,0,.5);
     transition:opacity .35s var(--settle), transform .45s var(--settle);
@@ -379,6 +397,10 @@
         <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.2v7.4m0 0 3-3m-3 3-3-3M2.6 12.4h10.8"/></svg>
         <span>留住</span>
       </button>
+      <button class="chip palette-chip" id="palette" type="button" aria-label="换一套配色，现在是樱花夜">
+        <span class="swatch" aria-hidden="true"></span>
+        <span>配色</span>
+      </button>
       <button class="chip sound" id="sound" type="button" aria-pressed="false" aria-label="声音：暖气片的轻响和窗外的风声">
         <svg viewBox="0 0 26 18" aria-hidden="true">
           <g>
@@ -419,9 +441,102 @@ if (!ctx) return;
 
 const root = document.documentElement;
 const TAU = Math.PI * 2, D60 = Math.PI / 3;
-const ICE = '207,232,245', SOD = '242,181,107';
+const ICE = '207,232,245';      /* 霜、水珠、玻璃高光：始终是冰的颜色 */
+let SOD = '242,181,107';        /* 窗外的灯：跟着配色换 */
 const rmq = window.matchMedia('(prefers-reduced-motion: reduce)');
 let reduced = rmq.matches;
+
+/* =====================================================================
+   配色：天空、街灯、窗框反光、界面强调色一起换
+   ===================================================================== */
+const THEME_KEY = 'frost-window-theme-v1';
+const THEMES = {
+  sakura: {
+    name: '樱花夜', night: '#140C18', glass: '#3A1F33', ice: '#F6E7F2', sodium: '#F7A8C4',
+    acc: '247,168,196', sod: '247,168,196', panel: '18,10,20',
+    halo: ['rgba(247,168,196,.32)', 'rgba(255,194,209,.24)', 'rgba(247,168,196,.18)'],
+    sw: ['#F7A8C4', '#B087C8', '#FFD9E6'],
+    sky: ['#150C1A', '#1C0F21', '#2E1830', '#3F2139', '#180D1C'],
+    ground: ['#3F2139', '#25142A', '#140B18'], roof: '#120A15', branch: '#0B0610',
+    glassRgb: '58,31,53',
+    cols: ['247,168,196', '255,210,224', '233,145,178', '207,232,245', '228,85,63', '98,214,160', '255,235,243']
+  },
+  dusk: {
+    name: '晚霞', night: '#0B1426', glass: '#332B4E', ice: '#FFE9DA', sodium: '#FFB27A',
+    acc: '255,178,122', sod: '255,178,122', panel: '14,16,34',
+    halo: ['rgba(255,178,122,.34)', 'rgba(255,140,130,.22)', 'rgba(255,178,122,.18)'],
+    sw: ['#FFB27A', '#FF8E8E', '#FFE2B8'],
+    sky: ['#0A1024', '#171734', '#3A2A4C', '#5E3A4E', '#241A30'],
+    ground: ['#4A3348', '#2A1E30', '#120E18'], roof: '#0C0918', branch: '#07050E',
+    glassRgb: '51,43,78',
+    cols: ['255,178,122', '255,214,170', '236,150,95', '180,200,255', '228,85,63', '98,214,160', '255,241,214']
+  },
+  aurora: {
+    name: '极光', night: '#06181C', glass: '#0E3A36', ice: '#D8FFF2', sodium: '#7FF0C8',
+    acc: '127,240,200', sod: '127,240,200', panel: '6,22,24',
+    halo: ['rgba(127,240,200,.26)', 'rgba(120,200,255,.18)', 'rgba(201,176,255,.14)'],
+    sw: ['#7FF0C8', '#8EC5FF', '#C9B0FF'],
+    sky: ['#041014', '#071E22', '#0C3A36', '#14524A', '#08201F'],
+    ground: ['#14524A', '#0A2A28', '#041210'], roof: '#031314', branch: '#020B0B',
+    glassRgb: '14,58,54',
+    cols: ['127,240,200', '190,255,225', '90,220,190', '150,220,255', '228,85,63', '98,214,160', '235,255,248']
+  },
+  ice: {
+    name: '冰蓝', night: '#0A1522', glass: '#16304A', ice: '#CFE8F5', sodium: '#F2B56B',
+    acc: '242,181,107', sod: '242,181,107', panel: '10,21,34',
+    halo: ['rgba(242,181,107,.34)', 'rgba(242,181,107,.30)', 'rgba(242,181,107,.26)'],
+    sw: ['#F2B56B', '#CFE8F5', '#EAF7FF'],
+    sky: ['#070E18', '#0A1522', '#12283F', '#16304A', '#0B1826'],
+    ground: ['#16304A', '#102338', '#0A1522'], roof: '#060C15', branch: '#04080E',
+    glassRgb: '22,48,74',
+    cols: ['242,181,107', '255,216,160', '233,154,79', '207,232,245', '228,85,63', '98,214,160', '255,241,214']
+  }
+};
+const THEME_ORDER = ['sakura', 'dusk', 'aurora', 'ice'];
+let themeId = 'sakura';
+const theme = () => THEMES[themeId];
+
+function applyTheme(id, quiet) {
+  themeId = THEMES[id] ? id : 'sakura';
+  const t = THEMES[themeId], s = document.documentElement.style;
+  s.setProperty('--night', t.night);
+  s.setProperty('--glass', t.glass);
+  s.setProperty('--ice', t.ice);
+  s.setProperty('--sodium', t.sodium);
+  s.setProperty('--acc', t.acc);
+  s.setProperty('--panel', t.panel);
+  s.setProperty('--glass-rgb', t.glassRgb);
+  s.setProperty('--halo1', t.halo[0]);
+  s.setProperty('--halo2', t.halo[1]);
+  s.setProperty('--halo3', t.halo[2]);
+  s.setProperty('--sw1', t.sw[0]); s.setProperty('--sw2', t.sw[1]); s.setProperty('--sw3', t.sw[2]);
+  document.documentElement.dataset.theme = themeId;
+  SOD = t.sod;
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', t.night);
+  const btn = document.getElementById('palette');
+  if (btn) {
+    btn.title = '配色：' + t.name;
+    btn.setAttribute('aria-label', '换一套配色，现在是' + t.name);
+  }
+  /* 外面的街景重新画一遍；用同一个种子，屋顶和树枝不会跟着换位置 */
+  if (W > 0 && staticC) {
+    makeSprites();
+    const keep = seed;
+    seed = worldSeed;
+    paintStatic(); paintGlass(); paintFrame();
+    seed = keep;
+  }
+  if (!quiet) toast('配色：' + t.name);
+  try { localStorage.setItem(THEME_KEY, themeId); } catch (e) { /* file:// 下可能被禁用 */ }
+}
+function loadTheme() {
+  try {
+    const v = localStorage.getItem(THEME_KEY);
+    if (THEMES[v]) return v;
+  } catch (e) { /* 忽略 */ }
+  return 'sakura';
+}
 
 /* ---------- small helpers ---------- */
 let seed = (Date.now() ^ 0x9E3779B9) >>> 0;
@@ -432,6 +547,7 @@ function mk(w, h){ const c = document.createElement('canvas'); c.width = Math.ma
 
 /* ---------- state ---------- */
 let W = 0, H = 0, dpr = 1, u = 1, m = 800, side = 40, sill = 60, mun = 16;
+let worldSeed = 0;              /* 街景的随机种子：换配色时重画，屋顶不能换位置 */
 let G = null, panes = [];
 let bgC, bgX, staticC, qaC, qaX, qbC, qbX, frostC, fx, densC, dx, diffC, diffX, fogC, fogX, glassC, frameC, textC, tx_, viewF, viewFX, viewD, viewDX;
 let textBox = {x: 0, y: 0, w: 1, h: 1};
@@ -501,7 +617,9 @@ function build(ffTo){
   P.down = false; P.patch = null; P.wound = null;
   P.kx = (G.cx + G.x1) / 2; P.ky = G.y1 - (G.y1 - G.cy) * .45;
 
-  makeSprites(); makeLights(); paintStatic(); paintGlass(); paintFrame(); paintText(); makeFogPattern();
+  makeSprites(); makeLights();
+  worldSeed = seed;
+  paintStatic(); paintGlass(); paintFrame(); paintText(); makeFogPattern();
   plantIslands(); plantSeeds();
 
   if (reduced){ fastForward(118); entered = true; }
@@ -510,7 +628,7 @@ function build(ffTo){
 
 /* ---------- bokeh sprites: a soft seven-bladed aperture ---------- */
 function makeSprites(){
-  const cols = ['242,181,107', '255,216,160', '233,154,79', '207,232,245', '228,85,63', '98,214,160', '255,241,214'];
+  const cols = theme().cols;
   sprites = cols.map(col => {
     const s = mk(144, 144), x = s.getContext('2d'), c = 72;
     const blade = R => {
@@ -560,16 +678,17 @@ function makeLights(){
 function paintStatic(){
   const sw = Math.ceil(W / 5), sh = Math.ceil(H / 5);
   const S = mk(sw, sh), x = S.getContext('2d');
+  const T = theme();
   x.setTransform(sw / W, 0, 0, sh / H, 0, 0);
   let g = x.createLinearGradient(0, 0, 0, H);
-  g.addColorStop(0, '#070E18'); g.addColorStop(.36, '#0A1522'); g.addColorStop(.6, '#12283F'); g.addColorStop(.68, '#16304A'); g.addColorStop(1, '#0B1826');
+  g.addColorStop(0, T.sky[0]); g.addColorStop(.36, T.sky[1]); g.addColorStop(.6, T.sky[2]); g.addColorStop(.68, T.sky[3]); g.addColorStop(1, T.sky[4]);
   x.fillStyle = g; x.fillRect(0, 0, W, H);
   g = x.createRadialGradient(W * .4, H * .6, 0, W * .4, H * .6, Math.max(W, H) * .62);
   g.addColorStop(0, 'rgba(' + SOD + ',.2)'); g.addColorStop(.5, 'rgba(' + SOD + ',.07)'); g.addColorStop(1, 'rgba(' + SOD + ',0)');
   x.fillStyle = g; x.fillRect(0, 0, W, H);
   // snowy ground with pools of lamp light
   g = x.createLinearGradient(0, H * .66, 0, H);
-  g.addColorStop(0, '#16304A'); g.addColorStop(.45, '#102338'); g.addColorStop(1, '#0A1522');
+  g.addColorStop(0, T.ground[0]); g.addColorStop(.45, T.ground[1]); g.addColorStop(1, T.ground[2]);
   x.fillStyle = g; x.fillRect(0, H * .66, W, H * .34);
   for (const l of lamps){
     const py = H * .7 + (l.r / m) * H * 1.5, pr = l.r * 2.4;
@@ -585,17 +704,17 @@ function paintStatic(){
     if (rnd() < .64){
       const pk = base - rr(.028, .06) * m;
       top.push([px, base], [px + hw * .5, pk], [px + hw, base]);
-      if (rnd() < .65){ const cxh = px + hw * rr(.6, .76), cyh = pk + (base - pk) * .3; x.fillStyle = '#060C15'; x.fillRect(cxh, cyh - .03 * m, .014 * m, .05 * m); }
+      if (rnd() < .65){ const cxh = px + hw * rr(.6, .76), cyh = pk + (base - pk) * .3; x.fillStyle = T.roof; x.fillRect(cxh, cyh - .03 * m, .014 * m, .05 * m); }
     } else { const f = base - .012 * m; top.push([px, f], [px + hw, f]); }
     px += hw + rr(-6, .014 * m);
   }
-  x.fillStyle = '#060C15'; x.beginPath(); x.moveTo(-20, H * .69);
+  x.fillStyle = T.roof; x.beginPath(); x.moveTo(-20, H * .69);
   for (const p of top) x.lineTo(p[0], p[1]);
   x.lineTo(W + 80, H * .69); x.closePath(); x.fill();
   x.strokeStyle = 'rgba(' + ICE + ',.2)'; x.lineWidth = 5; x.lineJoin = 'round'; x.beginPath();
   top.forEach((p, i) => i ? x.lineTo(p[0], p[1]) : x.moveTo(p[0], p[1])); x.stroke();
   // bare branches leaning in from the top corners
-  x.strokeStyle = '#04080E'; x.lineCap = 'round';
+  x.strokeStyle = T.branch; x.lineCap = 'round';
   const twig = (bx, by, ang, len, w, d) => {
     const ex = bx + Math.cos(ang) * len, ey = by + Math.sin(ang) * len;
     const mx = (bx + ex) / 2 + Math.sin(ang) * len * rr(-.12, .12), my = (by + ey) / 2 + rr(.02, .1) * len;
@@ -620,7 +739,7 @@ function paintStatic(){
 /* ---------- the glass itself: tint, condensation creeping up each pane, the frame's shadow ---------- */
 function paintGlass(){
   glassC = mk(W * dpr, H * dpr); const x = glassC.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0);
-  x.fillStyle = 'rgba(22,48,74,.1)'; x.fillRect(G.x0, G.y0, G.x1 - G.x0, G.y1 - G.y0);
+  x.fillStyle = 'rgba(' + theme().glassRgb + ',.1)'; x.fillRect(G.x0, G.y0, G.x1 - G.x0, G.y1 - G.y0);
   for (const p of panes){
     const w = p.r - p.l, h = p.b - p.t;
     x.save(); x.beginPath(); x.rect(p.l, p.t, w, h); x.clip();
@@ -675,12 +794,12 @@ function paintFrame(){
   wood(0, G.y1, W, sill, false);
   // sill: a lit top face and a dark lip
   let g = x.createLinearGradient(0, G.y1, 0, G.y1 + 9);
-  g.addColorStop(0, 'rgba(22,48,74,.75)'); g.addColorStop(1, 'rgba(22,48,74,0)');
+  g.addColorStop(0, 'rgba(' + theme().glassRgb + ',.75)'); g.addColorStop(1, 'rgba(' + theme().glassRgb + ',0)');
   x.fillStyle = g; x.fillRect(0, G.y1, W, 9);
   x.fillStyle = 'rgba(2,4,8,.55)'; x.fillRect(0, G.y1 + Math.min(12, sill * .22), W, 1);
   for (const p of panes){
     const w = p.r - p.l, h = p.b - p.t;
-    x.strokeStyle = 'rgba(22,48,74,.6)'; x.lineWidth = 3; x.strokeRect(p.l - 2, p.t - 2, w + 4, h + 4);
+    x.strokeStyle = 'rgba(' + theme().glassRgb + ',.6)'; x.lineWidth = 3; x.strokeRect(p.l - 2, p.t - 2, w + 4, h + 4);
     x.strokeStyle = 'rgba(' + ICE + ',.24)'; x.lineWidth = 1; x.strokeRect(p.l - .5, p.t - .5, w + 1, h + 1);
     // sodium light caught on the ledge under each pane
     g = x.createLinearGradient(p.l, 0, p.r, 0);
@@ -1782,6 +1901,11 @@ setTimeout(() => {
 }, 64000);
 
 lastW = window.innerWidth; lastH = window.innerHeight;
+$id('palette').addEventListener('click', () => {
+  const i = THEME_ORDER.indexOf(themeId);
+  applyTheme(THEME_ORDER[(i + 1) % THEME_ORDER.length]);
+});
+applyTheme(loadTheme(), true);
 build(0);
 start();
 })();
