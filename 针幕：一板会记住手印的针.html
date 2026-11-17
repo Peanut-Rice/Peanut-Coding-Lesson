@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0B0C0E">
 <title>针幕 · 一板会记住手印的针</title>
-<meta name="description" content="一板密密麻麻的钢针：用手指按下去，针会记住你的手印；按一个手印、按出一个字、再把整块板翻一翻。单文件离线可用，触摸屏最好玩。">
+<meta name="description" content="一板密密麻麻的钢针：按住，针就被顶出来，靠摩擦停住、不会自己弹回去；印手、按字、印花、两根手指一起按、橡皮抹平、翻板清空，还能把整块板留成一张图。单文件离线可用，触摸屏最好玩。">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='88'>🪡</text></svg>">
 <style>
   :root{
@@ -76,13 +76,15 @@
   .rig{position:relative;flex:1 1 0;min-height:0;display:flex;width:100%;max-width:1040px;margin:0 auto;perspective:2000px}
   .frame{
     position:relative;flex:1;min-width:0;display:flex;flex-direction:column;
-    padding:clamp(7px,.9vw,11px); border-radius:clamp(15px,1.9vw,22px);
+    padding:clamp(8px,1vw,13px); border-radius:clamp(14px,1.7vw,20px);
     background:
       radial-gradient(120% 90% at 16% -8%, rgba(255,255,255,.10), transparent 55%),
-      linear-gradient(158deg,#24272c 0%,#121417 24%,#0b0c0e 58%,#060708 100%);
+      repeating-linear-gradient(96deg, rgba(255,255,255,.018) 0 .7px, rgba(0,0,0,.05) .7px 1.8px),
+      linear-gradient(158deg,#31363d 0%,#1d2127 22%,#12151a 58%,#080a0d 100%);
     box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.20), inset 0 -1px 0 rgba(255,255,255,.045),
-      0 0 0 1px #000, 0 26px 54px -20px rgba(0,0,0,.95), 0 5px 14px rgba(0,0,0,.6);
+      inset 0 1px 0 rgba(255,255,255,.24), inset 0 -1px 0 rgba(0,0,0,.5),
+      inset 0 0 0 1px rgba(255,255,255,.03),
+      0 30px 60px -24px rgba(0,0,0,.95), 0 6px 16px rgba(0,0,0,.6);
     transform-origin:50% 58%;
   }
   .frame.flipping{animation:boardFlip .92s var(--settle)}
@@ -94,21 +96,22 @@
   }
   .well{
     position:relative; flex:1; min-height:0; overflow:hidden;
-    border-radius:clamp(9px,1.3vw,14px); background:#050607;
-    box-shadow:0 0 0 1px #000, 0 1px 0 1px rgba(201,206,214,.12);
+    border-radius:clamp(8px,1.1vw,12px);
+    background:
+      radial-gradient(130% 95% at 18% -14%, rgba(255,255,255,.07), transparent 62%),
+      radial-gradient(90% 80% at 74% 118%, rgba(239,190,132,.045), transparent 62%),
+      repeating-linear-gradient(92deg, rgba(255,255,255,.016) 0 .6px, rgba(0,0,0,.03) .6px 2px),
+      linear-gradient(164deg,#191e25 0%,#12161c 44%,#0b0e12 100%);
+    box-shadow:0 0 0 1px #000, inset 0 1px 0 rgba(201,206,214,.10);
   }
   #field{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;outline:none;cursor:none}
-  .well::before{
-    content:"";position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;
-    background:linear-gradient(112deg,transparent 29%,rgba(255,255,255,.045) 30.2%,rgba(255,255,255,.012) 42%,transparent 43%,transparent 49%,rgba(255,255,255,.022) 49.6%,transparent 54%);
-  }
   .well::after{
     content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;
-    box-shadow:inset 0 0 16px 4px rgba(0,0,0,.8), inset 0 2px 6px rgba(0,0,0,.85);
+    box-shadow:inset 0 0 7px 2px rgba(0,0,0,.5), inset 0 2px 4px rgba(0,0,0,.55);
   }
   .sweep{
     position:absolute;inset:-40% -70%;z-index:5;pointer-events:none;opacity:0;
-    background:linear-gradient(104deg,transparent 40%,rgba(255,255,255,.17) 48%,rgba(255,255,255,.05) 54%,transparent 63%);
+    background:linear-gradient(104deg,transparent 40%,rgba(255,255,255,.10) 48%,rgba(255,255,255,.03) 54%,transparent 63%);
     transform:translateX(-55%);
   }
   .sweep.run{animation:sweepRun .92s var(--settle) both}
@@ -131,6 +134,7 @@
     box-shadow:0 0 16px rgba(201,206,214,.18);
   }
   #cursor.handmode{width:74px;height:74px;margin:-37px 0 0 -37px;border-style:dashed;border-color:rgba(239,190,132,.6)}
+  #cursor.erase{width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:12px;border-color:rgba(242,181,107,.6)}
   #cursor.show{opacity:1}
 
   /* ---------------- 控制台 ---------------- */
@@ -171,23 +175,26 @@
   .word:active{transform:translateY(2px);box-shadow:inset 0 2px 5px rgba(0,0,0,.9),0 1px 0 #000}
   .word.pressed{color:var(--warm);border-color:rgba(239,190,132,.55)}
 
-  .rail{display:flex;align-items:center;justify-content:center;gap:8px;min-height:40px}
+  .rail{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 8px;min-height:40px}
   .chip{
-    display:inline-flex;align-items:center;gap:6px;height:44px;padding:0 14px;border-radius:999px;
+    display:inline-flex;align-items:center;gap:6px;height:44px;padding:0 13px;border-radius:999px;
     border:1px solid rgba(201,206,214,.2);background:rgba(201,206,214,.05);
     color:rgba(214,222,232,.72);font-size:12px;letter-spacing:.04em;white-space:nowrap;
-    touch-action:manipulation;transition:background .25s var(--settle),color .25s var(--settle),border-color .25s var(--settle);
+    touch-action:manipulation;transition:background .25s var(--settle),color .25s var(--settle),border-color .25s var(--settle),opacity .25s;
   }
   .chip:hover{background:rgba(201,206,214,.12);color:#fff;border-color:rgba(201,206,214,.42)}
   .chip svg{width:17px;height:14px;flex:none;overflow:visible}
+  .chip svg.sq{width:16px;height:16px}
   .chip svg .w{transition:opacity .25s var(--settle)}
   .chip svg .x{opacity:0;transition:opacity .25s var(--settle)}
   .chip[aria-pressed="true"]{color:var(--warm);border-color:rgba(239,190,132,.45);background:rgba(239,190,132,.08)}
   .chip.on{color:var(--warm);border-color:rgba(239,190,132,.45);background:rgba(239,190,132,.08)}
   .chip[aria-pressed="true"] svg .w{opacity:0}
   .chip[aria-pressed="true"] svg .x{opacity:1}
-  .foot{margin:0;text-align:center;font-size:11.5px;line-height:1.6;color:rgba(201,206,214,.55)}
-  .foot a{color:rgba(201,206,214,.62);text-decoration:none;border-bottom:1px dotted rgba(201,206,214,.32);padding-bottom:1px}
+  .chip[disabled]{opacity:.34;pointer-events:none}
+  .chip .kbd{font-size:10px;opacity:.5;letter-spacing:0}
+  .foot{margin:0;text-align:center;font-size:11.5px;line-height:1.6;color:rgba(201,206,214,.62)}
+  .foot a{color:rgba(201,206,214,.7);text-decoration:none;border-bottom:1px dotted rgba(201,206,214,.32);padding-bottom:1px}
   .foot a:hover,.foot a:focus-visible{color:#fff;border-color:var(--warm)}
 
   /* ---------------- 小抽屉 ---------------- */
@@ -231,6 +238,34 @@
   .sheet .foot-home{margin:20px 0 0;padding-top:16px;border-top:1px solid rgba(201,206,214,.14);text-align:center;font-size:13px}
   .sheet .foot-home a{color:rgba(201,206,214,.72);text-decoration:none;border-bottom:1px dotted rgba(201,206,214,.35);padding-bottom:2px}
   .sheet .foot-home a:hover,.sheet .foot-home a:focus-visible{color:#fff;border-color:var(--warm)}
+
+  /* 抽屉里的「自己写」「印花」 */
+  .sheet .block-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+    margin:18px 0 9px;padding-top:16px;border-top:1px solid rgba(201,206,214,.14);
+    font-size:15px;font-weight:600;letter-spacing:.05em;color:#EDF3FA}
+  .sheet .block-head em{font-style:normal;font-size:11.5px;font-weight:400;letter-spacing:.02em;color:rgba(196,208,222,.6)}
+  .write-row{display:flex;gap:8px;margin:0}
+  .write-row input{
+    flex:1 1 auto;min-width:0;height:46px;border-radius:12px;padding:0 14px;
+    border:1px solid rgba(201,206,214,.22);background:rgba(201,206,214,.06);
+    color:#EEF4FB;font:inherit;font-size:16px;letter-spacing:.06em;outline:none;
+  }
+  .write-row input::placeholder{color:rgba(201,206,214,.4);letter-spacing:.02em}
+  .write-row input:focus{border-color:rgba(239,190,132,.55);background:rgba(201,206,214,.09)}
+  .write-row .go{
+    flex:none;height:46px;padding:0 16px;border-radius:12px;
+    background:linear-gradient(180deg,#3a3427,#241f17);border:1px solid rgba(239,190,132,.42);
+    color:#FFE9CC;font-size:13px;font-weight:600;letter-spacing:.06em;
+  }
+  .write-row .go:hover{background:linear-gradient(180deg,#4a4131,#2b241a)}
+  .tpls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0}
+  .tpl{height:62px;border-radius:12px;border:1px solid rgba(201,206,214,.16);
+    background:rgba(201,206,214,.045);color:rgba(226,234,242,.78);
+    display:flex;align-items:center;justify-content:center;touch-action:manipulation;
+    transition:border-color .25s var(--settle),color .25s var(--settle),background .25s var(--settle)}
+  .tpl svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .tpl:hover,.tpl:focus-visible{border-color:rgba(201,206,214,.4);color:#fff;background:rgba(201,206,214,.1)}
+  .foot .keys{display:block;margin-top:2px;font-size:10.5px;letter-spacing:.02em;color:rgba(201,206,214,.42)}
 
   .toast{
     position:fixed;left:50%;bottom:calc(208px + env(safe-area-inset-bottom));z-index:21;
@@ -297,6 +332,7 @@
     .rail{min-height:34px}
     .chip{height:34px;font-size:11px;padding:0 10px}
     .foot{font-size:10.5px}
+    .foot .keys{display:none}
     .toast{bottom:calc(20px + env(safe-area-inset-bottom))}
   }
   @media (prefers-reduced-motion:reduce){
@@ -317,12 +353,12 @@
     <button class="tasks-btn" id="openTasks" type="button" aria-haspopup="dialog">四件小事 <b id="taskCount">0/4</b></button>
   </header>
 
-  <p class="hint" id="hint"><span class="dot" aria-hidden="true"></span>用手指按下去，针会记住你的手</p>
+  <p class="hint" id="hint"><span class="dot" aria-hidden="true"></span>按住，针会被顶出来；松手就留在那儿</p>
 
   <section class="rig" aria-label="针幕玩具">
     <div class="frame" id="frame">
       <div class="well">
-        <canvas id="field" role="img" aria-label="一块密密麻麻的钢针。按住并拖动，针会被按下去，然后慢慢弹回原样。"></canvas>
+        <canvas id="field" role="img" aria-label="一块密密麻麻的钢针。按住并拖动，针会被顶出来并留在板上；按「橡皮」把针抹回去，按「翻板」让它们全部落回去。"></canvas>
         <div class="sweep" id="sweep" aria-hidden="true"></div>
       </div>
       <i class="screw tl" aria-hidden="true"></i><i class="screw tr" aria-hidden="true"></i>
@@ -356,6 +392,14 @@
     </div>
 
     <div class="rail">
+      <button class="chip" id="erase" type="button" aria-pressed="false" aria-label="橡皮：把按出来的针抹回去">
+        <svg class="sq" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.6 15.6 10.4 9.8a2 2 0 0 1 2.8 0l3.2 3.2a2 2 0 0 1 0 2.8l-3.4 3.4H7.4z"/><path d="M8.6 20.2h11"/></svg>
+        <span>橡皮</span>
+      </button>
+      <button class="chip" id="keep" type="button" aria-label="留一张：把这块板存成一张图片">
+        <svg class="sq" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.6" y="6.4" width="16.8" height="13" rx="2.6"/><path d="M8.4 6.4 9.8 3.8h4.4l1.4 2.6"/><circle cx="12" cy="12.8" r="3.4"/></svg>
+        <span>留一张</span>
+      </button>
       <button class="chip" id="snd" type="button" aria-pressed="false" aria-label="声音：针的沙沙声">
         <svg viewBox="0 0 24 18" aria-hidden="true"><path d="M2.5 6.6h3.2l4.4-3.9v12.6l-4.4-3.9H2.5z"/><path class="w" d="M13.6 5.6a4.4 4.4 0 0 1 0 6.8M16.2 3.2a8 8 0 0 1 0 11.6"/><path class="x" d="M14 6.6l5 4.8M19 6.6l-5 4.8"/></svg>
         <span id="sndLabel">声音</span>
@@ -363,7 +407,7 @@
       <button class="chip" id="why" type="button">这是怎么做到的</button>
     </div>
 
-    <p class="foot"><a href="奇趣阁：六件小玩具.html">← 回到 Peanut 的奇趣阁</a></p>
+    <p class="foot"><a href="奇趣阁：六件小玩具.html">← 回到 Peanut 的奇趣阁</a><span class="keys">键盘：F 翻板 · H 印手 · 1–4 压字 · Ctrl+Z 退回</span></p>
   </div>
 </main>
 
@@ -371,17 +415,33 @@
 <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="true">
   <button class="sheet-close" id="closeTasks" type="button" aria-label="关上">✕</button>
   <h2 id="sheetTitle">四件小事</h2>
-  <p class="lead">做一件，就自己打个勾，记在这台电脑上。</p>
+  <p class="lead">做一件，就自动打个勾，记在这台电脑上。</p>
   <div class="tasks-head">已经做到 <span id="taskCount2">0 / 4</span></div>
   <div class="tasks" id="tasks"></div>
+
+  <div class="block-head">按自己的字 <em>最多八个</em></div>
+  <div class="write-row">
+    <input id="ownText" type="text" maxlength="8" placeholder="花生、妈妈、你好…" autocomplete="off" aria-label="想按出来的字">
+    <button class="go" id="ownGo" type="button">按下去</button>
+  </div>
+
+  <div class="block-head">印花 <em>四种样子</em></div>
+  <div class="tpls" id="tpls">
+    <button class="tpl" type="button" data-tpl="heart" aria-label="印一颗心"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 27s-9.5-5.9-9.5-12.2A5.4 5.4 0 0 1 16 11.6a5.4 5.4 0 0 1 9.5 3.2C25.5 21.1 16 27 16 27z"/></svg></button>
+    <button class="tpl" type="button" data-tpl="star" aria-label="印一颗星"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4.8l3.4 6.9 7.6 1.1-5.5 5.4 1.3 7.6L16 22.2l-6.8 3.6 1.3-7.6-5.5-5.4 7.6-1.1z"/></svg></button>
+    <button class="tpl" type="button" data-tpl="cat" aria-label="印一只猫"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8.6 13.4 7.4 7.2l5 3.3a9.4 9.4 0 0 1 7.2 0l5-3.3-1.2 6.2a9.6 9.6 0 1 1-14.8 0z"/><path d="M12.6 17.4h.02M19.4 17.4h.02"/><path d="M14.4 22.6c1 .9 2.2.9 3.2 0"/></svg></button>
+    <button class="tpl" type="button" data-tpl="leaf" aria-label="印一片叶子"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M26.4 5.6C15.6 5.6 7.4 10.4 7.4 19.2c0 3 .9 5.6 2.6 7.4C18.8 25.4 26.4 17.4 26.4 5.6z"/><path d="M10 26.4 24 12.4"/></svg></button>
+  </div>
+
   <p class="foot-home"><a href="奇趣阁：六件小玩具.html">← 回到 Peanut 的奇趣阁</a></p>
 </section>
 
 <section class="why" id="whyPanel" aria-hidden="true" aria-labelledby="whyTitle">
   <button class="why-close" id="whyClose" type="button" aria-label="关上">✕</button>
   <h2 id="whyTitle">这是怎么做到的？</h2>
-  <p>每一根针的后面，都顶着一根<b>小弹簧</b>。你按下去，它就缩进去；手一松，弹簧不急着弹回来，而是一点一点把它推回家——所以手印会慢慢化开。</p>
-  <p>真的玩具叫<b>「针幕」</b>（Pin Art）：把脸或手按在板子后面，前面就浮出一张亮闪闪的针做的像；翻过来抖一抖，板子又空了。这块板上有 <b id="pinCount">5,000</b> 根针。</p>
+  <p>每一根钢针都插在一个小孔里，靠<b>摩擦力</b>卡住。你在板子背面按，针就朝观众顶出来；手一松，它不动——针靠摩擦停住，<b>不会自己弹回去</b>。</p>
+  <p>针顶得越高，影子拉得越长，这一块就浮起来了。想清空的时候，把板子<b>翻过来轻轻一抖</b>，所有针才一起落回去。</p>
+  <p>真的玩具叫<b>「针幕」</b>（Pin Art）：把脸或手按在板子后面，前面就浮出一张亮闪闪的针做的像。这块板上有 <b id="pinCount">5,000</b> 根针。</p>
 </section>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -398,14 +458,92 @@ const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 
 /* ------------------------------------------------------------------ state */
 let W = 0, H = 0, dpr = 1, pitch = 7, rowH = 6, cols = 0, rows = 0, N = 0, ox = 0, oy = 0;
-let HT, VEL, MAP, PREV, RND, FALL, SETL, DYN, STAT, SW;
-let preset = null, press = 0, goal = 0, holdT = 0, holdMs = 0, flush = 0;
+let HT, VEL, KEEP, MAP, RND, SETL, DYN, STAT, SW;
+let preset = null, press = 0, goal = 0, holdT = 0;
 let mode = 'finger';
 const flip = { on: false, t: 0 };
-let awake = true, energy = 0, lightDirty = true;
-const ptr = { down: false, x: 0, y: 0, force: 1 };
-let lastX = 0, lastY = 0, depth = 0;
+let awake = true, energy = 0, lightDirty = true, hasRaise = false;
+const POINTERS = new Map();            /* pointerId -> 一根手指的笔迹 */
 let lastPoint = { x: 0, y: 0 };
+let undoKEEP = null;                   /* 翻板/盖章之前压的一层针高（Uint8，约 15KB） */
+let savedField = null;                 /* 上一次的针高：缩放窗口 / 刷新时接着用 */
+const FIELD_KEY = 'pinscreen-field-v2';
+
+/* 把「针要停在哪儿」（KEEP）拍成一张快照，量化到 0..255 */
+function captureField() {
+  if (!N || !KEEP) return null;
+  const data = new Uint8Array(N);
+  for (let i = 0; i < N; i++) data[i] = clamp((KEEP[i] * 255) | 0, 0, 255);
+  return { cols, rows, data };
+}
+function restoreField(cap) {
+  if (!cap || !cap.data || !cap.cols || !cap.rows) return;
+  const oc = cap.cols, orw = cap.rows;
+  if (oc === cols && orw === rows) {
+    for (let i = 0; i < N; i++) { KEEP[i] = cap.data[i] / 255; HT[i] = KEEP[i]; }
+  } else {
+    for (let j = 0, i = 0; j < rows; j++) {
+      for (let c = 0; c < cols; c++, i++) {
+        const u = cols > 1 ? c / (cols - 1) : 0, v = rows > 1 ? j / (rows - 1) : 0;
+        const c0 = Math.round(u * (oc - 1)), r0 = Math.round(v * (orw - 1));
+        KEEP[i] = cap.data[r0 * oc + c0] / 255;
+        HT[i] = KEEP[i];
+      }
+    }
+  }
+  VEL.fill(0); SETL.fill(0);
+  awake = true; lightDirty = true;
+}
+function encodeField() {
+  const cap = captureField();
+  if (!cap) return null;
+  let bin = '';
+  const CH = 0x8000;
+  for (let i = 0; i < cap.data.length; i += CH) {
+    bin += String.fromCharCode.apply(null, cap.data.subarray(i, i + CH));
+  }
+  try { return JSON.stringify({ v: 2, cols: cap.cols, rows: cap.rows, d: btoa(bin) }); }
+  catch (e) { return null; }
+}
+function loadField() {
+  let raw = null;
+  try { raw = localStorage.getItem(FIELD_KEY); } catch (e) { return null; }
+  if (!raw) return null;
+  try {
+    const o = JSON.parse(raw);
+    if (!o || o.v !== 2 || !o.d || !o.cols || !o.rows) return null;
+    const bin = atob(o.d), data = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) data[i] = bin.charCodeAt(i);
+    return { cols: o.cols, rows: o.rows, data };
+  } catch (e) { return null; }
+}
+let saveTimer = 0;
+function saveSoon() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveFieldNow, 700);
+}
+function saveFieldNow() {
+  if (!N) return;
+  try { const s = encodeField(); if (s) localStorage.setItem(FIELD_KEY, s); } catch (e) {}
+}
+/* 一层撤销：翻板 / 盖章之前把「要留住的针」压下来 */
+function pushUndo() {
+  if (!N) return;
+  const cap = captureField(); if (!cap) return;
+  undoKEEP = cap;
+}
+function undo() {
+  if (!undoKEEP || !N) return;
+  flip.on = false; flip.t = 0;                 /* 翻到一半也能退回来 */
+  frame.classList.remove('flipping');
+  $('sweep').classList.remove('run');
+  restoreField(undoKEEP);
+  undoKEEP = null;
+  preset = null; press = 0; goal = 0;
+  awake = true; lightDirty = true;
+  saveFieldNow();
+  toast('退回去一步');
+}
 
 /* ------------------------------------------------------------------ shapes */
 function ell(u, v, cx, cy, rx, ry, hh) {
@@ -439,10 +577,13 @@ function hand(u, v) {
 function build() {
   W = canvas.clientWidth; H = canvas.clientHeight;
   if (W < 40 || H < 40) return;
+  const carry = captureField();          /* 换尺寸时先把画接过来 */
   dpr = Math.min(2, window.devicePixelRatio || 1);
   canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
-  const want = W < 700 ? 5000 : 10500;
-  pitch = clamp(Math.sqrt(W * H / (want * 0.8660254)), 4.6, 11);
+  const small = W < 640;
+  const want = renderer.kind === 'gl' ? (small ? 5000 : 13500)
+                                      : (small ? 4600 : 8000);
+  pitch = clamp(Math.sqrt(W * H / (want * 0.8660254)), 5.0, 8.2);
   rowH = pitch * 0.8660254;
   const pad = pitch * 0.95;
   cols = Math.max(6, Math.floor((W - 2 * pad - pitch * 0.5) / pitch) + 1);
@@ -450,8 +591,8 @@ function build() {
   ox = (W - ((cols - 1) * pitch + pitch * 0.5)) / 2 + pitch * 0.12;
   oy = (H - (rows - 1) * rowH) / 2 + pitch * 0.14;
   N = cols * rows;
-  HT = new Float32Array(N); VEL = new Float32Array(N); MAP = new Float32Array(N);
-  PREV = new Float32Array(N); RND = new Float32Array(N); FALL = new Float32Array(N);
+  HT = new Float32Array(N); VEL = new Float32Array(N); KEEP = new Float32Array(N);
+  MAP = new Float32Array(N); RND = new Float32Array(N);
   SETL = new Uint8Array(N); SW = new Float32Array(N);
   DYN = new Float32Array(N * 4); STAT = new Float32Array(N * 3);
   let s = 987654321;
@@ -459,29 +600,32 @@ function build() {
   for (let j = 0, i = 0; j < rows; j++) {
     for (let c = 0; c < cols; c++, i++) {
       const x = ox + (c + (j & 1) * 0.5) * pitch, y = oy + j * rowH, r = rnd();
-      RND[i] = r; FALL[i] = 0.28 + rnd() * 0.10;
+      RND[i] = r;
       STAT[i * 3] = x; STAT[i * 3 + 1] = y; STAT[i * 3 + 2] = r;
     }
   }
   const pe = $('pinCount');
   if (pe) pe.textContent = N.toLocaleString('en-US');
-  preset = null; press = 0; goal = 0; depth = 0; ptr.down = false; flush = 0;
+  preset = null; press = 0; goal = 0;
+  POINTERS.clear();
   flip.on = false; frame.classList.remove('flipping');
   $('sweep').classList.remove('run');
-  lastX = lastY = 0; lastPoint = { x: W / 2, y: H / 2 };
+  lastPoint = { x: W / 2, y: H / 2 };
+  restoreField(carry || savedField);
   renderer.resize();
   awake = true; lightDirty = true;
 }
 
 /* ------------------------------------------------------------------ stamps */
-function startStamp(ms) {
-  preset = 'stamp'; press = RM ? 1 : 0; goal = 1; holdMs = ms; awake = true;
-  flush = 0.5;                    /* 旧印子在半秒里让开，新印子才看得清 */
+/* 盖章：波纹从中心往外顶，顶到哪儿就把哪儿写进 KEEP；顶完就停住，不散开 */
+function startStamp() {
+  preset = 'stamp';
+  press = RM ? 1 : 0; goal = 1; awake = true;
   clearTimeout(holdT);
-  holdT = setTimeout(() => { if (preset) { goal = 0; awake = true; } }, ms);
 }
 function stampHandAt(px, py) {
   if (flip.on || !N) return;
+  pushUndo();
   const s = Math.min(W * 0.80 / 1.325, H * 0.80 / 1.49);
   const hw = s * 0.663, hh = s * 0.745;
   px = clamp(px, hw + 2, W - hw - 2);
@@ -492,9 +636,11 @@ function stampHandAt(px, py) {
     MAP[i] = hand(u, v);
     SW[i] = clamp(Math.hypot(u * 0.92, v * 0.8) / 0.95, 0, 1);
   }
-  startStamp(2200);
+  startStamp();
   lastPoint = { x: px, y: py };
   finish('hand');
+  saveSoon();
+  if (mode === 'hand') setMode('finger');   /* 盖完就回到手指，别让下一笔又是个手 */
 }
 const PX_ = i => STAT[i * 3], PY_ = i => STAT[i * 3 + 1];
 
@@ -530,6 +676,37 @@ function textMap(str) {
     g.strokeText(l, w / 2, y0 + kk * lh);
     g.fillText(l, w / 2, y0 + kk * lh);
   });
+  return c;
+}
+
+/* 印花模板：32×32 的路径，填满板心 */
+const TPL = {
+  heart: 'M16 27s-9.5-5.9-9.5-12.2A5.4 5.4 0 0 1 16 11.6a5.4 5.4 0 0 1 9.5 3.2C25.5 21.1 16 27 16 27z',
+  star: 'M16 4.8l3.4 6.9 7.6 1.1-5.5 5.4 1.3 7.6L16 22.2l-6.8 3.6 1.3-7.6-5.5-5.4 7.6-1.1z',
+  cat: 'M8.6 13.4 7.4 7.2l5 3.3a9.4 9.4 0 0 1 7.2 0l5-3.3-1.2 6.2a9.6 9.6 0 1 1-14.8 0zM12.6 17.4h.02M19.4 17.4h.02M14.4 22.6c1 .9 2.2.9 3.2 0',
+  leaf: 'M26.4 5.6C15.6 5.6 7.4 10.4 7.4 19.2c0 3 .9 5.6 2.6 7.4C18.8 25.4 26.4 17.4 26.4 5.6zM10 26.4 24 12.4'
+};
+function shapeMap(name) {
+  const path = TPL[name];
+  if (!path || typeof Path2D === 'undefined') return null;
+  const c = document.createElement('canvas');
+  const w = Math.max(8, Math.round(W)), h = Math.max(8, Math.round(H));
+  c.width = w; c.height = h;
+  const g = c.getContext('2d', { willReadFrequently: true });
+  const s = Math.min(w, h) * 0.60 / 32;
+  g.translate(w / 2, h / 2); g.scale(s, s); g.translate(-16, -16);
+  g.fillStyle = '#fff'; g.strokeStyle = '#fff'; g.lineJoin = 'round'; g.lineCap = 'round';
+  g.lineWidth = Math.max(1.6, pitch * 0.62) / s;
+  const p = new Path2D(path);
+  g.fill(p); g.stroke(p);
+  return c;
+}
+
+/* 把一张遮罩画布采样成针高 */
+function stampMask(c) {
+  if (!c || !N) return;
+  const w = c.width, h = c.height;
+  const g = c.getContext('2d', { willReadFrequently: true });
   const img = g.getImageData(0, 0, w, h).data;
   const r = Math.max(1, Math.round(pitch * 0.45)), step = Math.max(1, Math.round(r / 2) + 1);
   const cx = w / 2, cy = h / 2, inv = 1 / (Math.hypot(cx, cy) || 1);
@@ -551,85 +728,109 @@ function textMap(str) {
 }
 function stampWord(str) {
   if (flip.on || !N) return;
-  textMap(str);
-  startStamp(4800);
+  pushUndo();
+  stampMask(textMap(str));
+  startStamp();
   finish('word');
+  saveSoon();
+}
+function stampShape(name) {
+  if (flip.on || !N) return;
+  const c = shapeMap(name);
+  if (!c) { toast('这个浏览器画不出印花'); return; }
+  pushUndo();
+  stampMask(c);
+  startStamp();
+  saveSoon();
 }
 
 /* ------------------------------------------------------------------ simulation */
-const K = 540, CZ = 21, CZ_RM = 46, G = 22;
+const K = 620, G = 22;
+
 function simulate(dt) {
-  const rate = goal > press ? 6.5 : 10.5;
-  press += (goal - press) * (1 - Math.exp(-dt * rate));
-  if (Math.abs(goal - press) < 0.0015) press = goal;
+  /* 盖章的波纹：0→1，顶到哪儿就把哪儿写进 KEEP，顶完定住 */
+  if (preset) press += (1 - press) * (1 - Math.exp(-dt * 7));
+  const stamping = preset && press > 0.001;
 
-  const pr = preset ? press : 0;
-  const wave = goal === 1 && pr > 0.001 && pr < 0.999;
-  const C = RM ? CZ_RM : CZ;
-  flush = Math.max(0, flush - dt);
-  const fallMul = flush > 0 ? 3.2 : 1;
-
-  const pOn = ptr.down && depth > 0.012 && !flip.on;
-  const r = pointerR();
-  let ax = 0, ay = 0, bx = 0, by = 0, l2 = 0;
-  let mx0 = 0, mx1 = 0, my0 = 0, my1 = 0;
-  if (pOn) {
-    ax = lastX; ay = lastY; bx = ptr.x; by = ptr.y;
-    lastX = bx; lastY = by;
-    const dx = bx - ax, dy = by - ay; l2 = dx * dx + dy * dy;
-    mx0 = Math.min(ax, bx) - r; mx1 = Math.max(ax, bx) + r;
-    my0 = Math.min(ay, by) - r; my1 = Math.max(ay, by) + r;
+  /* 把每根手指这一帧划过的线段收成一组 */
+  const strokes = [];
+  if (!flip.on) {
+    for (const p of POINTERS.values()) {
+      if (p.depth <= 0.012) continue;
+      const r = pointerR() * (0.72 + 0.42 * p.depth);
+      const ax = p.lx, ay = p.ly, bx = p.x, by = p.y;
+      const dx = bx - ax, dy = by - ay, l2 = dx * dx + dy * dy;
+      strokes.push({
+        ax, ay, bx, by, r, rr: r * r, inv2: l2 > 0.0004 ? 1 / l2 : 0,
+        depth: p.depth, erase: p.erase,
+        x0: Math.min(ax, bx) - r, x1: Math.max(ax, bx) + r,
+        y0: Math.min(ay, by) - r, y1: Math.max(ay, by) + r
+      });
+      p.lx = bx; p.ly = by;
+    }
   }
-  if (!pOn) { lastX = ptr.x; lastY = ptr.y; }
-  const rr = r * r, inv2 = l2 > 0.0004 ? 1 / l2 : 0;
+  const nS = strokes.length;
   let moving = 0, en = 0;
 
   for (let i = 0; i < N; i++) {
-    let h = HT[i], v = VEL[i];
-    let tg = 0;
-    if (pr > 0) {
+    let keep = KEEP[i];
+
+    /* 1. 盖章的波纹往 KEEP 里写 */
+    if (stamping) {
       const m = MAP[i];
       if (m > 0) {
-        if (wave) {
-          const q = (pr - SW[i] * 0.55) / 0.45;
-          tg = m * pr * (q <= 0 ? 0 : q >= 1 ? 1 : q * q * (3 - 2 * q));
-        } else tg = m * pr;
+        let v;
+        if (press < 0.999) {
+          const q = (press - SW[i] * 0.55) / 0.45;
+          v = m * press * (q <= 0 ? 0 : q >= 1 ? 1 : q * q * (3 - 2 * q));
+        } else v = m;
+        if (v > keep) keep = v;
       }
     }
-    if (pOn) {
+
+    /* 2. 手指：画上去，或者抹掉 */
+    if (nS) {
       const x = STAT[i * 3], y = STAT[i * 3 + 1];
-      if (x > mx0 && x < mx1 && y > my0 && y < my1) {
-        let tt = inv2 > 0 ? ((x - ax) * (bx - ax) + (y - ay) * (by - ay)) * inv2 : 0;
+      for (let k = 0; k < nS; k++) {
+        const st = strokes[k];
+        if (x <= st.x0 || x >= st.x1 || y <= st.y0 || y >= st.y1) continue;
+        let tt = st.inv2 > 0 ? ((x - st.ax) * (st.bx - st.ax) + (y - st.ay) * (st.by - st.ay)) * st.inv2 : 0;
         tt = tt < 0 ? 0 : tt > 1 ? 1 : tt;
-        const ex = x - ax - (bx - ax) * tt, ey = y - ay - (by - ay) * tt;
-        const d2 = (ex * ex + ey * ey) / rr;
+        const ex = x - st.ax - (st.bx - st.ax) * tt, ey = y - st.ay - (st.by - st.ay) * tt;
+        const d2 = (ex * ex + ey * ey) / st.rr;
         if (d2 < 1) {
-          const p = Math.pow(1 - d2, 0.36) * depth;
-          if (p > tg) tg = p;
+          const f = Math.pow(1 - d2, 0.36);
+          if (st.erase) {
+            keep *= 1 - f * 0.55;
+            if (keep < 0.004) keep = 0;
+          } else {
+            const v = f * st.depth;
+            if (v > keep) keep = v;
+          }
         }
       }
     }
-    const pt = PREV[i]; PREV[i] = tg;
-    if (h === tg && v === 0) continue;
-    if (tg < pt - 1e-4) SETL[i] = 0;
-    let spring = false;
-    if (tg > h) { SETL[i] = 1; spring = true; }
-    else if (v > 0 || SETL[i]) spring = true;
-    if (spring) {
-      v += (K * (tg - h) - C * v) * dt; h += v * dt;
-      if (h > 1.12) { h = 1.12; v = 0; }
-      if (h < 0) { h = 0; v = 0; }
-      const e = tg - h;
-      if (v < 0.012 && v > -0.012 && e < 0.0015 && e > -0.0015) { h = tg; v = 0; SETL[i] = 0; }
-      else { moving++; en += v < 0 ? -v : v; }
-    } else {
-      const vt = -FALL[i] * fallMul * (0.07 + 0.95 * (h - tg));
-      v += (vt - v) * Math.min(1, dt * 5); h += v * dt;
-      if (h <= tg) { h = tg; v = 0; } else { moving++; en -= v * 0.25; }
+
+    KEEP[i] = keep;
+
+    /* 3. 弹簧把针送到 KEEP 的位置；减动效时直接到 */
+    let h = HT[i], v = VEL[i];
+    if (RM) {
+      if (h !== keep) { HT[i] = keep; VEL[i] = 0; moving++; }
+      continue;
     }
+    if (h === keep && v === 0) continue;
+    v += (K * (keep - h) - 26 * v) * dt;
+    h += v * dt;
+    if (h > 1.12) { h = 1.12; v = 0; }
+    if (h < 0) { h = 0; v = 0; }
+    const e = keep - h;
+    if (v < 0.012 && v > -0.012 && e < 0.0015 && e > -0.0015) { h = keep; v = 0; }
+    else { moving++; en += v < 0 ? -v : v; }
     HT[i] = h; VEL[i] = v;
   }
-  if (goal === 0 && press < 0.002) { press = 0; preset = null; }
+
+  if (preset && press >= 0.998) { preset = null; press = 0; goal = 0; saveSoon(); }
   energy = en / N;
   return moving;
 }
@@ -660,22 +861,26 @@ function simulateFlip(dt) {
 }
 function endFlip() {
   flip.on = false; flip.t = 0;
-  HT.fill(0); VEL.fill(0); PREV.fill(0); SETL.fill(0);
+  HT.fill(0); VEL.fill(0); SETL.fill(0); KEEP.fill(0);
   preset = null; press = 0; goal = 0; energy = 0;
   frame.classList.remove('flipping');
   $('sweep').classList.remove('run');
   awake = true; lightDirty = true;
+  saveSoon();
 }
 function doFlip() {
   if (flip.on) return;
   clearTimeout(holdT);
-  preset = null; goal = 0; press = 0; depth = 0; ptr.down = false;
+  pushUndo();                      /* 翻板之前压一层，Ctrl+Z 能退回来 */
+  preset = null; goal = 0; press = 0;
+  POINTERS.clear();
+  KEEP.fill(0);
   if (RM) {
-    /* 少动一点：不翻、不扫光，板子轻轻一暗就空了 */
-    flip.on = false; HT.fill(0); VEL.fill(0); PREV.fill(0); SETL.fill(0); energy = 0;
-    awake = true; lightDirty = true;
+    /* 少动一点：不翻、不扫光，针直接落回去 */
+    flip.on = false; HT.fill(0); VEL.fill(0); SETL.fill(0); energy = 0;
+    awake = true; lightDirty = true; saveSoon();
   } else {
-    flip.on = true; flip.t = 0; SETL.fill(0); awake = true;
+    flip.on = true; flip.t = 0; awake = true;
     frame.classList.remove('flipping'); void frame.offsetWidth; frame.classList.add('flipping');
     const sw = $('sweep');
     sw.classList.remove('run'); void sw.offsetWidth; sw.classList.add('run');
@@ -685,8 +890,9 @@ function doFlip() {
 
 /* ------------------------------------------------------------------ shading */
 function shade() {
-  const SH = 2.6, te = 0.53, lx = -0.704, ly = -0.704;
+  const SH = 5.0, te = 0.34, lx = -0.704, ly = -0.704;
   const cm = cols - 1, rm = rows - 1, ip = 1 / pitch, ir = 1 / rowH;
+  hasRaise = false;
   for (let j = 0, i = 0; j < rows; j++) {
     const odd = j & 1, up = j > 0 ? -cols : 0, dn = j < rm ? cols : 0;
     for (let c = 0; c < cols; c++, i++) {
@@ -697,11 +903,12 @@ function shade() {
       const ul = HT[base + up + a], ur = HT[base + up + b], dl = HT[base + dn + a], dr = HT[base + dn + b];
       const k = i * 4;
       DYN[k] = h;
-      DYN[k + 1] = ((rt - l) + 0.5 * (ur - ul + dr - dl)) * 0.3333;
-      DYN[k + 2] = (dl + dr - ul - ur) * 0.2887;
+      if (h > 0.02) hasRaise = true;
+      DYN[k + 1] = ((rt - l) + 0.5 * (ur - ul + dr - dl)) * 0.42;
+      DYN[k + 2] = (dl + dr - ul - ur) * 0.34;
       let sh = 0;
       const x = STAT[i * 3] - ox, y = STAT[i * 3 + 1] - oy;
-      for (let q = 1; q <= 4; q++) {
+      for (let q = 1; q <= 5; q++) {
         const rj = Math.round((y + ly * q * pitch) * ir);
         if (rj < 0 || rj > rm) break;
         const ri = Math.round((x + lx * q * pitch) * ip - (rj & 1) * 0.5);
@@ -709,7 +916,7 @@ function shade() {
         const o = (HT[rj * cols + ri] - h) * SH - q * te;
         if (o > sh) sh = o;
       }
-      DYN[k + 3] = sh > 0.5 ? 1 : sh * 2;
+      DYN[k + 3] = sh > 0.85 ? 1 : sh * 1.18;
     }
   }
 }
@@ -717,53 +924,86 @@ function shade() {
 /* ------------------------------------------------------------------ renderers */
 const VS = `
 attribute vec3 aP; attribute vec4 aD;
-uniform vec2 uRes; uniform float uPitch; uniform float uDpr;
-varying vec4 vD; varying float vR; varying float vPx; varying vec2 vPos; varying vec2 vUv;
+uniform vec2 uRes; uniform float uPitch; uniform float uDpr; uniform float uPass;
+varying vec4 vD; varying float vR; varying float vPx; varying vec2 vUv;
 void main(){
   float h = aD.x;
-  vec2 c = aP.xy / uRes - .5;
-  vec2 par = (vec2(-.5,-.64) + c * vec2(.5,.42)) * uPitch * .86;
-  vec2 p = aP.xy + par * h;
-  float d = uPitch * .875 * (1. + .15 * h) * uDpr;
-  vPx = d; gl_PointSize = d + 2.;
+  vec2 base = aP.xy;
+  vD = aD; vR = aP.z; vUv = base / uRes;
+  vec2 c = base / uRes - .5;
+  vec2 p = base + c * (h * uPitch * .16);      /* 极小的径向视差：近了往外挪一点点 */
+  float d;
+  if (uPass > 1.5) {                            /* 影子 */
+    d = uPitch * 1.45 * (1. + .25 * h) * uDpr;
+    p = base + vec2(.10, .14) * uPitch;
+  } else if (uPass > .5) {                      /* 针孔 */
+    d = uPitch * .78 * uDpr;
+  } else {                                      /* 针头 */
+    d = uPitch * .62 * (1. + .30 * h) * uDpr;
+  }
+  vPx = d; gl_PointSize = d + 1.;
   gl_Position = vec4((p / uRes * 2. - 1.) * vec2(1.,-1.), 0., 1.);
-  vD = aD; vR = aP.z; vPos = p; vUv = aP.xy / uRes;
 }`;
 const FS = `
 precision mediump float;
 uniform vec3 uL;
-varying vec4 vD; varying float vR; varying float vPx; varying vec2 vPos; varying vec2 vUv;
+uniform highp float uPass;
+varying vec4 vD; varying float vR; varying float vPx; varying vec2 vUv;
 void main(){
-  vec2 q = (gl_PointCoord * 2. - 1.) * ((vPx + 2.) / vPx);
+  vec2 q = gl_PointCoord * 2. - 1.;
   float r = length(q);
-  float aa = 2.4 / vPx;
-  float a = 1. - smoothstep(1. - aa, 1. + aa * .15, r);
-  if (a < .01) discard;
-  vec3 n = normalize(vec3(-vD.yz * 2.6 + q * (.16 + .34 * r), 1.));
+  if (r > 1.06) discard;
+  float aa = 2.2 / vPx;
+  float a = 1. - smoothstep(1. - aa, 1. + aa * .2, r);
+  if (a < .02) discard;
+
+  if (uPass > 1.5) {                          /* 投影：只给被旁边高针挡住的针 */
+    if (vD.w < .1) discard;
+    float f = 1. - smoothstep(0., 1., r);
+    gl_FragColor = vec4(0., 0., 0., vD.w * .60 * f * f * a);
+    return;
+  }
+  if (uPass > .5) {                           /* 针孔：凹下去的暗井；针抬起来时井口被针身填住，四周反而浅一点 */
+    float f = 1. - smoothstep(.35, 1., r);
+    gl_FragColor = vec4(0., 0., 0., (.38 - .10 * vD.x) * f * a);
+    return;
+  }
+
+  vec2 tilt = q * (.10 + .40 * r) + vec2((vR - .5) * .14, (vR - .5) * .14);
+  vec3 n = normalize(vec3(-vD.yz * 3.2 + tilt, 1.));
   float diff = max(dot(n, uL), 0.);
   vec3 hv = normalize(uL + vec3(0., 0., 1.));
-  float sp = pow(max(dot(n, hv), 0.), 64.);
+  float sp = pow(max(dot(n, hv), 0.), 90.) * .85;
   float ang = atan(q.y, q.x) - atan(uL.y, uL.x) + (vR - .5) * .9;
-  float bow = pow(abs(cos(ang)), 7.) * smoothstep(.05, .55, r) * (1. - .5 * r);
-  float b = .10 + .72 * pow(diff, 1.2) + 1.15 * sp + bow * (.06 + .26 * diff);
-  b *= .90 + .20 * vR;
-  b += .50 * vD.x;
-  b *= 1. - .62 * vD.w;
-  b *= .70 + .48 * (1. - smoothstep(0., 1.05, vUv.x * .45 + vUv.y * .62));
-  b *= 1. - .30 * smoothstep(.62, 1., r);
-  b *= 1. - .22 * smoothstep(.5, 1.1, length(vUv - .5) * 1.3);
-  vec3 c0 = vec3(.05, .054, .064), c1 = vec3(.424, .455, .502), c2 = vec3(.788, .808, .839);
-  vec3 col = b < .5 ? mix(c0, c1, b * 2.) : b < .85 ? mix(c1, c2, (b - .5) / .35) : mix(c2, vec3(1.), clamp((b - .85) / .3, 0., 1.));
+  float bow = pow(abs(cos(ang)), 8.) * smoothstep(.2, .8, r) * (1. - .5 * r);
+  float b = .10 + .70 * pow(diff, 1.2) + 1.0 * sp + bow * (.04 + .18 * diff);
+  b *= .94 + .12 * vR;
+  b *= 1. + .32 * vD.x;                       /* 顶出来的针离光近一点，比板面亮一档；立体感还是交给影子和法线 */
+  b *= 1. - .85 * vD.w;
+  b *= 1. - .55 * smoothstep(.55, 1.02, r);
+  b *= .84 + .24 * (1. - smoothstep(.35, .72, length(vUv - .5)));
+  b = max(b, .02);
+  vec3 c0 = vec3(.055, .06, .07), c1 = vec3(.29, .314, .353),
+       c2 = vec3(.545, .58, .624), c3 = vec3(.784, .816, .855), c4 = vec3(.957, .969, .984);
+  vec3 col = b < .25 ? mix(c0, c1, b / .25)
+           : b < .55 ? mix(c1, c2, (b - .25) / .30)
+           : b < .80 ? mix(c2, c3, (b - .55) / .25)
+           : mix(c3, c4, clamp((b - .80) / .20, 0., 1.));
   gl_FragColor = vec4(col * a, a);
 }`;
 
 function makeGL() {
+  const node = canvas;
   let gl = null;
   try {
-    gl = canvas.getContext('webgl', { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance' });
+    gl = canvas.getContext('webgl', {
+      alpha: true, premultipliedAlpha: true, antialias: false,
+      depth: false, stencil: false, preserveDrawingBuffer: true,
+      powerPreference: 'high-performance'
+    });
   } catch (e) { gl = null; }
   if (!gl) return null;
-  let prog, bS, bD, u = {}, aP, aD, ok = false;
+  let prog, bS, bD, u = {}, aP, aD;
   function sh(type, src) {
     const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
     if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.warn('pinscreen shader', gl.getShaderInfoLog(s)); return null; }
@@ -775,15 +1015,14 @@ function makeGL() {
     prog = gl.createProgram(); gl.attachShader(prog, v); gl.attachShader(prog, f); gl.linkProgram(prog);
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { console.warn('pinscreen link', gl.getProgramInfoLog(prog)); return false; }
     gl.useProgram(prog);
-    for (const n of ['uRes', 'uPitch', 'uDpr', 'uL']) u[n] = gl.getUniformLocation(prog, n);
+    for (const n of ['uRes', 'uPitch', 'uDpr', 'uL', 'uPass']) u[n] = gl.getUniformLocation(prog, n);
     aP = gl.getAttribLocation(prog, 'aP'); aD = gl.getAttribLocation(prog, 'aD');
     bS = gl.createBuffer(); bD = gl.createBuffer();
     gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    gl.clearColor(0.016, 0.018, 0.022, 1);
+    gl.clearColor(0, 0, 0, 0);
     return true;
   }
-  ok = init();
-  if (!ok) return null;
+  if (!init()) return null;
   const api = {
     kind: 'gl', lost: false,
     resize() {
@@ -800,44 +1039,90 @@ function makeGL() {
       gl.uniform3f(u.uL, -0.62, -0.62, 0.469);
       gl.bindBuffer(gl.ARRAY_BUFFER, bD); gl.bufferSubData(gl.ARRAY_BUFFER, 0, DYN);
       gl.clear(gl.COLOR_BUFFER_BIT);
+      /* 三层：针孔 → 影子 → 针头 */
+      gl.uniform1f(u.uPass, 1);
+      gl.drawArrays(gl.POINTS, 0, N);
+      if (hasRaise) {
+        gl.uniform1f(u.uPass, 2);
+        gl.drawArrays(gl.POINTS, 0, N);
+      }
+      gl.uniform1f(u.uPass, 0);
       gl.drawArrays(gl.POINTS, 0, N);
     }
   };
-  canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); api.lost = true; });
-  canvas.addEventListener('webglcontextrestored', () => { u = {}; if (init()) { api.lost = false; api.resize(); lightDirty = true; } });
+  canvas.addEventListener('webglcontextlost', e => {
+    e.preventDefault(); api.lost = true;
+    /* 显卡被收走了：换一块 2D 的板继续画，别让孩子对着一块死掉的板 */
+    setTimeout(() => { if (api.lost) fallback2D(); }, 450);
+  });
+  canvas.addEventListener('webglcontextrestored', () => {
+    if (canvas !== node) return;
+    u = {}; if (init()) { api.lost = false; api.resize(); lightDirty = true; }
+  });
   return api;
 }
 
 function make2D() {
-  let g = canvas.getContext('2d', { alpha: false });
+  let g = canvas.getContext('2d', { alpha: true });
   if (!g) {
     /* 这块 canvas 已经被 WebGL 占过了，换一块干净的再画 */
     const c2 = canvas.cloneNode(false);
     canvas.parentNode.replaceChild(c2, canvas);
     canvas = c2;
-    g = canvas.getContext('2d', { alpha: false });
+    g = canvas.getContext('2d', { alpha: true });
   }
   if (!g) return null;
-  const LV = 16; let sprites = [], sz = 0;
+  const LV = 22;
+  let sprites = [], sz = 0, shadowSprite = null, shadowSize = 0, holesC = null;
   const ramp = b => {
-    const c0 = [13, 14, 16], c1 = [108, 116, 128], c2 = [201, 206, 214], c3 = [255, 255, 255];
+    const c0 = [14, 15, 18], c1 = [74, 80, 90], c2 = [139, 148, 159], c3 = [200, 208, 218], c4 = [244, 247, 251];
     let a, c, t;
-    if (b < 0.5) { a = c0; c = c1; t = b * 2; }
-    else if (b < 0.85) { a = c1; c = c2; t = (b - 0.5) / 0.35; }
-    else { a = c2; c = c3; t = clamp((b - 0.85) / 0.3, 0, 1); }
+    if (b < 0.25) { a = c0; c = c1; t = b / 0.25; }
+    else if (b < 0.55) { a = c1; c = c2; t = (b - 0.25) / 0.30; }
+    else if (b < 0.80) { a = c2; c = c3; t = (b - 0.55) / 0.25; }
+    else { a = c3; c = c4; t = clamp((b - 0.80) / 0.20, 0, 1); }
     t = clamp(t, 0, 1);
     return 'rgb(' + Math.round(a[0] + (c[0] - a[0]) * t) + ',' + Math.round(a[1] + (c[1] - a[1]) * t) + ',' + Math.round(a[2] + (c[2] - a[2]) * t) + ')';
   };
   function makeSprites() {
-    sz = Math.ceil(pitch * 0.875 * dpr) + 2; sprites = [];
-    const lx = -0.62, ly = -0.62, r = (sz - 2) / 2, c = sz / 2;
+    sz = Math.ceil(pitch * 0.62 * dpr) + 3; sprites = [];
+    const lx = -0.62, ly = -0.62, r = (sz - 3) / 2, c = sz / 2;
     for (let k = 0; k < LV; k++) {
       const s = document.createElement('canvas'); s.width = s.height = sz;
-      const x = s.getContext('2d'), b = k / (LV - 1) * 1.15;
-      const gr = x.createRadialGradient(c + lx * r * 0.55, c + ly * r * 0.55, 0, c, c, r);
-      gr.addColorStop(0, ramp(b * 1.25 + 0.3)); gr.addColorStop(0.45, ramp(b)); gr.addColorStop(1, ramp(b * 0.45));
+      const x = s.getContext('2d'), b = k / (LV - 1) * 1.02;
+      const gr = x.createRadialGradient(c + lx * r * 0.5, c + ly * r * 0.5, 0, c, c, r);
+      gr.addColorStop(0, ramp(Math.min(1.02, b * 1.15 + 0.34)));
+      gr.addColorStop(0.50, ramp(b * 1.02 + 0.06));
+      gr.addColorStop(0.85, ramp(b * 0.78));
+      gr.addColorStop(1, ramp(b * 0.40));
       x.fillStyle = gr; x.beginPath(); x.arc(c, c, r, 0, 6.2832); x.fill();
       sprites.push(s);
+    }
+    shadowSize = Math.ceil(pitch * 1.25 * dpr) + 3;
+    shadowSprite = document.createElement('canvas');
+    shadowSprite.width = shadowSprite.height = shadowSize;
+    const sx = shadowSprite.getContext('2d'), sc = shadowSize / 2, sr = shadowSize / 2;
+    const sg = sx.createRadialGradient(sc, sc, 0, sc, sc, sr);
+    sg.addColorStop(0, 'rgba(0,0,0,.95)');
+    sg.addColorStop(0.55, 'rgba(0,0,0,.45)');
+    sg.addColorStop(1, 'rgba(0,0,0,0)');
+    sx.fillStyle = sg; sx.beginPath(); sx.arc(sc, sc, sr, 0, 6.2832); sx.fill();
+
+    /* 针孔层：整块板只烤一次，之后每帧一张图盖上去 */
+    holesC = document.createElement('canvas');
+    holesC.width = canvas.width; holesC.height = canvas.height;
+    const hg = holesC.getContext('2d');
+    const hs = Math.ceil(pitch * 0.78 * dpr) + 3;
+    const hspr = document.createElement('canvas');
+    hspr.width = hspr.height = hs;
+    const hx = hspr.getContext('2d'), hc = hs / 2, hr = hs / 2;
+    const hgr = hx.createRadialGradient(hc, hc, 0, hc, hc, hr);
+    hgr.addColorStop(0, 'rgba(0,0,0,.42)');
+    hgr.addColorStop(0.6, 'rgba(0,0,0,.24)');
+    hgr.addColorStop(1, 'rgba(0,0,0,0)');
+    hx.fillStyle = hgr; hx.beginPath(); hx.arc(hc, hc, hr, 0, 6.2832); hx.fill();
+    for (let i = 0; i < N; i++) {
+      hg.drawImage(hspr, STAT[i * 3] * dpr - hs / 2, STAT[i * 3 + 1] * dpr - hs / 2);
     }
   }
   return {
@@ -845,89 +1130,145 @@ function make2D() {
     resize() { makeSprites(); },
     draw() {
       g.setTransform(1, 0, 0, 1, 0, 0);
-      g.fillStyle = '#040506'; g.fillRect(0, 0, canvas.width, canvas.height);
+      g.clearRect(0, 0, canvas.width, canvas.height);
+      g.drawImage(holesC, 0, 0);
       const hx = -0.62, hy = -0.62, hz = 1.469, hl = 1 / Math.hypot(hx, hy, hz);
+      if (hasRaise) {
+        for (let i = 0; i < N; i++) {
+          const k = i * 4, h = DYN[k], ao = DYN[k + 3];
+          if (ao < 0.12) continue;
+          const x0 = STAT[i * 3] * dpr, y0 = STAT[i * 3 + 1] * dpr;
+          const s = shadowSize * (1 + 0.25 * h);
+          g.globalAlpha = Math.min(0.46, ao * 0.38);
+          g.drawImage(shadowSprite,
+            x0 + 0.08 * pitch * dpr - s / 2,
+            y0 + 0.11 * pitch * dpr - s / 2, s, s);
+        }
+        g.globalAlpha = 1;
+      }
       for (let i = 0; i < N; i++) {
         const k = i * 4, h = DYN[k];
-        let nx = -DYN[k + 1] * 2.6, ny = -DYN[k + 2] * 2.6;
+        const nx = -DYN[k + 1] * 3.2, ny = -DYN[k + 2] * 3.2;
         const nl = 1 / Math.sqrt(nx * nx + ny * ny + 1);
         const diff = Math.max(0, (nx * hx + ny * hy + 0.469) * nl);
-        const sp = Math.pow(Math.max(0, (nx * hx + ny * hy + hz) * nl * hl), 26);
+        const sp = Math.pow(Math.max(0, (nx * hx + ny * hy + hz) * nl * hl), 90) * 0.85;
         const x0 = STAT[i * 3], y0 = STAT[i * 3 + 1];
         const cu = x0 / W - 0.5, cv = y0 / H - 0.5;
-        const x = x0 + (-0.5 + cu * 0.5) * pitch * 0.86 * h, y = y0 + (-0.64 + cv * 0.42) * pitch * 0.86 * h;
+        const x = x0 + cu * h * pitch * 0.16, y = y0 + cv * h * pitch * 0.16;
         const u = x / W, v = y / H;
-        let b = (0.11 + 0.72 * Math.pow(diff, 1.2) + 1.0 * sp) * (0.90 + 0.20 * RND[i]) + 0.50 * h;
-        b *= 1 - 0.62 * DYN[k + 3];
-        b *= 0.70 + 0.48 * (1 - clamp(u * 0.45 + v * 0.62, 0, 1.05));
-        b *= 1 - 0.22 * clamp((Math.hypot(u - .5, v - .5) - .38) * 1.9, 0, 1);
-        const lv = clamp(Math.round(b / 1.15 * (LV - 1)), 0, LV - 1), s = sz * (1 + 0.15 * h);
+        let b = (0.10 + 0.70 * Math.pow(diff, 1.2) + 1.0 * sp) * (0.94 + 0.12 * RND[i]) * (1 + 0.12 * h);
+        b *= 1 - 0.85 * DYN[k + 3];
+        b *= 0.84 + 0.24 * (1 - clamp((Math.hypot(u - .5, v - .5) - .35) * 2.6, 0, 1));
+        const lv = clamp(Math.round(b / 1.02 * (LV - 1)), 0, LV - 1), s = sz * (1 + 0.22 * h);
         g.drawImage(sprites[lv], x * dpr - s / 2, y * dpr - s / 2, s, s);
       }
     }
   };
 }
-const renderer = makeGL() || make2D() || { kind: 'none', resize() {}, draw() {} };
+let renderer = makeGL() || make2D() || { kind: 'none', resize() {}, draw() {} };
 document.documentElement.dataset.renderer = renderer.kind;
+
+/* WebGL 掉了：换一块干净的 canvas 用 2D 接着画，画的内容从针高里重建 */
+function fallback2D() {
+  if (!renderer || renderer.kind !== 'gl') return;
+  const neo = document.createElement('canvas');
+  for (const a of canvas.attributes) neo.setAttribute(a.name, a.value);
+  canvas.parentNode.replaceChild(neo, canvas);
+  canvas = neo;
+  bindBoard(neo);
+  renderer = make2D() || { kind: 'none', resize() {}, draw() {} };
+  document.documentElement.dataset.renderer = renderer.kind;
+  build();
+  awake = true; lightDirty = true;
+  start();
+  toast('换了块备用的板，画还在');
+}
 
 /* ------------------------------------------------------------------ pointer */
 function pointerR() { return clamp(Math.min(W, H) * 0.068, 15, 32); }
-function local(e) {
+function localPt(e) {
   const r = canvas.getBoundingClientRect();
-  ptr.x = (e.clientX - r.left) * (W / r.width);
-  ptr.y = (e.clientY - r.top) * (H / r.height);
+  return { x: (e.clientX - r.left) * (W / r.width), y: (e.clientY - r.top) * (H / r.height) };
 }
-let dragLen = 0, px0 = 0, py0 = 0, moved = false;
+/* 按得多重：压感设备读压力，鼠标 / 大多数触屏给一个默认值 */
+function pressBase(e) {
+  if (e.pointerType !== 'mouse' && e.pressure > 0 && e.pressure !== 0.5) {
+    return clamp(0.55 + e.pressure * 0.45, 0.55, 1);
+  }
+  return 0.95;
+}
+function showCursor(e) {
+  cursor.classList.add('show');
+  cursor.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px)';
+  if (mode === 'finger') {          /* 光标和真的笔头一样大 */
+    const d = Math.round(pointerR() * 1.72);
+    cursor.style.width = d + 'px'; cursor.style.height = d + 'px';
+    cursor.style.margin = (-d / 2) + 'px 0 0 ' + (-d / 2) + 'px';
+  }
+}
 const used = () => { hints.classList.add('gone'); };
-canvas.addEventListener('pointerdown', e => {
+
+function onDown(e) {
   if (e.button > 0 || flip.on) return;
   if (whyOpen) setWhy(false);
-  local(e);
-  ptr.down = true;
-  ptr.force = (e.pointerType !== 'mouse' && e.pressure > 0 && e.pressure !== 0.5) ? clamp(0.62 + e.pressure * 0.5, 0.62, 1) : 1;
-  lastX = ptr.x; lastY = ptr.y;
-  lastPoint = { x: ptr.x, y: ptr.y };
-  dragLen = 0; px0 = ptr.x; py0 = ptr.y; moved = false;
-  try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
-  if (mode === 'hand') {
-    ptr.down = false;
-    stampHandAt(ptr.x, ptr.y);
-  }
+  const p = localPt(e);
+  lastPoint = { x: p.x, y: p.y };
   used();
-  if (e.pointerType === 'mouse') { cursor.classList.add('show'); cursor.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px)'; }
+  if (e.pointerType === 'mouse') showCursor(e);
+  if (mode === 'hand') { stampHandAt(p.x, p.y); e.preventDefault(); return; }
+  const erase = mode === 'erase';
+  if (!POINTERS.size) pushUndo();
+  POINTERS.set(e.pointerId, {
+    id: e.pointerId, x: p.x, y: p.y, lx: p.x, ly: p.y,
+    want: pressBase(e), depth: 0.55, erase, drag: 0, moved: false, t: performance.now()
+  });
+  if (POINTERS.size >= 2) finish('touch');
+  try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
   e.preventDefault();
-});
-canvas.addEventListener('pointermove', e => {
-  local(e);
-  if (e.pointerType === 'mouse') {
-    cursor.classList.add('show');
-    cursor.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px)';
-  }
-  if (ptr.down) {
-    dragLen += Math.hypot(ptr.x - px0, ptr.y - py0);
-    px0 = ptr.x; py0 = ptr.y;
-    if (dragLen > 2) moved = true;
-    if (e.pointerType !== 'mouse' && e.pressure > 0 && e.pressure !== 0.5) ptr.force = clamp(0.62 + e.pressure * 0.5, 0.62, 1);
-  }
-});
-function release() {
-  if (!ptr.down) return;
-  ptr.down = false;
-  if (dragLen >= 120 && moved) {
-    setTimeout(() => finish('line'), 1500);
-  }
 }
-canvas.addEventListener('pointerup', release);
-canvas.addEventListener('pointercancel', () => { ptr.down = false; });
-canvas.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') cursor.classList.remove('show'); });
-canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+function onMove(e) {
+  if (e.pointerType === 'mouse') showCursor(e);
+  const st = POINTERS.get(e.pointerId);
+  if (!st) return;
+  const p = localPt(e);
+  const now = performance.now();
+  const dtm = Math.max(1, now - st.t); st.t = now;
+  const d = Math.hypot(p.x - st.lx, p.y - st.ly);
+  const speed = d / dtm * 1000;
+  st.drag += Math.hypot(p.x - st.x, p.y - st.y);
+  if (st.drag > 2) st.moved = true;
+  st.x = p.x; st.y = p.y;
+  /* 划得越快，按得越轻：慢而稳最深，快划只擦出一道浅痕 */
+  const light = clamp(speed / 900, 0, 1);
+  st.want = pressBase(e) * (1 - 0.55 * light);
+  lastPoint = { x: p.x, y: p.y };
+}
+
+function endPointer(e) {
+  if (!POINTERS.has(e.pointerId)) return;
+  POINTERS.delete(e.pointerId);
+  saveSoon();
+}
+
+function bindBoard(c) {
+  c.addEventListener('pointerdown', onDown);
+  c.addEventListener('pointermove', onMove);
+  c.addEventListener('pointerup', endPointer);
+  c.addEventListener('pointercancel', endPointer);
+  c.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') cursor.classList.remove('show'); });
+  c.addEventListener('contextmenu', e => e.preventDefault());
+}
+bindBoard(canvas);
 
 /* ------------------------------------------------------------------ keyboard */
 addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); undo(); return; }
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const k = e.key;
   if (k === 'f' || k === 'F') { doFlip(); }
   else if (k === 'h' || k === 'H') { setMode('hand'); stampHandAt(lastPoint.x || W / 2, lastPoint.y || H / 2); }
+  else if (k === 'e' || k === 'E') { setMode(mode === 'erase' ? 'finger' : 'erase'); }
   else if (k === '1') stampWord('花生');
   else if (k === '2') stampWord('你好');
   else if (k === '3') stampWord('王');
@@ -938,10 +1279,13 @@ addEventListener('keydown', e => {
 /* ------------------------------------------------------------------ modes */
 function setMode(m) {
   mode = m;
-  const f = $('finger'), h = $('hand');
+  const f = $('finger'), h = $('hand'), er = $('erase');
   f.classList.toggle('on', m === 'finger'); f.setAttribute('aria-pressed', m === 'finger');
   h.classList.toggle('on', m === 'hand'); h.setAttribute('aria-pressed', m === 'hand');
+  er.classList.toggle('on', m === 'erase'); er.setAttribute('aria-pressed', m === 'erase');
   cursor.classList.toggle('handmode', m === 'hand');
+  cursor.classList.toggle('erase', m === 'erase');
+  if (m !== 'finger') { cursor.style.width = ''; cursor.style.height = ''; cursor.style.margin = ''; }
 }
 $('finger').addEventListener('click', () => { setMode('finger'); used(); });
 $('hand').addEventListener('click', () => {
@@ -949,6 +1293,9 @@ $('hand').addEventListener('click', () => {
   stampHandAt(W / 2, H / 2);
 });
 $('flip').addEventListener('click', () => { used(); doFlip(); });
+$('erase').addEventListener('click', () => {
+  setMode(mode === 'erase' ? 'finger' : 'erase'); used();
+});
 document.querySelectorAll('.word').forEach(b => b.addEventListener('click', () => {
   used(); stampWord(b.dataset.w);
   b.classList.add('pressed');
@@ -986,12 +1333,28 @@ $('snd').addEventListener('click', () => {
   $('sndLabel').textContent = soundOn ? '声音 开' : '声音';
 });
 
+/* 一根针划过去的「咔」声：限流，免得一秒里造几十个振荡器 */
+let voices = 0, lastClick = 0;
+function pinClick(level) {
+  if (!soundOn || !AC || voices > 5) return;
+  const t = AC.currentTime, o = AC.createOscillator(), g = AC.createGain();
+  o.type = 'triangle';
+  o.frequency.setValueAtTime(1700 + Math.random() * 1800, t);
+  o.frequency.exponentialRampToValueAtTime(620 + Math.random() * 360, t + 0.035);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(0.09 + 0.10 * level, t + 0.003);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
+  o.connect(g); g.connect(AC.destination);
+  o.start(t); o.stop(t + 0.08);
+  voices++; setTimeout(() => { voices--; }, 80);
+}
+
 /* ------------------------------------------------------------------ tasks */
 const TASKS = [
-  { id: 'hand', t: '推出一个手印', h: '按「印手」，或者在板上点一下' },
-  { id: 'word', t: '按出一个字', h: '下面四个字，挑一个按进去' },
-  { id: 'flip', t: '把整块板翻一次', h: '按「翻板」，针会一阵风似的全落下去' },
-  { id: 'line', t: '用手指画一条线，看它慢慢弹回来', h: '按住拖一小段，松手，再等一会儿' }
+  { id: 'hand', t: '推出一个手印', h: '按「印手」，或者在板上按一下' },
+  { id: 'word', t: '按出一个字', h: '下面四个字挑一个；也可以自己写一个' },
+  { id: 'touch', t: '两指一起按', h: '两根手指同时按在板上，会同时顶出两处针' },
+  { id: 'flip', t: '把整块板翻一次', h: '按「翻板」，针会一阵风似的全落回去' }
 ];
 const doneTasks = new Set();
 try { JSON.parse(localStorage.getItem('pinscreen-tasks') || '[]').forEach(k => doneTasks.add(k)); } catch (e) {}
@@ -1000,12 +1363,17 @@ function renderTasks() {
   box.innerHTML = TASKS.map(t => '<div class="task' + (doneTasks.has(t.id) ? ' done' : '') + '" data-id="' + t.id + '">' +
     '<span class="tick" aria-hidden="true">✓</span><p>' + t.t + '<small>' + t.h + '</small></p></div>').join('');
   const c1 = $('taskCount'), c2 = $('taskCount2');
-  if (c1) c1.textContent = doneTasks.size + '/4';
-  if (c2) c2.textContent = doneTasks.size + ' / 4';
+  if (c1) c1.textContent = doneTasks.size + '/' + TASKS.length;
+  if (c2) c2.textContent = doneTasks.size + ' / ' + TASKS.length;
 }
 let toastTimer = 0;
 function toast(msg) {
   const el = $('toast'); if (!el) return;
+  const dock = document.querySelector('.dock');   /* 压在按钮上面，别盖住它 */
+  if (dock) {
+    const h = dock.getBoundingClientRect().height;
+    el.style.bottom = Math.round(h + 26) + 'px';
+  }
   el.textContent = msg; el.classList.add('show');
   clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2300);
 }
@@ -1052,6 +1420,80 @@ $('why').setAttribute('aria-expanded', 'false');
 $('why').addEventListener('click', () => setWhy(!whyOpen));
 $('whyClose').addEventListener('click', () => setWhy(false));
 
+/* ------------------------------------------------------------------ own words / shapes */
+$('ownGo').addEventListener('click', () => {
+  const v = Array.from(($('ownText').value || '').trim()).slice(0, 8).join('');
+  if (!v) { $('ownText').focus(); return; }
+  setSheet(false); used();
+  stampWord(v);
+});
+$('ownText').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); $('ownGo').click(); }
+});
+document.querySelectorAll('.tpl').forEach(b => b.addEventListener('click', () => {
+  setSheet(false); used();
+  stampShape(b.dataset.tpl);
+}));
+
+/* ------------------------------------------------------------------ keep：把这一板合成一张能看的图 */
+function keep() {
+  if (!N) return;
+  const bw = canvas.width, bh = canvas.height;
+  const pad = Math.round(16 * dpr), foot = Math.round(30 * dpr);
+  const out = document.createElement('canvas');
+  out.width = bw + pad * 2; out.height = bh + pad * 2 + foot;
+  const g = out.getContext('2d');
+  const ow = out.width, oh = out.height;
+  g.fillStyle = '#0b0d11'; g.fillRect(0, 0, ow, oh);
+
+  /* 板子：圆角 + 深色底 + 一层顶光，再把 canvas 盖上去 */
+  const r = Math.round(14 * dpr);
+  const bx = pad, by = pad;
+  g.save();
+  g.beginPath();
+  if (g.roundRect) g.roundRect(bx, by, bw, bh, r);
+  else g.rect(bx, by, bw, bh);
+  g.clip();
+  g.fillStyle = '#14181e'; g.fillRect(bx, by, bw, bh);
+  const light = g.createRadialGradient(bx + bw * 0.2, by - bh * 0.12, 0, bx + bw * 0.5, by + bh * 0.5, bw * 0.85);
+  light.addColorStop(0, 'rgba(255,255,255,.08)');
+  light.addColorStop(0.55, 'rgba(255,255,255,.02)');
+  light.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = light; g.fillRect(bx, by, bw, bh);
+  g.drawImage(canvas, bx, by);
+  const vig = g.createRadialGradient(bx + bw / 2, by + bh / 2, Math.min(bw, bh) * 0.4, bx + bw / 2, by + bh / 2, Math.max(bw, bh) * 0.72);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,.5)');
+  g.fillStyle = vig; g.fillRect(bx, by, bw, bh);
+  g.restore();
+
+  g.strokeStyle = 'rgba(200,208,218,.22)';
+  g.lineWidth = Math.max(1, dpr);
+  g.beginPath();
+  if (g.roundRect) g.roundRect(bx + .5, by + .5, bw - 1, bh - 1, r);
+  else g.rect(bx + .5, by + .5, bw - 1, bh - 1);
+  g.stroke();
+
+  /* 一行小字水印 */
+  const fam = '"PingFang SC","Microsoft YaHei UI","Microsoft YaHei","Noto Sans SC","Hiragino Sans GB",sans-serif';
+  g.font = (12 * dpr) + 'px ' + fam;
+  g.textAlign = 'right'; g.textBaseline = 'middle';
+  g.fillStyle = 'rgba(210,220,232,.52)';
+  g.fillText("Peanut's Coding Lesson · 针幕", ow - pad, pad + bh + foot / 2);
+
+  out.toBlob(b => {
+    if (!b) { toast('这张图没存下来'); return; }
+    const url = URL.createObjectURL(b);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '针幕-手印.png';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    toast('存好了：针幕-手印.png');
+  }, 'image/png');
+}
+$('keep').addEventListener('click', () => { used(); keep(); });
+
 /* ------------------------------------------------------------------ loop */
 let last = 0, raf = 0;
 function tick(now) {
@@ -1067,17 +1509,22 @@ function tick(now) {
     return;
   }
 
-  const dGoal = ptr.down ? ptr.force : 0;
-  depth += (dGoal - depth) * (1 - Math.exp(-dt * (ptr.down ? 14 : 9)));
-  if (!ptr.down && depth < 0.012) depth = 0;
+  /* 每根手指的按压力度：按下去快，抬起来慢；快划更轻，慢按更深 */
+  for (const p of POINTERS.values()) {
+    p.depth += (p.want - p.depth) * (1 - Math.exp(-dt * 22));
+  }
 
-  const active = awake || depth > 0 || press !== goal;
+  const active = awake || POINTERS.size > 0 || preset || press > 0 || energy > 0.002;
   if (active || lightDirty) {
     if (active) awake = simulate(dt) > 0;
     shade(); renderer.draw(); lightDirty = false;
   } else energy = 0;
 
   if (soundOn && sGain) sGain.gain.setTargetAtTime(Math.min(0.42, energy * 2.6), AC.currentTime, 0.055);
+  if (soundOn && energy > 0.015) {
+    const t2 = performance.now();
+    if (t2 - lastClick > 55) { lastClick = t2; pinClick(Math.min(1, energy * 3)); }
+  }
 }
 function start() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } }
 function stop() { cancelAnimationFrame(raf); raf = 0; }
@@ -1085,6 +1532,7 @@ document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     stop();
     if (soundOn && sGain && AC) sGain.gain.setTargetAtTime(0, AC.currentTime, 0.02);
+    saveFieldNow();
   } else {
     if (N) { awake = true; lightDirty = true; }
     start();
@@ -1102,8 +1550,10 @@ addEventListener('resize', () => {
 const onRM = () => { RM = mq.matches; awake = true; };
 if (mq.addEventListener) mq.addEventListener('change', onRM); else if (mq.addListener) mq.addListener(onRM);
 
+savedField = loadField();
 build();
 start();
+addEventListener('pagehide', saveFieldNow);
 setTimeout(() => { if (!sheetOpen) hints.classList.add('gone'); }, 22000);
 })();
 </script>

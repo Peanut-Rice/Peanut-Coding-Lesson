@@ -25,6 +25,7 @@
     color:var(--ice);
     font-family:"Gill Sans","Gill Sans MT","Century Gothic","Trebuchet MS",system-ui,sans-serif;
     -webkit-user-select:none; user-select:none;
+    -webkit-text-size-adjust:100%; text-size-adjust:100%;
     -webkit-tap-highlight-color:transparent;
   }
   .window{position:absolute; inset:0; margin:0}
@@ -85,6 +86,7 @@
   .thermo .tick{stroke:rgba(207,232,245,.42); stroke-width:.6}
   .thermo .zero{stroke:rgba(242,181,107,.8); stroke-width:.8}
   .thermo .mercury{fill:#CFE8F5; transition:fill .6s var(--settle)}
+  .thermo .merc{transform-box:fill-box; transform-origin:50% 100%; transition:transform .7s var(--settle)}
   .thermo .glint{fill:#FFFFFF; opacity:.85}
   .thermo:hover .mercury,.thermo:focus-visible .mercury{fill:#FFFFFF}
   .thermo-read{font-size:9.5px; letter-spacing:.06em; line-height:1.15; text-align:center; white-space:nowrap}
@@ -104,12 +106,37 @@
   }
   .thermo-tip i{font-style:normal; color:var(--sodium); padding:0 .45em}
   .thermo:hover .thermo-tip,.thermo:focus-visible .thermo-tip,.thermo.open .thermo-tip{opacity:1; transform:translate(0,-50%)}
+  .thermo{cursor:pointer; touch-action:manipulation}
+  .thermo.warm .mercury{fill:#F2B56B}
+  .thermo.cold .mercury{fill:#EAF7FF}
+  .thermo-how{display:block; margin-top:6px; font-family:var(--ui); font-style:normal; font-size:11px; line-height:1.45; letter-spacing:.03em; color:rgba(207,232,245,.6)}
+  .thermo-say{
+    position:absolute; left:calc(var(--side) + 14px); top:calc(var(--thy) + 34px); z-index:8;
+    padding:7px 12px 8px; white-space:nowrap; pointer-events:none;
+    font-family:var(--ui); font-size:12.5px; letter-spacing:.03em; color:#FFF4E2;
+    background:rgba(10,21,34,.92); border:1px solid rgba(242,181,107,.42); border-radius:2px;
+    box-shadow:0 10px 26px rgba(0,0,0,.45);
+    opacity:0; transform:translate(-6px,0); transition:opacity .3s var(--settle), transform .4s var(--settle);
+  }
+  .thermo-say.show{opacity:1; transform:translate(0,0)}
+  .tasks-reset{
+    display:inline-block; margin:0 0 0 12px; padding:5px 12px; border-radius:999px;
+    border:1px solid rgba(207,232,245,.22); background:rgba(207,232,245,.05);
+    color:rgba(214,235,246,.72); font-family:var(--ui); font-size:12px; letter-spacing:.05em; cursor:pointer;
+    transition:background .3s var(--settle), color .3s var(--settle), border-color .3s var(--settle);
+  }
+  .tasks-reset:hover,.tasks-reset:focus-visible{background:rgba(207,232,245,.14); color:#fff; border-color:rgba(207,232,245,.45)}
+  .tasks-head span{margin-left:auto}
+  .chip.busy{opacity:.45; pointer-events:none}
+  .chip[hidden]{display:none}
 
   @media (max-width:520px){
     .caption{font-size:8.5px; letter-spacing:.3em}
     .sound{font-size:8.5px; letter-spacing:.24em; gap:8px; padding-left:6px}
     .sound svg{width:22px; height:16px}
     .thermo-tip{font-size:13px; padding:8px 11px 9px}
+    .thermo-how{font-size:10.5px}
+    .thermo-say{font-size:11.5px; padding:6px 10px 7px; max-width:calc(100vw - var(--side) - 40px); white-space:normal; line-height:1.4}
   }
   @media (max-width:1000px){
     .thermo{height:112px}
@@ -120,6 +147,8 @@
     .caption,.sound,.thermo{animation:none; opacity:1}
     .sound[aria-pressed="true"] .fin{animation:none}
     .thermo-tip,.sound .fin{transition-duration:.01s}
+    .thermo .merc{transition:none}
+    .thermo-say{transition-duration:.01s}
   }
 
   /* ==================== 给孩子的那一层 ==================== */
@@ -187,7 +216,7 @@
     background:rgba(8,16,26,.78); border:1px solid rgba(207,232,245,.16); color:#E6F4FC;
   }
   .thermo-read b{display:inline; margin-left:1px; font-size:8px; letter-spacing:.02em; opacity:.85}
-  .sill-actions{display:flex; align-items:center; gap:8px; pointer-events:none}
+  .sill-actions{display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:8px; row-gap:6px; max-width:100%; pointer-events:none}
   .chip{
     pointer-events:auto; display:inline-flex; align-items:center; gap:6px; min-height:38px;
     padding:6px 12px; border-radius:999px; border:1px solid rgba(207,232,245,.22);
@@ -200,6 +229,18 @@
   .chip.sound{animation:none; opacity:1; min-height:38px; padding:6px 12px; font-size:11.5px; letter-spacing:.06em; color:rgba(214,235,246,.82); justify-content:center}
   .chip.sound svg{width:18px; height:13px}
   .chip.sound .sound-label{min-width:0}
+  /* 手机上四颗胶囊要排得下，字不换行 */
+  @media (max-width:520px){
+    .sill-actions{gap:5px}
+    .chip{padding:6px 9px; font-size:10.5px; letter-spacing:.02em; gap:5px; white-space:nowrap}
+    .chip svg{width:12px; height:12px}
+    .chip.sound{padding:6px 9px; font-size:10.5px; letter-spacing:.02em; gap:5px}
+    .chip.sound svg{width:16px; height:12px}
+  }
+  @media (max-width:360px){
+    .chip{padding:6px 8px; gap:4px}
+    .chip.sound{padding:6px 8px; gap:4px}
+  }
 
   /* 小抽屉：为什么、四件小事 */
   .scrim{
@@ -300,9 +341,9 @@
     <p class="hint" id="hint"><span class="dot" aria-hidden="true"></span>按住玻璃，<b>哈一口气</b></p>
   </div>
 
-  <button class="tasks-btn" id="openTasks" type="button" aria-haspopup="dialog">四件小事 <b id="taskCount">0/4</b></button>
+  <button class="tasks-btn" id="openTasks" type="button" aria-haspopup="dialog">六件小事 <b id="taskCount">0/6</b></button>
 
-  <button class="thermo" type="button" aria-describedby="thermoTip" aria-label="温度计：外面零下十一度">
+  <button class="thermo" type="button" aria-label="外面的温度：零下 11 度，现在。点一下更冷" aria-describedby="thermoTip">
     <svg viewBox="0 0 16 104" aria-hidden="true">
       <rect class="plate" x="0.5" y="0.5" width="15" height="103" rx="2"/>
       <g class="tick">
@@ -314,20 +355,29 @@
       </g>
       <line class="zero" x1="1.8" y1="39.2" x2="5" y2="39.2"/>
       <path class="tube" d="M6 8a2 2 0 0 1 4 0v78.6a5.4 5.4 0 1 1-4 0z"/>
-      <path class="mercury" d="M7.1 53.1h1.8v35.2a3.6 3.6 0 1 1-1.8 0z"/>
-      <rect class="glint" x="7.25" y="54" width=".5" height="30" rx=".25"/>
+      <rect class="merc mercury" x="7.1" y="8.6" width="1.8" height="79.7" style="transform:scaleY(.4422)"/>
+      <circle class="mercury" cx="8" cy="91.8" r="3.6"/>
       <circle class="glint" cx="6.9" cy="90.4" r=".8"/>
     </svg>
     <span class="thermo-read">&minus;11<b>&deg;C</b></span>
-    <span class="thermo-tip" id="thermoTip" role="tooltip">外面 &minus;11&deg;C<i>&middot;</i>屋里 14&deg;C</span>
+    <span class="thermo-tip" id="thermoTip" role="tooltip">外面 &minus;11&deg;C<i>&middot;</i>屋里 14&deg;C<span class="thermo-how">点一下：更冷</span></span>
   </button>
+  <span class="thermo-say" id="thermoSay" role="status" aria-live="polite"></span>
 
   <div class="sill">
     <p class="caption">安静一点，霜正在长</p>
     <div class="sill-actions">
       <button class="chip" id="resetFrost" type="button" aria-label="重新结霜，从头开始">
         <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M13.2 6.4A5.6 5.6 0 1 1 8 2.4"/><path d="M13.4 2.6v4.1h-4.1"/></svg>
-        重新结霜
+        <span>重新结霜</span>
+      </button>
+      <button class="chip" id="fastFwd" type="button" aria-label="快进，把接下来八秒钟的霜一口气看完">
+        <svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor" stroke="none"><path d="M2.2 3.4v9.2L8 8 2.2 3.4zm6 0v9.2L14.2 8 8.2 3.4z"/></svg>
+        <span>快进</span>
+      </button>
+      <button class="chip" id="keepShot" type="button" aria-label="留住这一扇窗，存成一张图">
+        <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.2v7.4m0 0 3-3m-3 3-3-3M2.6 12.4h10.8"/></svg>
+        <span>留住</span>
       </button>
       <button class="chip sound" id="sound" type="button" aria-pressed="false" aria-label="声音：暖气片的轻响和窗外的风声">
         <svg viewBox="0 0 26 18" aria-hidden="true">
@@ -351,8 +401,11 @@
   <button class="sheet-close" id="closeTasks" type="button" aria-label="关上">✕</button>
   <h2 id="sheetTitle">窗上为什么会结霜？</h2>
   <p>屋里暖暖的水汽，碰到冰冰的玻璃，会<b>跳过「水」这一步</b>，直接变成一朵朵小冰花贴在玻璃上。所以这层霜，其实是空气里的水汽在画画。</p>
-  <p>你的手指是热的。按住玻璃，那一块就化成雾、化成水珠；手一拿开，霜又会从边上慢慢长回来——每次长出来的花纹都不一样。</p>
-  <div class="tasks-head">顺手做四件小事 <span id="taskCount2">0 / 4</span></div>
+  <p>你的手指是热的。按住玻璃，那一块就化成雾、化成水珠；手一拿开，霜又会从边上慢慢长回来——每次长出来的花纹都不一样。霜的粗细也看温度：外面越冷，冰晶长得越急，枝杈就排得越密、线越细。</p>
+  <p>左边那支<b>温度计</b>能点：点一下，外面就冷一档（−11℃ → −17℃ → −24℃ → −4℃ 回暖，再点回 −11℃）。越冷，霜长得越急、星核越多；越暖，霜疏疏朗朗，雾更浓、水珠更多。等不及就按「快进」，画得满意就按「留住」。</p>
+  <div class="tasks-head">顺手做六件小事 <span id="taskCount2">0 / 6</span>
+    <button class="tasks-reset" id="resetTasks" type="button" aria-label="清空打勾的进度，重新玩一遍">重来一次</button>
+  </div>
   <div class="tasks" id="tasks"></div>
   <p style="margin-top:16px;font-size:12.5px;color:rgba(196,218,232,.6)">小提示：名字写完别急着擦，等一会儿，看霜是怎么一点一点把它盖住的。</p>
   <p class="foot-home"><a href="奇趣阁：六件小玩具.html">← 回到 Peanut 的奇趣阁</a></p>
@@ -389,7 +442,7 @@ let textBox = {x: 0, y: 0, w: 1, h: 1};
 let fogPattern = null;
 const CELL = 3;
 let gw = 0, gh = 0, grid = null;
-let tips = [], stems = [], sparks = [], seeds = [], islands = [], nextId = 1, simT = 0, thI = 0, lateStar = 0;
+let tips = [], stems = [], sparks = [], seeds = [], islands = [], nextId = 1, simT = 0, thI = 0, lateStar = 0, starNext = 0;
 let seg0 = [], seg1 = [], segB = [], seg3 = [];
 let TIPCAP = 1000;
 let lights = [], lamps = [], snow = [], sprites = [], lit = [];
@@ -398,7 +451,8 @@ let traffic = null;
 let patches = [], drops = [], runners = [], wounds = [], rmPatches = [];
 let rt = 0, last = 0, raf = 0, entered = false;
 let finger = 12, maxR = 110;
-const P = {down: false, id: -1, x: 0, y: 0, ax: 0, ay: 0, hx: -99, hy: -99, inside: false, fine: false, still: 0, r: 0, stampR: 0, patch: null, wound: null, runT: 0, runners: 0, acc: 0, wacc: 0, kb: false, kx: 0, ky: 0, ring: 0};
+const P = {down: false, id: -1, x: 0, y: 0, ax: 0, ay: 0, hx: -99, hy: -99, wx: -9999, wy: -9999, inside: false, fine: false, still: 0, r: 0, stampR: 0, patch: null, wound: null, runT: 0, runners: 0, acc: 0, wacc: 0, kb: false, kx: 0, ky: 0, ring: 0,
+  dx: 0, dy: 0, sx: 0, sy: 0, strokes: 0, strokeSum: 0, strokeAt: 0};
 
 /* =====================================================================
    BUILD: geometry, canvases, the static outside world, frame and glass
@@ -445,7 +499,7 @@ function build(ffTo){
     if (x < G.x0 || x > G.x1 || y < G.y0 || y > G.y1 || Math.abs(x - G.cx) < hm || Math.abs(y - G.cy) < hm) grid[j * gw + i] = -1;
   }
 
-  tips = []; stems = []; sparks = []; seeds = []; islands = []; nextId = 1; simT = 0; thI = 0; lateStar = 0;
+  tips = []; stems = []; sparks = []; seeds = []; islands = []; nextId = 1; simT = 0; thI = 0; lateStar = 0; starNext = 0;
   seg0 = []; seg1 = []; segB = []; seg3 = [];
   patches = []; drops = []; runners = []; wounds = []; rmPatches = [];
   P.down = false; P.patch = null; P.wound = null;
@@ -738,7 +792,7 @@ function islandD(x, y){
 
 function addTip(o){ o.id = nextId++; o.len = 0; o.lx = o.x; o.ly = o.y; o.alive = true; tips.push(o); return o; }
 function makeStem(x, y, ang, maxLen, depth, speedMul, free, straight){
-  const t = addTip({x, y, ang, curv: straight ? 0 : (rnd() < .5 ? -1 : 1) * rr(.0012, .0058), straight: !!straight, speed: rr(3.5, 5.1) * u * speedMul, maxLen, gen: 0, depth, gap: rr(6.2, 8.2) * Math.max(u, .72), side: rnd() < .5 ? 1 : -1, free: !!free});
+  const t = addTip({x, y, ang, curv: straight ? 0 : (rnd() < .5 ? -1 : 1) * rr(.0012, .0058), straight: !!straight, speed: rr(3.5, 5.1) * u * speedMul, maxLen, gen: 0, depth, gap: rr(6.2, 8.2) * Math.max(u, .72) * branchGapMul(), side: rnd() < .5 ? 1 : -1, free: !!free});
   t.nextB = t.gap * rr(.5, 1.1); t.pts = [x, y]; t.born = simT; t.thick = 0;
   if (stems.length > 760) stems = stems.filter(s => s.thick < 3 || s.alive);
   stems.push(t);
@@ -782,10 +836,12 @@ function plantSeeds(){
   scratch(26, G.x1 - 3, G.y0 + (G.cy - G.y0) * .5, Math.PI - .28, span * .46, -.0007);
   scratch(52, G.x0 + (G.cx - G.x0) * .55, G.y0 + 3, 1.02, span * .4, .0005);
   scratch(78, G.x1 - (G.x1 - G.cx) * .2, G.y1 - 3, -Math.PI / 2 - .5, span * .3, -.0008);
-  // nucleation points: frost flowers
-  const stars = Math.round(clamp(W * H / 95000, 6, 15));
+  // nucleation points: frost flowers（越冷，星核越多）
+  const stars = Math.max(2, Math.round(clamp(W * H / 95000, 6, 15) * starMul()));
   for (let i = 0; i < stars; i++){
     at(rr(10, 112), () => {
+      // 星核到点再掷一次骰子：越冷，越容易开出来
+      if (rnd() > clamp(starMul(), .08, 1)) return;
       for (let tries = 0; tries < 12; tries++){
         const x = rr(G.x0 + 20, G.x1 - 20), y = rr(G.y0 + 20, G.y1 - 20);
         if (islandD(x, y) < 1.35 || !clearAround(x, y, 16 * u)) continue;
@@ -868,14 +924,16 @@ function strokeSegs(c, a, style, width){
 }
 function flush(){
   fx.globalCompositeOperation = 'source-over'; dx.globalCompositeOperation = 'source-over';
-  const k = Math.max(u, .75);
+  const k = Math.max(u, .75), lw = lineMul(), la = Math.min(1, lineAlpha());
+  fx.globalAlpha = la; dx.globalAlpha = la;
   strokeSegs(dx, seg0, 'rgba(255,255,255,.34)', 12 * k);
   strokeSegs(dx, seg1, 'rgba(255,255,255,.2)', 9.5 * k);
   strokeSegs(dx, seg3, 'rgba(255,255,255,.12)', 5 * k);
-  strokeSegs(fx, segB, 'rgba(' + ICE + ',.42)', .6);
-  strokeSegs(fx, seg3, 'rgba(' + ICE + ',.2)', .6);
-  strokeSegs(fx, seg1, 'rgba(' + ICE + ',.7)', .8);
-  strokeSegs(fx, seg0, 'rgba(255,255,255,.86)', 1.1);
+  strokeSegs(fx, segB, 'rgba(' + ICE + ',.42)', .6 * lw);
+  strokeSegs(fx, seg3, 'rgba(' + ICE + ',.2)', .6 * lw);
+  strokeSegs(fx, seg1, 'rgba(' + ICE + ',.7)', .8 * lw);
+  strokeSegs(fx, seg0, 'rgba(255,255,255,.86)', 1.1 * lw);
+  fx.globalAlpha = 1; dx.globalAlpha = 1;
   seg0.length = seg1.length = segB.length = seg3.length = 0;
 }
 const THICK_AT = [9, 26, 52];
@@ -888,13 +946,15 @@ function thicken(){
     const n = s.pts.length >> 1, upto = Math.floor(n * (.82 - .2 * s.thick));
     if (upto >= 2){
       fx.globalCompositeOperation = 'source-over';
-      fx.strokeStyle = 'rgba(255,255,255,.2)'; fx.lineWidth = 1.9 + s.thick * .9; fx.beginPath();
+      fx.globalAlpha = Math.min(1, lineAlpha());
+      fx.strokeStyle = 'rgba(255,255,255,.2)'; fx.lineWidth = (1.9 + s.thick * .9) * lineMul(); fx.beginPath();
       let pen = false;
       for (let i = 0; i < upto; i++){
         const px = s.pts[i * 2], py = s.pts[i * 2 + 1];
         if (grid[((py / CELL) | 0) * gw + ((px / CELL) | 0)] > 0){ pen ? fx.lineTo(px, py) : fx.moveTo(px, py); pen = true; } else pen = false;
       }
       fx.stroke();
+      fx.globalAlpha = 1;
     }
     s.thick++;
   }
@@ -902,14 +962,21 @@ function thicken(){
 function simStep(sdt){
   simT += sdt;
   while (seeds.length && seeds[0].t <= simT && tips.length < TIPCAP * .7) seeds.shift().fn();
+  // 比「现在」更冷的时候，隔一会儿就多开一朵霜花
+  if (tempI < 2 && simT > 8 && simT > starNext){
+    starNext = simT + rr(7, 12) / starMul();
+    const sx = rr(G.x0 + 20, G.x1 - 20), sy = rr(G.y0 + 20, G.y1 - 20);
+    if (islandD(sx, sy) > 1.35 && clearAround(sx, sy, 16 * u) && tips.length < TIPCAP * .8) makeStar(sx, sy, rr(30, 80) * u, false);
+  }
   // long after the pane has settled, the odd new flower still opens in whatever glass is left
   if (simT > 118 && simT > lateStar){
-    lateStar = simT + rr(5, 11);
+    lateStar = simT + rr(5, 11) / starMul();
     const x = rr(G.x0 + 16, G.x1 - 16), y = rr(G.y0 + 16, G.y1 - 16);
     if (islandD(x, y) > 1.4 && clearAround(x, y, 20 * u) && tips.length < TIPCAP * .5) makeStar(x, y, rr(26, 70) * u, false);
   }
   let dead = 0;
-  for (let i = 0, n = tips.length; i < n; i++){ const t = tips[i]; if (t.alive) advance(t, t.speed * sdt); if (!t.alive) dead++; }
+  const gm = growthMul();
+  for (let i = 0, n = tips.length; i < n; i++){ const t = tips[i]; if (t.alive) advance(t, t.speed * sdt * gm); if (!t.alive) dead++; }
   if (dead > 40 || dead === tips.length) tips = tips.filter(t => t.alive);
   thicken(); flush();
 }
@@ -961,22 +1028,36 @@ function meltLine(x0, y0, x1, y1){
 }
 function addPatch(x, y, r, a, holdT, fadeT, released){
   if (patches.length > 110) patches.shift();
-  const p = {x, y, r, a, cur: released ? a : 0, state: released ? 1 : 0, tRel: rt, holdT, fadeT, hollow: 0};
+  const k = fogLifeMul();
+  // 沿手指滑动的方向微微拉长，每口气才会有自己的形状
+  const moving = P.down && (Math.abs(P.dx) + Math.abs(P.dy)) > .6;
+  const p = {x, y, r, a, cur: released ? a : 0, state: released ? 1 : 0, tRel: rt,
+    holdT: holdT * k, fadeT: fadeT * k, hollow: 0,
+    rot: moving ? Math.atan2(P.dy, P.dx) : rr(0, TAU),
+    sq: moving ? rr(.64, .8) : rr(.86, 1),
+    st0: rr(.34, .5), st1: rr(.58, .8)};
   patches.push(p); return p;
 }
 function addDrop(x, y, r, life){
   if (drops.length > 720) return;
   if (grid[((y / CELL) | 0) * gw + ((x / CELL) | 0)] === -1) return;
-  drops.push({x, y, r, age: 0, life});
+  drops.push({x, y, r, age: 0, life: life * dropLifeMul()});
 }
 function addRunner(x, y, r){
-  if (runners.length > 14 || reduced) return;
+  if (runners.length > 14) return;
   finish('drip');
+  if (reduced){
+    // 减动效时不往下爬，就让一颗水珠安安静静地凝在玻璃上
+    if (drops.length < 720) drops.push({x, y, r: Math.max(2.2, r * 1.05), age: 0, life: rr(7, 10)});
+    return;
+  }
   runners.push({x, y, r, vy: 0, vx: 0, jerk: .2, jt: rr(.2, .7), trail: [x, y], dead: 0, wd: 0});
 }
 function startBreath(x, y){
+  if (ff.on) endFF(false);
   P.down = true; P.x = P.ax = x; P.y = P.ay = y; P.still = 0; P.r = finger; P.stampR = 0; P.patch = null; P.wound = null;
-  P.runT = .9; P.runners = 0; P.acc = 0; P.wacc = 0;
+  P.runT = .9 / runnerMul(); P.runners = 0; P.acc = 0; P.wacc = 0;
+  P.dx = 0; P.dy = 0; P.sx = x; P.sy = y; P.drawn = 0;
   meltAt(x, y, finger, true);
   addPatch(x, y, finger * 2.3, .26, .5, 2.2, true);
   if (wounds.length < 320) wounds.push({x, y, r: finger * .72, at: rt + rr(8, 11), big: false});
@@ -990,8 +1071,10 @@ function settleBreath(){
 function moveBreath(x, y){
   const d = Math.hypot(x - P.x, y - P.y);
   if (d < .4) return;
-  P.drawn = (P.drawn || 0) + d;
-  if (P.drawn > 84) finish('write');
+  P.drawn += d;
+  P.dx = x - P.x; P.dy = y - P.y;
+  // 写字：画出一个圈，或者真的画了好几笔；随手一抹不算
+  if (P.drawn > 150 && Math.hypot(x - P.sx, y - P.sy) < 30) finish('write');
   if (Math.hypot(x - P.ax, y - P.ay) > 7){
     if (P.patch && P.r > finger * 2 && !reduced && rnd() < .7) addRunner(P.ax + rr(-.4, .4) * P.r, P.ay + rr(0, .5) * P.r, rr(2.6, 3.8));
     settleBreath(); P.ax = x; P.ay = y; P.still = 0; P.r = finger; P.stampR = 0;
@@ -1003,11 +1086,16 @@ function moveBreath(x, y){
 function endBreath(){
   if (!P.down) return;
   if (P.patch && P.r > finger * 2.2 && P.runners < 6) addRunner(P.x + rr(-.5, .5) * P.r, P.y + rr(.1, .6) * P.r, rr(2.8, 4));
+  // 一笔一笔记下来：两笔以上、总长够长，才算写过字
+  if (P.drawn > 50){
+    if (rt - P.strokeAt > 12){ P.strokes = 0; P.strokeSum = 0; }
+    P.strokeAt = rt; P.strokes++; P.strokeSum += P.drawn;
+    if (P.strokes >= 2 && P.strokeSum >= 150) finish('write');
+  }
   settleBreath(); P.down = false; breathSound(false);
 }
 function warmth(x, y){
-  const d = Math.hypot(x - P.wx, y - P.wy);
-  if (!(d > 9)){ if (P.wx === undefined){ P.wx = x; P.wy = y; } return; }
+  if (Math.hypot(x - P.wx, y - P.wy) < 9) return;
   P.wx = x; P.wy = y;
   addPatch(x, y, 17 * u + 8, .075, 0, 1.1, true);
 }
@@ -1032,7 +1120,7 @@ function updatePointer(dt){
   }
   if (P.still > .9){
     P.runT -= dt;
-    if (P.runT <= 0 && P.runners < 6){ P.runT = rr(.45, 1.15); P.runners++; addRunner(P.x + rr(-.7, .7) * P.r * .8, P.y + rr(-.15, .7) * P.r * .8, rr(2.5, 4.1)); }
+    if (P.runT <= 0 && P.runners < 6){ P.runT = rr(.45, 1.15) / runnerMul(); P.runners++; addRunner(P.x + rr(-.7, .7) * P.r * .8, P.y + rr(-.15, .7) * P.r * .8, rr(2.5, 4.1)); }
   }
 }
 function updateFog(dt){
@@ -1104,10 +1192,17 @@ function regrow(w){
     makeStem(px, py, a + Math.PI + rr(-.55, .55), Math.max(14 * u, w.r * rr(.8, 1.6)), 2, w.big ? 2.3 : 1.7, true);
     made++;
   }
-  if (w.big && made < 2 && w.r > finger * 2.4 && tips.length < TIPCAP) makeStar(w.x + rr(-.3, .3) * w.r, w.y + rr(-.3, .3) * w.r, w.r * rr(.6, .9), true);
+  if (w.big && made < 2 && w.r > finger * 2.4 && tips.length < TIPCAP && rnd() < clamp(starMul() * .5, .12, .9)) makeStar(w.x + rr(-.3, .3) * w.r, w.y + rr(-.3, .3) * w.r, w.r * rr(.6, .9), true);
 }
 function tendWounds(){
-  if (reduced){ wounds.length = 0; return; }
+  // 减动效时不等：创口一出现就当作已经长回来了，任务照样能打勾
+  if (reduced){
+    if (wounds.length){
+      for (const w of wounds) regrow(w);
+      wounds.length = 0;
+    }
+    return;
+  }
   for (let i = wounds.length - 1; i >= 0; i--){
     const w = wounds[i];
     if (rt >= w.at){ regrow(w); wounds[i] = wounds[wounds.length - 1]; wounds.pop(); }
@@ -1173,19 +1268,29 @@ function drawFog(){
   f.setTransform(fw / W, 0, 0, fh / H, 0, 0);
   for (let i = 0; i < patches.length; i++){
     const p = patches[i]; if (p.cur <= .003) continue;
-    const g = f.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r), a = p.cur;
+    const a = p.cur;
+    f.save();
+    f.translate(p.x, p.y); f.rotate(p.rot || 0); f.scale(1, p.sq || 1);
+    const g = f.createRadialGradient(0, 0, 0, 0, 0, p.r);
     g.addColorStop(0, 'rgba(255,255,255,' + (a * (1 - p.hollow)).toFixed(3) + ')');
-    g.addColorStop(.46, 'rgba(255,255,255,' + (a * (1 - p.hollow * .35)).toFixed(3) + ')');
-    g.addColorStop(.72, 'rgba(255,255,255,' + (a * .7).toFixed(3) + ')');
+    g.addColorStop(p.st0 || .46, 'rgba(255,255,255,' + (a * (1 - p.hollow * .35)).toFixed(3) + ')');
+    g.addColorStop(p.st1 || .72, 'rgba(255,255,255,' + (a * .7).toFixed(3) + ')');
     g.addColorStop(1, 'rgba(255,255,255,0)');
-    f.fillStyle = g; f.fillRect(p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
+    f.fillStyle = g; f.fillRect(-p.r, -p.r, p.r * 2, p.r * 2);
+    f.restore();
   }
   // the haze carries the colour of the street behind it
   f.setTransform(1, 0, 0, 1, 0, 0);
   f.globalCompositeOperation = 'source-atop'; f.globalAlpha = .3; f.drawImage(qbC, 0, 0, fw, fh);
   f.globalAlpha = .3; f.fillStyle = 'rgb(' + ICE + ')'; f.fillRect(0, 0, fw, fh);
   f.globalAlpha = 1; f.globalCompositeOperation = 'destination-out';
-  f.fillStyle = fogPattern; f.fillRect(0, 0, fw, fh);
+  f.fillStyle = fogPattern;
+  if (reduced) f.fillRect(0, 0, fw, fh);
+  else {
+    // 雾里的水汽慢慢往上爬，噪点瓦片跟着走，不会每一口都对齐
+    const drift = (rt * 9) % 120;
+    f.save(); f.translate(0, -drift); f.fillRect(0, 0, fw, fh + 120); f.restore();
+  }
   f.setTransform(fw / W, 0, 0, fh / H, 0, 0);
   f.strokeStyle = '#000'; f.lineCap = 'round'; f.lineJoin = 'round';
   for (let i = 0; i < runners.length; i++){
@@ -1267,7 +1372,8 @@ function composite(t){
   }
   const d = diffX, dw = diffC.width, dh = diffC.height;
   d.globalCompositeOperation = 'copy'; d.globalAlpha = 1; d.imageSmoothingQuality = 'high'; d.drawImage(qbC, 0, 0, dw, dh);
-  d.globalCompositeOperation = 'source-over'; d.fillStyle = 'rgba(' + ICE + ',.36)'; d.fillRect(0, 0, dw, dh);
+  const iceA = (.36 * lineAlpha()).toFixed(2);
+  d.globalCompositeOperation = 'source-over'; d.fillStyle = 'rgba(' + ICE + ',' + iceA + ')'; d.fillRect(0, 0, dw, dh);
   d.globalCompositeOperation = 'destination-in'; d.drawImage(dn, 0, 0, dw, dh);
 
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1; ctx.imageSmoothingQuality = 'high';
@@ -1307,7 +1413,9 @@ function frame(ts){
     if (!entered && rt > 9) entered = true;
     if (boost > 0) simStep(dt * boost);
   }
-  updatePointer(dt); updateFog(dt); updateDrops(dt); tendWounds();
+  updatePointer(dt);
+  if (ff.on) ffAdvance(dt);
+  else { updateFog(dt); updateDrops(dt); tendWounds(); }
   drawBg(rt, dt); composite(rt);
 }
 function start(){ if (raf) return; last = performance.now() / 1000; raf = requestAnimationFrame(frame); }
@@ -1350,10 +1458,77 @@ main.addEventListener('keydown', e => {
 main.addEventListener('keyup', e => { if ((e.key === ' ' || e.key === 'Enter') && P.id === -2) endBreath(); });
 main.addEventListener('blur', () => { if (P.id === -2) endBreath(); });
 
-const thermo = document.querySelector('.thermo');
-thermo.addEventListener('click', () => thermo.classList.toggle('open'));
-thermo.addEventListener('blur', () => thermo.classList.remove('open'));
-thermo.addEventListener('pointerleave', () => thermo.classList.remove('open'));
+/* =====================================================================
+   TEMPERATURE: 四档外面，点一下就冷一档
+   ===================================================================== */
+const TEMPS = [-24, -17, -11, -4];
+const TEMP_WORD = ['极寒', '深冬', '现在', '回暖'];
+const TEMP_SAY = ['外面冷到极寒：霜会长得又急又密', '外面更冷了，霜会长得更急', '回到现在：霜按老样子慢慢长', '回暖了：雾更浓，水珠更多'];
+// 所有温度效应集中在这里：0 极寒 → 3 回暖
+const TUNE = {
+  growth:   [1.50, 1.20, 0.80, 0.42],   // 枝晶生长速度（0.8 = 原来 −11℃ 的节奏）
+  gap:      [0.72, 0.85, 1.00, 1.28],   // 分叉间距（越小越密）
+  star:     [2.10, 1.50, 1.00, 0.42],   // 星核出现概率 / 频率
+  lineW:    [0.74, 0.86, 1.00, 1.16],   // 霜线宽度
+  lineA:    [1.12, 1.05, 1.00, 0.88],   // 霜线亮度
+  fogLife:  [0.55, 0.76, 1.00, 1.55],   // 雾的保持与消退
+  dropLife: [0.72, 0.85, 1.00, 1.35],   // 水珠寿命
+  runner:   [0.60, 0.80, 1.00, 1.40]    // 水珠流下的频率
+};
+let tempI = 2, temp = TEMPS[tempI], tempTouched = false;
+const tune = k => TUNE[k][tempI];
+const growthMul = () => tune('growth');
+const branchGapMul = () => tune('gap');
+const starMul = () => tune('star');
+const lineMul = () => tune('lineW');
+const lineAlpha = () => tune('lineA');
+const fogLifeMul = () => tune('fogLife');
+const dropLifeMul = () => tune('dropLife');
+const runnerMul = () => tune('runner');
+const fmtT = v => '\u2212' + Math.abs(v);        // 四档都在零下
+const tempName = () => TEMP_WORD[tempI];
+const moreTxt = () => tempI === 0 ? '点一下：绕回最暖' : '点一下更冷';
+
+const thermoEl = document.querySelector('.thermo');
+const mercEl = thermoEl.querySelector('.merc');
+const tempReadEl = thermoEl.querySelector('.thermo-read');
+const tempTipEl = thermoEl.querySelector('.thermo-tip');
+const tempSayEl = document.getElementById('thermoSay');
+let sayTimer = 0;
+
+function mercuryTransform(){
+  // 0℃ 在 y=39.2，5℃ ≈ 6.3px；柱底 88.3、柱长 79.7
+  const y = clamp(39.2 - temp * 1.26, 8.8, 88.1);
+  return 'scaleY(' + ((88.3 - y) / 79.7).toFixed(4) + ')';
+}
+function applyTemp(){
+  tempReadEl.innerHTML = fmtT(temp) + '<b>\u00B0C</b>';
+  tempTipEl.innerHTML = '外面 ' + fmtT(temp) + '\u00B0C<i>\u00B7</i>屋里 14\u00B0C' +
+    '<span class="thermo-how">' + tempName() + ' · ' + moreTxt() + '</span>';
+  mercEl.style.transform = mercuryTransform();
+  thermoEl.setAttribute('aria-label', '外面的温度：零下 ' + Math.abs(temp) + ' 度，' + tempName() + '。' + moreTxt());
+  thermoEl.classList.toggle('cold', tempI <= 1);
+  thermoEl.classList.toggle('warm', tempI === 3);
+}
+function say(msg){
+  tempSayEl.textContent = msg;
+  tempSayEl.classList.add('show');
+  clearTimeout(sayTimer);
+  sayTimer = setTimeout(() => tempSayEl.classList.remove('show'), 2600);
+}
+function cycleTemp(){
+  const before = tempI;
+  tempI = (tempI + 3) % 4;           // 3→2→1→0→3：一路更冷，绕回最暖
+  temp = TEMPS[tempI];
+  tempTouched = true;
+  applyTemp();
+  say(TEMP_SAY[tempI]);
+  if (tempI < before) finish('temp');
+  // 减动效时没有实时生长，就让这一档立刻长一点点，形态照样跟着温度变
+  if (reduced) fastForward(simT + 4 * growthMul());
+}
+thermoEl.addEventListener('click', cycleTemp);
+applyTemp();
 
 /* =====================================================================
    SOUND: a ticking radiator and muffled wind, only when asked for
@@ -1418,14 +1593,16 @@ function setSound(on){
 sBtn.addEventListener('click', () => setSound(!soundOn));
 
 /* =====================================================================
-   孩子的那一层：四件小事、小抽屉、「重新结霜」
+   孩子的那一层：六件小事、小抽屉、「重新结霜」
    ===================================================================== */
 const $id = id => document.getElementById(id);
 const TASKS = [
   { id: 'breath', t: '哈出一块透明的窗', h: '按住玻璃别松手，等雾散开' },
-  { id: 'write',  t: '在雾上写一个字',   h: '手指别抬起来，慢慢划' },
+  { id: 'write',  t: '在雾上写一个字',   h: '慢慢划两笔，或者画一个圈' },
   { id: 'regrow', t: '等霜重新长回来',   h: '松手之后，看霜从旁边一点点补上来' },
-  { id: 'drip',   t: '看一颗水珠往下爬', h: '多哈一会儿，水珠会变重，然后往下溜' }
+  { id: 'drip',   t: '看一颗水珠往下爬', h: '多哈一会儿，水珠会变重，然后往下溜' },
+  { id: 'temp',   t: '把外面调冷一档',   h: '点一下左边的温度计' },
+  { id: 'ff',     t: '快进看霜长回来',   h: '按「快进」，把八秒钟一口气看完' }
 ];
 const doneTasks = new Set();
 try { JSON.parse(localStorage.getItem('frost-tasks') || '[]').forEach(k => doneTasks.add(k)); } catch (e) {}
@@ -1435,15 +1612,16 @@ function renderTasks(){
   if (!tasksEl) return;
   tasksEl.innerHTML = TASKS.map(t => '<div class="task' + (doneTasks.has(t.id) ? ' done' : '') + '" data-id="' + t.id + '">' +
     '<span class="tick" aria-hidden="true">✓</span><p>' + t.t + '<small>' + t.h + '</small></p></div>').join('');
-  if (taskCountEl) taskCountEl.textContent = doneTasks.size + '/4';
-  if (taskCountEl2) taskCountEl2.textContent = doneTasks.size + ' / 4';
+  if (taskCountEl) taskCountEl.textContent = doneTasks.size + '/6';
+  if (taskCountEl2) taskCountEl2.textContent = doneTasks.size + ' / 6';
 }
 function finish(id){
-  if (doneTasks.has(id) || !TASKS.some(t => t.id === id)) return;
+  const item = TASKS.find(t => t.id === id);
+  if (doneTasks.has(id) || !item) return;
   doneTasks.add(id);
   renderTasks();
   try { localStorage.setItem('frost-tasks', JSON.stringify([...doneTasks])); } catch (e) {}
-  toast('✓ ' + TASKS.find(t => t.id === id).t);
+  toast('✓ ' + item.t);
   if (id === 'breath') setTimeout(() => showHint('现在，在雾上写个<b>名字</b>'), 1200);
 }
 let toastTimer = 0;
@@ -1482,8 +1660,88 @@ if ('inert' in sheet) sheet.inert = true;
 /* 换一扇新玻璃 */
 $id('resetFrost').addEventListener('click', () => {
   endBreath(); clearTimeout(breathTimer); setSheet(false);
-  entered = false; rt = 0; build(0);
+  endFF(false);
+  entered = false; rt = 0;
+  build(0);
   toast('换好一扇干净的玻璃');
+});
+
+/* 快进：把接下来八秒钟的霜，挤进一秒半里演完 */
+const FF_SPAN = 8, FF_DUR = 1.4;
+const ff = {on: false, t: 0};
+const ffBtn = $id('fastFwd');
+function ffAdvance(dt){
+  const sdt = Math.min(dt, .05) * (FF_SPAN / FF_DUR);
+  ff.t += dt;
+  let rest = sdt;
+  while (rest > 0){
+    const chunk = Math.min(rest, .3);
+    simStep(chunk);
+    // 雾、水珠、创口也跟着一起往前走
+    for (let i = 0; i < patches.length; i++) patches[i].tRel -= chunk;
+    for (let i = 0; i < wounds.length; i++) wounds[i].at -= chunk;
+    updateFog(chunk); updateDrops(chunk); tendWounds();
+    rest -= chunk;
+  }
+  if (ff.t >= FF_DUR) endFF(true);
+}
+function endFF(done){
+  if (!ff.on) return;
+  ff.on = false; ff.t = 0;
+  if (ffBtn){
+    ffBtn.disabled = false; ffBtn.classList.remove('busy');
+    const s = ffBtn.querySelector('span'); if (s) s.textContent = '快进';
+  }
+  if (done){ toast('八秒钟的霜，一口气看完了'); finish('ff'); }
+}
+function startFF(){
+  if (ff.on) return;
+  entered = true;
+  if (reduced){
+    // 减动效：不放动画，一次算完
+    for (let i = 0; i < 80; i++){
+      simStep(.1);
+      for (let j = 0; j < patches.length; j++) patches[j].tRel -= .1;
+      for (let j = 0; j < wounds.length; j++) wounds[j].at -= .1;
+    }
+    updateFog(FF_SPAN); updateDrops(FF_SPAN); tendWounds();
+    ff.on = true; endFF(true);
+    return;
+  }
+  ff.on = true; ff.t = 0;
+  if (ffBtn){
+    ffBtn.disabled = true; ffBtn.classList.add('busy');
+    const s = ffBtn.querySelector('span'); if (s) s.textContent = '…';
+  }
+  toast('快进：接下来八秒钟');
+}
+if (ffBtn) ffBtn.addEventListener('click', startFF);
+
+/* 留住：把这一扇窗存成一张图，左下角带一行小字 */
+const keepBtn = $id('keepShot');
+if (keepBtn) keepBtn.addEventListener('click', () => {
+  try {
+    const c = document.createElement('canvas');
+    c.width = main.width; c.height = main.height;
+    const g = c.getContext('2d');
+    g.drawImage(main, 0, 0);
+    const s = c.width / (W || 1);
+    const fs = Math.max(10, Math.round(clamp(W * .011, 11, 16) * s));
+    g.font = '400 ' + fs + 'px "PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",system-ui,sans-serif';
+    g.fillStyle = 'rgba(207,232,245,.42)';
+    g.textBaseline = 'alphabetic';
+    g.fillText("Peanut's Coding Lesson · 霜窗", Math.round(18 * s), Math.round((H - Math.max(10, sill * .3)) * s));
+    c.toBlob(blob => {
+      if (!blob){ toast('这张图没有留住'); return; }
+      const d = new Date(), p2 = n => String(n).padStart(2, '0');
+      const name = '霜窗-' + d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + '.png';
+      const url = URL.createObjectURL(blob), a = document.createElement('a');
+      a.href = url; a.download = name; a.rel = 'noopener';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      toast('留住了：' + name);
+    }, 'image/png');
+  } catch (e){ toast('这张图没有留住'); }
 });
 
 /* 提示条：学会之后自己退场 */
@@ -1499,6 +1757,13 @@ function showHint(html){
 main.addEventListener('pointerdown', hideHint, { passive: true });
 
 renderTasks();
+const resetTasksBtn = $id('resetTasks');
+if (resetTasksBtn) resetTasksBtn.addEventListener('click', () => {
+  doneTasks.clear();
+  try { localStorage.removeItem('frost-tasks'); } catch (e) {}
+  renderTasks();
+  toast('打勾都擦掉了，再来一遍');
+});
 
 /* =====================================================================
    LIFECYCLE
@@ -1508,17 +1773,70 @@ document.addEventListener('visibilitychange', () => {
   else { start(); if (AC && soundOn){ AC.resume(); tickTimer = setTimeout(tick, 800); } }
 });
 let rz = 0, lastW = 0, lastH = 0;
+/* 转屏、拉窗：先把孩子画的那一扇窗留住，重建之后再按比例铺回去 */
+let keptGlass = null;
+function keepGlass(){
+  if (!frostC || !densC) return;
+  keptGlass = {f: frostC, d: densC, t: textC, gw, gh, w: W, h: H};
+}
+function restoreGlass(){
+  const k = keptGlass; keptGlass = null;
+  if (!k || !grid) return;
+  // 用旧的那一张整张换掉重建出来的霜，免得两代霜叠在一起变成一团乱麻
+  fx.setTransform(1, 0, 0, 1, 0, 0); fx.globalAlpha = 1; fx.globalCompositeOperation = 'source-over';
+  fx.clearRect(0, 0, frostC.width, frostC.height);
+  fx.drawImage(k.f, 0, 0, k.f.width, k.f.height, 0, 0, frostC.width, frostC.height);
+  dx.setTransform(1, 0, 0, 1, 0, 0); dx.globalAlpha = 1; dx.globalCompositeOperation = 'source-over';
+  dx.clearRect(0, 0, densC.width, densC.height);
+  dx.drawImage(k.d, 0, 0, k.d.width, k.d.height, 0, 0, densC.width, densC.height);
+  fx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  dx.setTransform(densC.width / W, 0, 0, densC.height / H, 0, 0);
+  // 孩子已经擦掉的那行「哈一口气」，重建后不该又冒出来
+  if (k.t && textC){
+    tx_.setTransform(1, 0, 0, 1, 0, 0);
+    tx_.clearRect(0, 0, textC.width, textC.height);
+    tx_.drawImage(k.t, 0, 0, k.t.width, k.t.height, 0, 0, textC.width, textC.height);
+    tx_.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  // 格子图也以旧霜为准：旧的霜占住的地方，新枝不会硬钻进去
+  for (let i = 0; i < grid.length; i++) if (grid[i] > 0) grid[i] = 0;
+  try {
+    const img = k.d.getContext('2d').getImageData(0, 0, k.d.width, k.d.height).data;
+    for (let j = 0; j < gh; j++){
+      const oy = Math.min(k.gh - 1, Math.floor((j + .5) / gh * k.gh));
+      for (let i = 0; i < gw; i++){
+        const ox = Math.min(k.gw - 1, Math.floor((i + .5) / gw * k.gw));
+        if (img[(oy * k.gw + ox) * 4 + 3] > 20) grid[j * gw + i] = 1;
+      }
+    }
+  } catch (e) {}
+}
 window.addEventListener('resize', () => {
   clearTimeout(rz);
   rz = setTimeout(() => {
     const w = window.innerWidth, h = window.innerHeight;
     if (w === lastW && h === lastH) return;
     lastW = w; lastH = h; endBreath();
+    keepGlass();
     build(Math.max(simT, 1));
+    restoreGlass();
   }, 220);
 });
-const onMotion = () => { reduced = rmq.matches; entered = false; rt = 0; build(0); };
+const onMotion = () => {
+  reduced = rmq.matches; entered = false; rt = 0;
+  endFF(false);
+  build(0);
+  renderTasks();
+};
 if (rmq.addEventListener) rmq.addEventListener('change', onMotion); else if (rmq.addListener) rmq.addListener(onMotion);
+
+/* 一直没碰温度计的话，过一会儿提醒一句 */
+setTimeout(() => {
+  if (!tempTouched && !sheetOpen && !hintGone) showHint('点一点左边的温度计：外面越冷，霜长得越密');
+}, 24000);
+setTimeout(() => {
+  if (!sheetOpen && !hintGone) showHint('等不及就按<b>快进</b>；画得好就按<b>留住</b>');
+}, 64000);
 
 lastW = window.innerWidth; lastH = window.innerHeight;
 build(0);

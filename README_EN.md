@@ -83,7 +83,7 @@ It is not a syntax lesson; it is a playful entry point to 3D graphics, best used
 
 ## 🎪 The Cabinet · Six Little Toys
 
-The atelier is where you take a lesson; the Cabinet is where you play. Six single-file toys, no scores and no winning; most have four small missions, and each one has a "why" written for kids.
+The atelier is where you take a lesson; the Cabinet is where you play. Six single-file toys, no scores and no winning; most have four or six small missions, and each one has a "why" written for kids.
 
 ### 1. 🎠 The Living Zoetrope · A Little Picture Machine
 **File:** `会动的转筒：小小动画机.html`
@@ -104,16 +104,18 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 - A single-file, offline night window: frost grows tip by tip along the frame and the scratches in the glass, six-armed flowers open, the street lamps outside melt into soft bokeh
 - Press and hold the glass to breathe on it: a patch of fog blooms, the frost turns to water, and now and then a heavy bead runs down leaving a clear track
 - Let go and the frost creeps back in from the rim with new patterns — which is exactly how a name written in the fog gets covered up again
-- A thermometer on the left stile (−11 °C outside, 14 °C inside); tap it for the reading
-- **Four small missions**: breathe a clear patch / write one character in the fog / watch the frost grow back / watch a bead run down
+- A working thermometer on the left stile: **tap it to make the night colder** (−11 → −17 → −24 °C, then back round to a thaw at −4 °C). The colder it gets, the faster, finer and denser the frost grows; the warmer, the sparser the ferns and the thicker the fog
+- **Six small missions**: breathe a clear patch / write one character in the fog / watch the frost grow back / watch a bead run down / turn the night one notch colder / fast-forward a frost regrowth
+- In a hurry, 「快进」 squeezes eight seconds of frost into one and a half; when it looks right, 「留住」 saves a dated PNG with a small watermark
 - No score, no timer, quiet enough for bedtime; works in phone portrait
 
 ### 3. 🪡 The Pin Screen
 **File:** `针幕：一板会记住手印的针.html`
 
-- A single-file, offline pin-art toy: a dense field of steel pins that light up when pushed and fall dark when they retreat; a raking light makes the heads glint
-- Press and drag to push pins in; when the finger leaves, the pins creep back and the imprint melts like snow
-- 「印手」 presses a whole handprint; 「按个字」 presses a word (花生 / 你好 / 王 / 哈哈); 「翻板」 drops the whole board back with a rolling wave
+- A single-file, offline pin-art toy: a dense field of steel pins that lift into the light and cast shadows on the plate; a raking light makes the heads glint
+- Press and drag: pins rise and **stay put**, held by friction like the real toy — higher pins throw longer shadows, so the imprint stands up. 「橡皮」 wipes a patch flat, 「翻板」 drops the whole board
+- 「印手」 presses a handprint; 「按个字」 presses a word (花生 / 你好 / 王 / 哈哈), and the drawer lets you press your own text or one of four stamps; 「留住」 saves the board as a PNG
+- Your drawing is kept on the device and survives refreshes, rotation and window resizes; two fingers can draw at once, and Ctrl/⌘+Z steps back one move
 - **Four small missions**; best on a touchscreen, fine with a mouse
 
 ### 4. 🏺 The Wheel · Throw a Pot
@@ -193,9 +195,9 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 - Progress is stored in this computer's browser and does not sync across devices
 
 ### The Cabinet (six little toys: zoetrope / frost window / pin screen / wheel / marbling / koi)
-- Enter from the Cabinet door at the bottom of the home page, after the lessons (`奇趣阁：六件小玩具.html`); 「← 奇趣阁」 at the top-left of each toy goes back to the Cabinet. Most toys have a 「四件小事」 list to discover
-- **Frost window**: press and hold to breathe, write in the fog; 「重新结霜」 gives you a fresh pane
-- **Pin screen**: push with a finger; 「印手」 for a handprint, 「按个字」 for a word, 「翻板」 to drop the board
+- Enter from the Cabinet door at the bottom of the home page, after the lessons (`奇趣阁：六件小玩具.html`); 「← 奇趣阁」 at the top-left of each toy goes back to the Cabinet. Most toys have a small mission list (four or six) to discover
+- **Frost window**: press and hold to breathe, write in the fog; tap the thermometer on the left stile to change the weather; 「快进 / 留住 / 重新结霜」 sit on the sill
+- **Pin screen**: press and the pins stay up; 「印手」 for a handprint, 「按个字」 for a word, the drawer for your own text or a stamp; 「橡皮」 wipes pins back, 「翻板」 drops them all, 「留住」 saves a picture
 - **Wheel**: hold 「转起来」 (or the pedal), then drag on the clay; if it slumps, tap 「再团一团」, then glaze and fire. On the shelf, tap a pot to see it large, name it, take it down, or 「存成一张图」
 - **Marbling**: drop ink, drag the comb, stir with the fan, then 「拉一张纸」; tap a print on the rack to see it large
 - **Koi pond**: tap the water, hold to feed, move a finger slowly; tap a fish for its name. Switch to 「我的池塘」 to build your own: pick fish, plant pads and lotus, drag things around, change the season — saved on the device, and exportable as a picture
