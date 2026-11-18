@@ -1,6 +1,6 @@
 # Peanut's Coding Lesson 🎓
 
-A coding-learning project for children: **six lessons** — programming, physics, history on the map, a 3D art toy, a 3D anatomy lesson — plus **the Cabinet**, six small things to play with by hand: a zoetrope, a frosted window, a pin screen, a pottery wheel, a marbling tray and a koi pond.
+A coding-learning project for children: **six lessons** — programming, physics, history on the map, a 3D art toy, a 3D anatomy lesson — plus **the Cabinet**, a growing collection of small things to play with by hand: a zoetrope, a frosted window, a pin screen, a pottery wheel, a marbling tray, a koi pond and a glass workshop.
 
 **Open it online: <https://peanut-rice.github.io/Peanut-Coding-Lesson/>** — nothing to install. For offline use, download the repo and open `index.html`.
 
@@ -81,9 +81,9 @@ It is not a syntax lesson; it is a playful entry point to 3D graphics, best used
 - Includes ready-made print files: `教师手册·身体探索局.pdf` and `学习单·身体探索局.pdf`
 - Licensing note: this project **does not bundle** BodyVista's models or pages, it only links to the official site; the course illustrations and text are original, and anatomical structure names are cited as factual teaching content. BodyVista's code is MIT, but the anatomical models come from third-party sources such as Z-Anatomy / BodyParts3D, which upstream marks with restrictions such as `NC exceptions; research only` — check the licences before redistributing
 
-## 🎪 The Cabinet · Six Little Toys
+## 🎪 The Cabinet · A Cabinet of Little Toys
 
-The atelier is where you take a lesson; the Cabinet is where you play. Six single-file toys, no scores and no winning; each one has a "why" written for kids.
+The atelier is where you take a lesson; the Cabinet is where you play. A growing cabinet of single-file toys, no scores and no winning; each one has a "why" written for kids.
 
 ### 1. 🎠 The Living Zoetrope · A Little Picture Machine
 **File:** `会动的转筒：小小动画机.html`
@@ -146,9 +146,23 @@ The atelier is where you take a lesson; the Cabinet is where you play. Six singl
 - **「我的池塘」 (My Pond)**: start from bare water, pick fish (four varieties), plant lily pads and lotus, drag anything to move it; switch spring / summer / autumn / winter (water colour, pads, petals, snow and how lazy the fish are all follow). The pond saves itself on the device, and「存成图」exports a picture
 - No goal, no score — keep it as a pet; best in phone portrait
 
+### 7. 🫧 The Wonder Glass Atelier
+**File:** `奇妙玻璃工坊.html`
+
+- A single-file, offline glass workshop: pick colours, melt the glass, blow, turn, stretch, squeeze and mold it, then anneal the piece and keep it in a local gallery
+- **Melting & colour**: six glass colours that mix with visible proportions; hold the bellows to heat the batch from cold and hard to soft, glowing and molten, with flames, bubbles, heat shimmer and a temperature readout
+- **Shaping**: hold to blow the gather, drag to turn, stretch or dent it, and choose a sphere, oval, vase or cup mold; reheat at any time when the glass stiffens
+- **Decorating**: stripes, a spiral, waves, dots and confetti, plus decorative colour, density, transparency and gloss
+- **Annealing with a consequence**: slow annealing gives a clearer piece; a quick quench opens fine cracks, with an explanation of why the outside contracts faster than the inside
+- **Keep & re-edit**: name the piece, save it, export a PNG, and keep a local gallery that survives a reload; any saved piece can go back onto the bench
+- **Free play**: skip melting and start with a random colour and form; each stage also offers a small "think about it" question
+- Desktop-first, still usable in phone portrait; Space blows, arrow keys shape
+
 ### Where these toys come from
 
-The six Cabinet toys began as studies in [MiaAI-Lab/Claude-Fable-5.2-HTML-Files](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files) ([the gallery](https://miaai-lab.github.io/Claude-Fable-5.2-HTML-Files/)), a collection of 76 HTML visual studies. We kept the subject matter and the mood and reworked everything else — play, interaction, offline packaging, accessibility and copy — into six single files you can open on their own for this class.
+The earliest Cabinet toys began as studies in [MiaAI-Lab/Claude-Fable-5.2-HTML-Files](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files) ([the gallery](https://miaai-lab.github.io/Claude-Fable-5.2-HTML-Files/)), a collection of 76 HTML visual studies. We kept the subject matter and the mood and reworked everything else — play, interaction, offline packaging, accessibility and copy — into single files you can open on their own for this class.
+
+**The Wonder Glass Atelier** was inspired by [GLASSHOUSE — the hot shop](https://github.com/MiaAI-Lab/GLM-5.3-100-HTML-Files/blob/main/075-glasshouse-blower.html) from [MiaAI-Lab/GLM-5.3-100-HTML-Files](https://github.com/MiaAI-Lab/GLM-5.3-100-HTML-Files), and was rebuilt around melting, colour mixing, blowing, shaping, decorating, annealing, collecting and local saving.
 
 | Cabinet | Original study |
 | --- | --- |
@@ -158,8 +172,9 @@ The six Cabinet toys began as studies in [MiaAI-Lab/Claude-Fable-5.2-HTML-Files]
 | The Wheel | [025-pottery-wheel.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/025-pottery-wheel.html) |
 | Suminagashi | [001-suminagashi-marbling-tray.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/001-suminagashi-marbling-tray.html) |
 | Koi Pond, Noon | [009-koi-pond-noon.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/009-koi-pond-noon.html) |
+| The Wonder Glass Atelier | [075-glasshouse-blower.html](https://github.com/MiaAI-Lab/GLM-5.3-100-HTML-Files/blob/main/075-glasshouse-blower.html) |
 
-The original repository does not include a licence file; this note is a credit and a pointer, not a licence grant.
+The original repositories do not include licence files; this note is a credit and a pointer, not a licence grant.
 
 ## 🚀 Quick Start
 
@@ -209,13 +224,14 @@ The original repository does not include a licence file; this note is a credit a
 - Click "教师手册" in the top-right for the teacher's guide; "打印学习单" prints the worksheet or saves it as PDF
 - Progress is stored in this computer's browser and does not sync across devices
 
-### The Cabinet (six little toys: zoetrope / frost window / pin screen / wheel / marbling / koi)
-- Enter from the Cabinet door at the bottom of the home page, after the lessons (`奇趣阁：六件小玩具.html`); 「← 奇趣阁」 at the top-left of each toy goes back to the Cabinet
+### The Cabinet (a growing cabinet: zoetrope / frost window / pin screen / wheel / marbling / koi / glass workshop)
+- Enter from the Cabinet door at the bottom of the home page, after the lessons (`奇趣阁：N件小玩具.html`); 「← 奇趣阁」 at the top-left of each toy goes back to the Cabinet
 - **Frost window**: press and hold to breathe, write in the fog; tap the thermometer on the left stile to change the weather; 「快进 / 留住 / 重新结霜」 sit on the sill
 - **Pin screen**: press and the pins stay up; 「印手」 for a handprint, 「按个字」 for a word, the drawer for your own text or a stamp; 「橡皮」 wipes pins back, 「翻板」 drops them all, 「留住」 saves a picture
 - **Wheel**: hold 「转起来」 (or the pedal), then drag on the clay; if it slumps, tap 「再团一团」, then glaze and fire. On the shelf, tap a pot to see it large, name it, take it down, or 「存成一张图」
 - **Marbling**: drop ink, drag the comb, stir with the fan, then 「拉一张纸」; tap a print on the rack to see it large
 - **Koi pond**: tap the water, hold to feed, move a finger slowly; tap a fish for its name. Switch to 「我的池塘」 to build your own: pick fish, plant pads and lotus, drag things around, change the season — saved on the device, and exportable as a picture
+- **Glass workshop**: pick colours, hold to heat, gather the glass from the furnace, hold to blow, drag to turn/stretch/dent and pick a mold; decorate with stripes, a spiral, waves, dots or confetti; anneal slowly or quench quickly, then name and collect the piece. Works are kept on this device and can be re-edited
 - **Zoetrope**: see the section above
 
 ## 🎨 Features
@@ -228,8 +244,8 @@ The original repository does not include a licence file; this note is a credit a
 - 🔎 Learning through play: four Chinese discovery missions on viewpoint, lighting, materials and composition
 - 🫀 Layered anatomy with a five-station lesson, teacher's guide and printable worksheet
 - 🔄 Gradual learning curve
-- 🖐️ Hand-first toys: six things with no score that hold a child by feel and by "one more time"
-- 🔬 Every toy answers one "why": why frost grows, why pins spring back, why clay slumps, why ink floats, why a fish follows your finger
+- 🖐️ Hand-first toys: a growing cabinet of things with no score that hold a child by feel and by "one more time"
+- 🔬 Every toy answers one "why": why frost grows, why pins spring back, why clay slumps, why ink floats, why a fish follows your finger, why glass softens in the heat
 
 ## 📝 Planned Features
 

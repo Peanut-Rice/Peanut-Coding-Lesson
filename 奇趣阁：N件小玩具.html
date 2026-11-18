@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#f5f0e7">
-<title>奇趣阁 · 六件不用学的小东西</title>
-<meta name="description" content="Peanut 的奇趣阁：六件不用学、只管玩的小玩具——会动的转筒、会结霜的窗、会记住手印的针幕、会塌的陶轮、水上的水拓画和一池锦鲤。单文件、完全离线。">
+<title>奇趣阁 · 一柜子小玩具</title>
+<meta name="description" content="Peanut 的奇趣阁：一柜子不用学、只管玩的小玩具——会动的转筒、会结霜的窗、会记住手印的针幕、会塌的陶轮、水上的水拓画、一池锦鲤，还有一间会吹玻璃的小工坊。单文件、完全离线。">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Peanut's Cabinet">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:title" content="奇趣阁 · 六件不用学的小东西">
-<meta property="og:description" content="会动的、会塌的、会结霜的、会记住你手的。六件单文件小玩具，各有各的玩法。">
+<meta property="og:title" content="奇趣阁 · 一柜子小玩具">
+<meta property="og:description" content="会动的、会塌的、会结霜的、会记住你手的，还有一间会吹玻璃的小工坊。一柜子单文件小玩具，各有各的玩法。">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="奇趣阁 · 六件不用学的小东西">
-<meta name="twitter:description" content="会动的、会塌的、会结霜的、会记住你手的。六件单文件小玩具，各有各的玩法。">
+<meta name="twitter:title" content="奇趣阁 · 一柜子小玩具">
+<meta name="twitter:description" content="会动的、会塌的、会结霜的、会记住你手的，还有一间会吹玻璃的小工坊。一柜子单文件小玩具，各有各的玩法。">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗝️</text></svg>">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -189,6 +189,18 @@
   .t-pot{--accent:#a2603c}
   .t-ink{--accent:#2f7f79}
   .t-koi{--accent:#b06034}
+  .t-glass{--accent:#2f747a}
+
+  .spec.feature{grid-column:1/-1;display:grid;grid-template-columns:1.06fr .94fr}
+  .spec.feature .plate{
+    aspect-ratio:auto;min-height:320px;border-bottom:0;border-right:1px solid rgba(34,28,24,.09);
+    background:linear-gradient(158deg,#faf4e7 0%,#edf1e9 55%,#e2ece7 100%);
+  }
+  .spec.feature .body{justify-content:center;padding:clamp(24px,3.2vw,40px) clamp(24px,3.4vw,42px)}
+  .spec.feature .name{font-size:clamp(24px,2.7vw,31px)}
+  .spec.feature .line{font-size:14.5px;max-width:46ch}
+  .spec.feature .how{max-width:46ch;padding-top:12px}
+  .spec.feature .foot{margin-top:10px}
 
   .spec svg .f{fill:var(--accent);stroke:none}
   .spec svg .s{fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
@@ -215,6 +227,10 @@
   @media (max-width:820px){
     .cabinet{grid-template-columns:1fr}
     .plate{aspect-ratio:16/8.4}
+    .spec.feature{display:flex;flex-direction:column}
+    .spec.feature .plate{min-height:0;aspect-ratio:16/8.4;border-right:0;border-bottom:1px solid rgba(34,28,24,.09)}
+    .spec.feature .body{padding:16px clamp(16px,2.4vw,24px) 18px}
+    .spec.feature .name{font-size:clamp(21px,2.2vw,24px)}
     header{padding-top:clamp(32px,6vw,52px)}
   }
   @media (max-width:520px){
@@ -241,7 +257,7 @@
     <span class="brand"><span class="key" aria-hidden="true">🗝️</span> <b>Peanut's</b> Cabinet</span>
     <span class="right">
       <a class="home" href="index.html">← 乐园</a>
-      <span>Vol. 02 · 六件小玩具</span>
+      <span>Vol. 02 · 一柜子小玩具</span>
     </span>
   </div>
 
@@ -249,11 +265,11 @@
     <span class="eyebrow">A cabinet of small curiosities</span>
     <h1>奇趣阁</h1>
     <p class="lead">
-      六件不用学、只管玩的小东西：会动的、会塌的、会结霜的、会记住你手的。<br class="lead-br">
+      一柜子不用学、只管玩的小东西：会动的、会塌的、会结霜的、会记住你手的，还有一间会吹玻璃的小工坊。<br class="lead-br">
       挑一件，推门进去。
     </p>
     <ul class="meta">
-      <li>六件小玩具</li>
+      <li>一柜子小玩具</li>
       <li>单文件</li>
       <li>完全离线</li>
       <li>不用学，只管玩</li>
@@ -432,10 +448,43 @@
       </span>
     </a>
 
+    <!-- 07 玻璃工坊 -->
+    <a class="spec feature t-glass" href="奇妙玻璃工坊.html">
+      <span class="plate">
+        <span class="n">N° 07 · NEW</span>
+        <svg viewBox="0 0 320 170" aria-hidden="true">
+          <g class="s">
+            <path d="M40 146v-28c0-13 11-23 24-23s24 10 24 23v28" opacity=".4"/>
+            <path d="M52 146v-22c0-7 5-12 12-12s12 5 12 12v22" opacity=".58"/>
+            <path d="M55 140c4-7 8-7 12 0s8 7 12 0" opacity=".62"/>
+            <path d="M158 36h34l-5 20c13 10 21 24 21 41 0 30-14 50-33 50s-33-20-33-50c0-17 8-31 21-41l-5-20Z"/>
+            <ellipse cx="175" cy="36" rx="17" ry="5.5"/>
+            <path d="M150 92c17-6 33-6 50 0M147 111c19-6 37-6 56 0M150 130c16-5 34-5 50 0" opacity=".5"/>
+            <path d="M160 57c-4 6-7 12-8 18" opacity=".32"/>
+            <path d="M212 132l44-22M208 130l9 5" opacity=".55"/>
+            <path d="M112 48c-18 8-30 24-30 44" opacity=".16"/>
+          </g>
+          <g class="f" opacity=".55">
+            <circle cx="138" cy="64" r="1.6"/>
+            <circle cx="222" cy="82" r="1.2"/>
+            <circle cx="86" cy="74" r="1.5"/>
+            <circle cx="238" cy="118" r="1.1"/>
+          </g>
+          <circle class="f" cx="76" cy="111" r="2.6" opacity=".32"/>
+        </svg>
+      </span>
+      <span class="body">
+        <span class="name">奇妙玻璃工坊<em>The Wonder Glass Atelier</em></span>
+        <span class="line">一团烧得发亮的玻璃，吹一口气就鼓起来；转一转、拉一拉、捏一捏，再慢慢冷却，变成只属于你的玻璃作品。</span>
+        <span class="how">怎么玩：先<b>选颜色</b>、按住加热，再<b>吹气</b>、拖动塑形；作品会收进本机的作品馆</span>
+        <span class="foot"><span class="go">推门 →</span></span>
+      </span>
+    </a>
+
   </main>
 
   <div class="after">
-    <p>每件玩具都配了一段讲给孩子听的<b>「为什么」</b>——霜怎么长、针怎么弹、泥怎么塌、墨怎么浮、鱼为什么跟着手。没有分数，没有输赢，玩到哪儿算哪儿。</p>
+    <p>每件玩具都配了一段讲给孩子听的<b>「为什么」</b>——霜怎么长、针怎么弹、泥怎么塌、墨怎么浮、鱼为什么跟着手，还有玻璃为什么会变软、吹气为什么能把它鼓起来。没有分数，没有输赢，玩到哪儿算哪儿。</p>
   </div>
 
   <footer>
