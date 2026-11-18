@@ -202,6 +202,7 @@
     backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
     box-shadow:0 18px 40px -24px #000; pointer-events:none;
   }
+  .mentor-hit{display:none}
   .mentor .spark{
     width:30px; height:30px; flex:none; border-radius:50%; position:relative; margin-top:1px;
     background:radial-gradient(circle at 38% 30%,#fff4d2 0%,#ffc06e 32%,#f0713a 68%,#8e2f12 100%);
@@ -795,11 +796,30 @@
     .drag-cue{display:none}
     .toast{bottom:16px;font-size:10px;padding:9px 13px}
     .mobile-hold{right:12px;bottom:12px}
-    .mentor{max-width:calc(100% - 96px);left:11px;bottom:11px;gap:8px;padding:8px 10px;border-radius:13px}
-    .mentor p{font-size:9.5px;line-height:1.55}
-    .mentor .spark{width:24px;height:24px}
-    .mentor .spark::before{top:9px;left:7px}.mentor .spark::after{top:9px;right:7px}
-    .mentor .spark i{top:14px;width:5px;height:2px}
+    .mentor{
+      left:11px; bottom:11px; width:56px; height:56px; max-width:none; min-width:0;
+      padding:0; gap:0; align-items:center; justify-content:center; border-radius:50%;
+      pointer-events:auto; transition:border-radius .22s,background .22s;
+    }
+    .mentor-copy{display:none}
+    .mentor .spark{width:30px;height:30px;margin:0}
+    .mentor-hit{
+      display:block; position:absolute; inset:0; z-index:2; width:100%; height:100%;
+      padding:0; border:0; border-radius:inherit; background:transparent; cursor:pointer;
+    }
+    .mentor-hit:focus-visible{outline:2px solid var(--teal); outline-offset:3px}
+    .mentor.open{
+      width:auto; height:auto; max-width:calc(100% - 96px);
+      padding:10px 12px 11px; border-radius:15px; align-items:flex-start; justify-content:flex-start; gap:9px;
+    }
+    .mentor.open .mentor-copy{display:block; animation:fadeIn .24s var(--settle)}
+    .mentor.open .mentor-hit{
+      inset:auto; left:9px; top:10px; width:30px; height:30px; border-radius:50%;
+    }
+    .mentor.open .spark{width:28px;height:28px;margin-top:1px}
+    .mentor.open p{font-size:10px;line-height:1.6}
+    .mentor.open .m-think{font-size:9px}
+    .mentor.open .why{font-size:9.5px}
     .workbench{border-radius:18px;padding:16px}
     .panel-view h2{font-size:21px}
     .panel-lede{font-size:10.5px;margin-bottom:14px}
@@ -885,8 +905,9 @@
       </div>
 
       <div class="mentor" id="mentor">
+        <button class="mentor-hit" id="mentorToggle" type="button" aria-label="打开小熔炉的悄悄话" aria-controls="mentorCopy" aria-expanded="false"></button>
         <div class="spark" aria-hidden="true"><i></i></div>
-        <div class="mentor-copy">
+        <div class="mentor-copy" id="mentorCopy">
           <div class="m-label">小熔炉的悄悄话</div>
           <div class="m-think"><span class="q">?</span><span id="thinkQuestion">玻璃为什么会变软？</span></div>
           <p id="tipText">先挑一种颜色放进熔炉，再按住加热，看看它怎么变软。</p>
@@ -1001,9 +1022,9 @@
       </section>
 
       <section class="panel-view" data-view="cool">
-        <div class="eyebrow">Annealing · 冷却</div>
-        <h2>让玻璃慢慢安定</h2>
-        <p class="panel-lede">热玻璃突然遇冷，里外收缩不一样，就可能裂开。选一种冷却方式吧。</p>
+        <div class="eyebrow" id="coolEyebrow">Annealing · 冷却</div>
+        <h2 id="coolTitle">让玻璃慢慢安定</h2>
+        <p class="panel-lede" id="coolLede">热玻璃突然遇冷，里外收缩不一样，就可能裂开。选一种冷却方式吧。</p>
         <div id="coolChoices">
           <div class="cool-options" id="coolOptions">
             <button class="cool-card on" data-cool="slow">
@@ -2310,7 +2331,7 @@
   function updateParticles(dt) {
     if (state.stage === "melt" && state.heating && Math.random() < .5) spawnEmber(1);
     if (state.stage === "melt" && Math.random() < .12) spawnDust(1);
-    if (state.stage !== "melt" && Math.random() < .06) spawnDust(1);
+    if (state.stage !== "melt" && state.stage !== "done" && Math.random() < .06) spawnDust(1);
     if (state.cooling && state.coolType === "fast" && Math.random() < .55) spawnSteam(1);
 
     for (const p of particles) {
@@ -3119,6 +3140,7 @@
 
   function currentModel(now = performance.now()) {
     const heat = clamp((state.temp - 380) / 760, 0, 1);
+    const finished = state.stage === "done";
     return {
       size: state.size,
       lenRatio: state.lenRatio,
@@ -3133,8 +3155,9 @@
       thin: state.thin,
       cracks: state.cracks,
       asym: state.asym * .65,
-      sway: Math.sin(now * .0027) * state.asym * state.size * .22 + Math.sin(now * .0012 + 1) * state.size * .004 * (1 + state.thin),
-      lean: Math.sin(now * .00055) * state.asym * state.size * .22
+      sway: finished ? 0 : Math.sin(now * .0027) * state.asym * state.size * .22 + Math.sin(now * .0012 + 1) * state.size * .004 * (1 + state.thin),
+      lean: finished ? 0 : Math.sin(now * .00055) * state.asym * state.size * .22,
+      finished
     };
   }
 
@@ -3182,24 +3205,6 @@
 
     drawHeatAura(now);
     drawParticles(g);
-
-    if (state.stage === "done") {
-      g.save();
-      g.globalCompositeOperation = "lighter";
-      for (let i = 0; i < 12; i++) {
-        const a = now * .00018 + i * 2.2;
-        const rr = state.size * (1.2 + Math.sin(now * .001 + i) * .25);
-        const x = cx + Math.cos(a + i) * rr;
-        const y = layout.baseY - state.size * .8 + Math.sin(a * 1.3 + i) * rr * .5;
-        const sz = 1 + Math.sin(now * .002 + i) * .8;
-        g.globalAlpha = .2 + Math.sin(now * .0017 + i) * .12;
-        g.fillStyle = i % 3 ? "#ffe6b7" : "#a9fff0";
-        g.beginPath();
-        g.arc(x, y, Math.max(.4, sz), 0, TAU);
-        g.fill();
-      }
-      g.restore();
-    }
   }
 
   function drawIntro(now) {
@@ -3269,14 +3274,75 @@
     done: ["YOUR PIECE · 完成", "它现在属于你了", "转一转，看看它在光里的样子。"]
   };
 
+  const mentorMedia = window.matchMedia("(max-width: 680px)");
+  let mentorHideTimer = null;
+  let tipWhy = "";
+  let tipWhyWanted = false;
+
+  function mentorIsCompact() {
+    return mentorMedia.matches;
+  }
+  function paintTipWhy() {
+    const whyText = $("whyText");
+    if (!whyText) return;
+    if (tipWhyWanted && tipWhy) {
+      whyText.textContent = tipWhy;
+      whyText.hidden = false;
+    } else {
+      whyText.hidden = true;
+    }
+  }
+  function closeMentor() {
+    const box = $("mentor");
+    if (box) box.classList.remove("open");
+    const btn = $("mentorToggle");
+    if (btn) {
+      btn.setAttribute("aria-expanded", "false");
+      btn.setAttribute("aria-label", "打开小熔炉的悄悄话");
+    }
+    clearTimeout(mentorHideTimer);
+    mentorHideTimer = null;
+    const whyText = $("whyText");
+    if (whyText) whyText.hidden = true;
+  }
+  function scheduleMentorClose() {
+    clearTimeout(mentorHideTimer);
+    mentorHideTimer = null;
+    if (!mentorIsCompact() || !$("mentor")?.classList.contains("open")) return;
+    mentorHideTimer = setTimeout(closeMentor, 11000);
+  }
+  function openMentor() {
+    if (!mentorIsCompact()) return;
+    $("mentor").classList.add("open");
+    const btn = $("mentorToggle");
+    btn.setAttribute("aria-expanded", "true");
+    btn.setAttribute("aria-label", "收起小熔炉的悄悄话");
+    paintTipWhy();
+    scheduleMentorClose();
+  }
+  function toggleMentor() {
+    if (!mentorIsCompact()) return;
+    if ($("mentor").classList.contains("open")) closeMentor();
+    else openMentor();
+  }
+
   function setTip(text, why = null, showWhy = false) {
     const tipText = $("tipText"), whyText = $("whyText");
     tipText.textContent = text || TIPS[state.stage]?.text || "";
+    tipWhy = why && showWhy ? why : "";
+    tipWhyWanted = !!(why && showWhy);
     clearTimeout(setTip._timer);
-    if (why && showWhy) {
-      whyText.textContent = why;
-      whyText.hidden = false;
-      setTip._timer = setTimeout(() => { whyText.hidden = true; }, 7200);
+    if (!mentorIsCompact()) {
+      if (tipWhyWanted) {
+        whyText.textContent = tipWhy;
+        whyText.hidden = false;
+        setTip._timer = setTimeout(() => { whyText.hidden = true; }, 7200);
+      } else {
+        whyText.hidden = true;
+      }
+    } else if ($("mentor").classList.contains("open")) {
+      paintTipWhy();
+      scheduleMentorClose();
     } else {
       whyText.hidden = true;
     }
@@ -3291,6 +3357,7 @@
 
   function goStage(stage) {
     state.stage = stage;
+    closeMentor();
     state.heating = false;
     state.blowing = false;
     Sound.stopAir();
@@ -3299,6 +3366,15 @@
 
     const view = stage === "done" ? "cool" : stage;
     document.querySelectorAll(".panel-view").forEach(v => v.classList.toggle("on", v.dataset.view === view));
+    if (stage === "done") {
+      $("coolEyebrow").textContent = "YOUR PIECE · 完成";
+      $("coolTitle").textContent = "作品完成了";
+      $("coolLede").textContent = "玻璃已经慢慢冷却，颜色和光也安定下来了。给它取个名字，收进作品馆吧。";
+    } else if (view === "cool") {
+      $("coolEyebrow").textContent = "Annealing · 冷却";
+      $("coolTitle").textContent = "让玻璃慢慢安定";
+      $("coolLede").textContent = "热玻璃突然遇冷，里外收缩不一样，就可能裂开。选一种冷却方式吧。";
+    }
 
     const order = ["melt", "blow", "decor", "cool"];
     const idx = stage === "done" ? 4 : order.indexOf(stage);
@@ -4787,6 +4863,11 @@
     $("introFreeBtn").addEventListener("click", startFree);
     $("introGalleryBtn").addEventListener("click", openGallery);
 
+    $("mentorToggle").addEventListener("click", toggleMentor);
+    const onMentorMedia = () => { if (!mentorIsCompact()) closeMentor(); };
+    if (mentorMedia.addEventListener) mentorMedia.addEventListener("change", onMentorMedia);
+    else mentorMedia.addListener(onMentorMedia);
+
     document.querySelectorAll(".cabinet-link, .intro-cabinet").forEach(link => {
       link.addEventListener("click", (e) => {
         if (state.stage === "melt" || state.size === 0 || state.workSaved) return;
@@ -4980,7 +5061,7 @@
         if (state.coolProgress >= 1) finishCooling();
       }
     } else if (state.stage === "done") {
-      state.rotation += dt * .055;
+      // The finished piece is deliberately still: no auto-spin, no idle sway.
       state.temp = 22;
     }
 
