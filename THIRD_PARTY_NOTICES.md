@@ -145,3 +145,12 @@ this repository is an unofficial, fan-made artistic interpretation. It is
 not affiliated with or endorsed by the rights holders. No official assets,
 logos or models from the character are included; the sculpt, textures,
 materials and scene are generated procedurally in code.
+
+## Murmuration (inspiration only, no bundled code)
+
+The dusk toy `椋鸟：一片会呼吸的布.html` takes its subject and mood from
+[MiaAI-Lab/Claude-Fable-5.2-HTML-Files — 012-murmuration-at-dusk.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/012-murmuration-at-dusk.html).
+No code, markup, imagery or audio from that study is bundled or copied. The flock
+simulation, falcon interaction, sky and marsh painting, palettes, wing-rush sound and
+local saving were written for this project. The upstream repository does not declare a
+licence; this note is a credit, not a licence grant.

@@ -1,6 +1,6 @@
 # Peanut's Coding Lesson 🎓
 
-A coding-learning project for children: **six lessons** — programming, physics, history on the map, a 3D art toy, a 3D anatomy lesson — plus **the Cabinet**, a growing collection of small things to play with by hand: a zoetrope, a frosted window, a pin screen, a pottery wheel, a marbling tray, a koi pond and a glass workshop.
+A coding-learning project for children: **six lessons** — programming, physics, history on the map, a 3D art toy, a 3D anatomy lesson — plus **the Cabinet**, a growing collection of small things to play with by hand: a zoetrope, a frosted window, a pin screen, a pottery wheel, a marbling tray, a koi pond, a murmuration and a glass workshop.
 
 **Open it online: <https://peanut-rice.github.io/Peanut-Coding-Lesson/>** — nothing to install. For offline use, download the repo and open `index.html`.
 
@@ -159,11 +159,26 @@ The atelier is where you take a lesson; the Cabinet is where you play. A growing
 - **Free play**: skip melting and start with a random colour and form; each stage also offers a small "think about it" question
 - Desktop-first, still usable in phone portrait; Space blows, arrow keys shape
 
+### 8. 🐦 Murmuration · A Cloth That Breathes
+**File:** `椋鸟：一片会呼吸的布.html`
+
+- A single-file dusk murmuration: 2,200 starlings (1,400 on phones) gather over a reed marsh into one folding, breathing cloth
+- Each bird watches only its nearest few neighbours and does three small things — **don't collide**, **fly the same way**, **stay close**; thousands of "follow your neighbour" add up to one living sheet
+- **Your pointer is a falcon**: come close and the flock parts, wraps behind you and closes again; a click makes the falcon tuck its wings and stoop, punching a hole that heals almost at once
+- **Waves of alarm**: the birds at the edge dodge first and the alarm passes to their neighbours — a dark wave runs through the flock, and startled birds briefly draw thicker and longer
+- **The evening ends itself**: left alone, after two or three minutes the flock funnels down and pours into the reeds like liquid, rests, and a new evening begins; 「让它们落下」/「再飞一会儿」 lets you call them down or send them back up
+- **Depth and volume**: near birds draw larger and darker, overlaps darken like folds, so the sheet has thickness rather than reading as a sheet of paper
+- Four palettes (Dusk / Blue hour / Aurora / Rose dusk) change sky, sun, water, reeds and interface together, and are remembered
+- Sound is off by default; when on it is a soft rush of wings that follows the flock's speed and fear
+- 「留住」 saves the scene as a PNG; works in phone portrait, has keyboard controls (arrows guide the falcon, space stoops) and a reduced-motion variant
+
 ### Where these toys come from
 
 The earliest Cabinet toys began as studies in [MiaAI-Lab/Claude-Fable-5.2-HTML-Files](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files) ([the gallery](https://miaai-lab.github.io/Claude-Fable-5.2-HTML-Files/)), a collection of 76 HTML visual studies. We kept the subject matter and the mood and reworked everything else — play, interaction, offline packaging, accessibility and copy — into single files you can open on their own for this class.
 
 **The Wonder Glass Atelier** was inspired by [GLASSHOUSE — the hot shop](https://github.com/MiaAI-Lab/GLM-5.3-100-HTML-Files/blob/main/075-glasshouse-blower.html) from [MiaAI-Lab/GLM-5.3-100-HTML-Files](https://github.com/MiaAI-Lab/GLM-5.3-100-HTML-Files), and was rebuilt around melting, colour mixing, blowing, shaping, decorating, annealing, collecting and local saving.
+
+**Murmuration** takes its subject from [012-murmuration-at-dusk.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/012-murmuration-at-dusk.html) in the same collection: the dusk, the reed marsh, the thousands of birds and the falcon remain, while the flock algorithm, falcon interaction, Chinese copy, palettes, sound, roosting and local saving were rewritten from scratch.
 
 | Cabinet | Original study |
 | --- | --- |
@@ -173,6 +188,7 @@ The earliest Cabinet toys began as studies in [MiaAI-Lab/Claude-Fable-5.2-HTML-F
 | The Wheel | [025-pottery-wheel.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/025-pottery-wheel.html) |
 | Suminagashi | [001-suminagashi-marbling-tray.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/001-suminagashi-marbling-tray.html) |
 | Koi Pond, Noon | [009-koi-pond-noon.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/009-koi-pond-noon.html) |
+| Murmuration | [012-murmuration-at-dusk.html](https://github.com/MiaAI-Lab/Claude-Fable-5.2-HTML-Files/blob/main/012-murmuration-at-dusk.html) |
 | The Wonder Glass Atelier | [075-glasshouse-blower.html](https://github.com/MiaAI-Lab/GLM-5.3-100-HTML-Files/blob/main/075-glasshouse-blower.html) |
 
 The original repositories do not include licence files; this note is a credit and a pointer, not a licence grant.
@@ -225,7 +241,7 @@ The original repositories do not include licence files; this note is a credit an
 - Click "教师手册" in the top-right for the teacher's guide; "打印学习单" prints the worksheet or saves it as PDF
 - Progress is stored in this computer's browser and does not sync across devices
 
-### The Cabinet (a growing cabinet: zoetrope / frost window / pin screen / wheel / marbling / koi / glass workshop)
+### The Cabinet (a growing cabinet: zoetrope / frost window / pin screen / wheel / marbling / koi / murmuration / glass workshop)
 - Enter from the Cabinet door at the bottom of the home page, after the lessons (`奇趣阁：N件小玩具.html`); 「← 奇趣阁」 at the top-left of each toy goes back to the Cabinet
 - **Frost window**: press and hold to breathe, write in the fog; tap the thermometer on the left stile to change the weather; 「快进 / 留住 / 重新结霜」 sit on the sill
 - **Pin screen**: press and the pins stay up; 「印手」 for a handprint, 「按个字」 for a word, the drawer for your own text or a stamp; 「橡皮」 wipes pins back, 「翻板」 drops them all, 「留住」 saves a picture
@@ -233,6 +249,7 @@ The original repositories do not include licence files; this note is a credit an
 - **Marbling**: drop ink, drag the comb, stir with the fan, then 「拉一张纸」; tap a print on the rack to see it large
 - **Koi pond**: tap the water, hold to feed, move a finger slowly; tap a fish for its name. Switch to 「我的池塘」 to build your own: pick fish, plant pads and lotus, drag things around, change the season — saved on the device, and exportable as a picture
 - **Glass workshop**: pick colours, hold to heat, gather the glass from the furnace, hold to blow, drag to turn/stretch/dent and pick a mold; decorate with stripes, a spiral, waves, dots or confetti; anneal slowly or quench quickly, then name and collect the piece. Works are kept on this device and can be re-edited
+- **Murmuration**: move a finger and the falcon follows it — the flock parts around you; pause and the falcon hunts on its own; click to stoop and punch a hole that closes again; 「让它们落下」 pours them into the reeds, 「配色」 changes the dusk, 「留住」 saves a picture
 - **Zoetrope**: see the section above
 
 ## 🎨 Features
@@ -246,7 +263,7 @@ The original repositories do not include licence files; this note is a credit an
 - 🫀 Layered anatomy with a five-station lesson, teacher's guide and printable worksheet
 - 🔄 Gradual learning curve
 - 🖐️ Hand-first toys: a growing cabinet of things with no score that hold a child by feel and by "one more time"
-- 🔬 Every toy answers one "why": why frost grows, why pins spring back, why clay slumps, why ink floats, why a fish follows your finger, why glass softens in the heat
+- 🔬 Every toy answers one "why": why frost grows, why pins spring back, why clay slumps, why ink floats, why a fish follows your finger, why birds become one cloth, why glass softens in the heat
 
 ## 📝 Planned Features
 
