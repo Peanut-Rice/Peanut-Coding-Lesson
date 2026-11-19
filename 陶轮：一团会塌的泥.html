@@ -117,6 +117,13 @@ body[data-st="collapsed"] .slumps{opacity:0}
 .gl[data-g="tenmoku"] i{background:radial-gradient(circle at 50% 50%,#2A1A14 58%,#8a4b25 74%)}
 .gl[data-g="cobalt"] i{background:#2B4C7E}
 .gl[data-g="oatmeal"] i{background:radial-gradient(circle at 30% 60%,#6b4226 0 1.2px,transparent 1.6px),radial-gradient(circle at 64% 36%,#6b4226 0 .9px,transparent 1.3px),radial-gradient(circle at 70% 72%,#6b4226 0 1.3px,transparent 1.7px),#E9E1CF}
+/* 花纹：色板是「白坯上的样子」，釉色才管颜色 */
+.gl[data-d="none"] i{background:linear-gradient(155deg,#DCB995,#B57C54)}
+.gl[data-d="dots"] i{background:radial-gradient(circle at 30% 30%,#4A2A18 0 3.1px,transparent 3.5px),radial-gradient(circle at 70% 42%,#4A2A18 0 3.1px,transparent 3.5px),radial-gradient(circle at 44% 72%,#4A2A18 0 3.1px,transparent 3.5px),radial-gradient(circle at 82% 78%,#4A2A18 0 3.1px,transparent 3.5px),#EFE4CC}
+.gl[data-d="rings"] i{background:repeating-linear-gradient(178deg,#4A2A18 0 2.4px,transparent 2.4px 6.8px),#EFE4CC}
+.gl[data-d="waves"] i{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M-3 11q4.5-6 9 0t9 0 9 0 9 0' fill='none' stroke='%234A2A18' stroke-width='2.6' stroke-linecap='round'/><path d='M-3 21q4.5-6 9 0t9 0 9 0 9 0' fill='none' stroke='%234A2A18' stroke-width='2.6' stroke-linecap='round'/></svg>") center/cover no-repeat,#EFE4CC}
+.gl[data-d="flowers"] i{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><g fill='%234A2A18'><circle cx='16' cy='7.6' r='4'/><circle cx='16' cy='24.4' r='4'/><circle cx='7.6' cy='16' r='4'/><circle cx='24.4' cy='16' r='4'/><circle cx='10' cy='10' r='3.4'/><circle cx='22' cy='10' r='3.4'/><circle cx='10' cy='22' r='3.4'/><circle cx='22' cy='22' r='3.4'/></g><circle cx='16' cy='16' r='4.2' fill='%23EFE4CC'/></svg>") center/cover no-repeat,#EFE4CC}
+.gl[data-d="ears"] i{background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='11' y='6' width='10' height='21' rx='4' fill='%234A2A18'/><path d='M11 11c-3.6 1.2-4.6 4-4.6 6.6s1.6 5.6 5 6.2M21 11c3.6 1.2 4.6 4 4.6 6.6s-1.6 5.6-5 6.2' fill='none' stroke='%234A2A18' stroke-width='2.6' stroke-linecap='round'/></svg>") center/cover no-repeat,#EFE4CC}
 .fire{
   flex:0 0 76px;border-radius:12px;background:linear-gradient(#E2703C,#B5653A);color:#FFF6E8;
   font-size:13px;font-weight:800;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;
@@ -140,6 +147,9 @@ body[data-st="emerge"] .row.spin,body[data-st="emerge"] .row.tools,body[data-st=
 body[data-st="toshelf"] .row.spin,body[data-st="toshelf"] .row.tools,body[data-st="toshelf"] .go,
 body[data-st="collapsed"] .row.spin,body[data-st="collapsed"] .row.tools,body[data-st="collapsed"] .go{display:none}
 body[data-st="glaze"] .hint,body[data-st="kiln"] .hint,body[data-st="emerge"] .hint,body[data-st="toshelf"] .hint{opacity:0}
+/* 画花纹这一步：只留下花纹一栏和下面那颗「上釉」按钮 */
+body[data-st="decor"] .row.spin,body[data-st="decor"] .row.tools{display:none}
+body[data-st="decor"] .hint{bottom:80px}
 
 .phasebar{display:none;align-items:center;gap:10px;padding:9px 11px;border-radius:16px;
   background:rgba(255,249,238,.92);border:1px solid rgba(122,62,34,.18);box-shadow:0 2px 0 rgba(122,62,34,.1);
@@ -355,7 +365,16 @@ body[data-st="emerge"] .phasebar,body[data-st="toshelf"] .phasebar{display:flex}
       <button class="btn" id="reLump" type="button" style="width:100%;min-height:52px;border-radius:14px;background:linear-gradient(#E2703C,#B5653A);color:#FFF6E8;font-size:17px;font-weight:800;box-shadow:0 4px 0 #8E4623">再团一团</button>
     </div>
 
-    <div class="glaze" id="gbar" hidden>
+    <div class="glaze" id="dbar" role="group" aria-label="画花纹" hidden>
+      <button class="gl" type="button" data-d="none" aria-pressed="true"><i></i>不画</button>
+      <button class="gl" type="button" data-d="dots" aria-pressed="false"><i></i>点点</button>
+      <button class="gl" type="button" data-d="rings" aria-pressed="false"><i></i>圈圈</button>
+      <button class="gl" type="button" data-d="waves" aria-pressed="false"><i></i>波浪</button>
+      <button class="gl" type="button" data-d="flowers" aria-pressed="false"><i></i>小花</button>
+      <button class="gl" type="button" data-d="ears" aria-pressed="false"><i></i>小耳朵</button>
+    </div>
+
+    <div class="glaze" id="gbar" role="group" aria-label="选釉色" hidden>
       <button class="gl" type="button" data-g="celadon" aria-pressed="false"><i></i>青瓷</button>
       <button class="gl" type="button" data-g="tenmoku" aria-pressed="false"><i></i>天目</button>
       <button class="gl" type="button" data-g="cobalt" aria-pressed="false"><i></i>钴蓝</button>
@@ -404,7 +423,7 @@ body[data-st="emerge"] .phasebar,body[data-st="toshelf"] .phasebar{display:flex}
       </button>
     </div>
 
-    <button class="go" id="go" type="button">就这样，上釉 →</button>
+    <button class="go" id="go" type="button">就这样，画花纹 →</button>
 
     <div class="phasebar" id="phasebar">
       <span id="phaseTxt">第 1 号上架了 ✨</span>
@@ -693,6 +712,14 @@ function buildBody(p, o, key) {
   paintStrips(x, p, o);
   bodyCache.key = key; bodyCache.cv = cv; bodyCache.L = L; bodyCache.T = T; bodyCache.W = w; bodyCache.H = h; bodyCache.SW = cw; bodyCache.SH = ch;
 }
+/* 釉面的高光单独拎出来：花纹要压在高光底下，才像「釉下」而不是贴纸 */
+function potGloss(x, p, o, m) {
+  if (!m.gloss) return;
+  const s = o.s, gx = -.56 + (o.glint || 0), L = p.H * s; x.lineCap = 'round';
+  x.strokeStyle = `rgba(255,255,255,${.13 * m.gloss})`; x.lineWidth = s * .95; surfLine(x, gx, 5, N - 5); x.stroke();
+  x.strokeStyle = `rgba(255,255,255,${.62 * m.gloss})`; x.lineWidth = s * .2; x.setLineDash([L * .3, L * .07, L * .1, L * .6]); x.lineDashOffset = -L * .08; surfLine(x, gx - .05, 4, N - 4); x.stroke();
+  x.setLineDash([]); x.strokeStyle = `rgba(255,255,255,${.2 * m.gloss})`; x.lineWidth = s * .12; surfLine(x, .87, 6, N - 6); x.stroke(); x.lineCap = 'butt';
+}
 function drawPot(x, p, o) {
   const m = o.mat, s = o.s, live = !!o.live;
   geom(p, o);
@@ -736,12 +763,7 @@ function drawPot(x, p, o) {
     for (let k = 0; k < n; k++) { const i = 1 + Math.floor(r() * (N - 2)), ph = (r() - .5) * 2.8, sz = (.035 + r() * r() * .12) * s * Math.cos(ph);
       x.beginPath(); x.arc(GX[i] + GR[i] * Math.sin(ph), GY[i] + GR[i] * TILT * Math.cos(ph), Math.max(.3, sz), 0, TAU); x.fill(); }
   }
-  if (m.gloss) {
-    const gx = -.56 + (o.glint || 0), L = p.H * s; x.lineCap = 'round';
-    x.strokeStyle = `rgba(255,255,255,${.13 * m.gloss})`; x.lineWidth = s * .95; surfLine(x, gx, 5, N - 5); x.stroke();
-    x.strokeStyle = `rgba(255,255,255,${.62 * m.gloss})`; x.lineWidth = s * .2; x.setLineDash([L * .3, L * .07, L * .1, L * .6]); x.lineDashOffset = -L * .08; surfLine(x, gx - .05, 4, N - 4); x.stroke();
-    x.setLineDash([]); x.strokeStyle = `rgba(255,255,255,${.2 * m.gloss})`; x.lineWidth = s * .12; surfLine(x, .87, 6, N - 6); x.stroke(); x.lineCap = 'butt';
-  }
+  if (m.gloss) potGloss(x, p, o, m);
   /* rim and hollow */
   const xt = GX[N - 1], yt = GY[N - 1], rt = GR[N - 1];
   let ri = 0;
@@ -830,19 +852,165 @@ function drawCrackle(x, look, s, base) {
   }
   x.restore();
 }
+/* ================= 花纹 · 配饰 =================
+   真的顺序是：泥胎半干时刻花、印花、贴塑 → 素烧 → 上釉 → 釉烧 1,240 ℃。
+   所以花纹在上釉「之前」，最后一次被釉盖住；代码里也就得画在釉层重画之后、
+   高光和冰裂纹之前——底下是釉，上面是玻璃光，中间夹着那层颜色。 */
+const DECO = {
+  dots: { n: '点点', k: 1, paint: 1 },
+  rings: { n: '圈圈', k: 2, paint: 1 },
+  waves: { n: '波浪', k: 3, paint: 1 },
+  flowers: { n: '小花', k: 4, paint: 1 },
+  ears: { n: '小耳朵', k: 5, paint: 0 } /* 配饰：贴在壁上，会伸出轮廓 */
+};
+const INK_IRON = [78, 42, 22], INK_SLIP = [248, 236, 212];
+function decoName(r) { return (r && r.d && DECO[r.d]) ? DECO[r.d].n : ''; }
+function potDesc(r) { const d = decoName(r); return GL[r.g][0] + (d ? '的' + d : '') + r.form; }
+function decoInk(rec, fired) {
+  if (!rec.g) return { ink: INK_IRON, a: .95 }; /* 还在泥胎上：铁褐色的化妆土 */
+  /* 深浅由「烧成后的釉」定，这样挑釉时看到的花纹，出窑之后还是那个色 */
+  const fm = firedGlaze(rec), sum = fm.ba[0] + fm.ba[1] + fm.ba[2];
+  let ink = sum < 300 ? INK_SLIP : INK_IRON; /* 深釉配白泥，浅釉配铁褐，不然花纹就没了 */
+  if (!fired) ink = mix(ink, GL[rec.g][2].ba, .3); /* 釉还没化开，蒙着一层乳浊 */
+  return { ink, a: .92 };
+}
+/* 外壁：左轮廓 → 底前弧 → 右轮廓 → 口沿前弧。这样花纹不会跑进壶嘴里 */
+function wallClip(x) {
+  x.beginPath();
+  for (let i = N - 1; i >= 0; i--) { const X = GX[i] - GR[i]; i === N - 1 ? x.moveTo(X, GY[i]) : x.lineTo(X, GY[i]); }
+  x.ellipse(GX[0], GY[0], GR[0], GR[0] * TILT, 0, PI, 0, true);
+  for (let i = 0; i <= N - 1; i++) x.lineTo(GX[i] + GR[i], GY[i]);
+  x.ellipse(GX[N - 1], GY[N - 1], GR[N - 1], GR[N - 1] * TILT, 0, 0, PI, false);
+  x.closePath(); x.clip();
+}
+/* 圆柱面上的一点：phi = 0 在正面，±π/2 是两侧轮廓；k 是被压扁的程度 */
+function surfPt(u, phi) {
+  const i = clamp(Math.round(u * (N - 1)), 0, N - 1), k = Math.cos(phi);
+  return { i, x: GX[i] + GR[i] * Math.sin(phi), y: GY[i] + GR[i] * k * TILT, k };
+}
+function wrapDot(x, u, phi, rcm, ink, a, s) {
+  const p = surfPt(u, phi); if (p.k < .08) return;
+  x.save(); x.translate(p.x, p.y); x.scale(Math.max(.12, p.k), 1);
+  x.fillStyle = rgb(ink, a); x.beginPath(); x.arc(0, 0, rcm * s, 0, TAU); x.fill(); x.restore();
+}
+function wrapStroke(x, pts, wcm, ink, a, s) {
+  x.lineCap = 'round';
+  for (let n = 1; n < pts.length; n++) {
+    const A = surfPt(pts[n - 1][0], pts[n - 1][1]), B = surfPt(pts[n][0], pts[n][1]), k = (A.k + B.k) / 2;
+    if (k < .07) continue;
+    x.strokeStyle = rgb(ink, a * (.4 + .6 * Math.min(1, k * 1.2)));
+    x.lineWidth = Math.max(.6, wcm * s * (.35 + .65 * k));
+    x.beginPath(); x.moveTo(A.x, A.y); x.lineTo(B.x, B.y); x.stroke();
+  }
+  x.lineCap = 'butt';
+}
+function decoDots(x, p, s, ink, a, r, lo, hi) {
+  const rows = clamp(Math.round(p.H / 4.4) + 2, 3, 5);
+  for (let j = 0; j < rows; j++) {
+    const u = lo + (rows < 2 ? .5 : j / (rows - 1)) * (hi - lo);
+    const n = clamp(Math.round(2.4 + p.H * .34), 3, 8), off = (j % 2) * .5 + (r() - .5) * .22;
+    for (let i = 0; i < n; i++) {
+      const phi = -PI / 2 + ((i + .5 + off) / n) * PI + (r() - .5) * .1;
+      if (Math.cos(phi) < .08) continue;
+      wrapDot(x, u + (r() - .5) * .035, phi, .34 + r() * .2, ink, a * (.78 + r() * .22), s);
+    }
+  }
+}
+function decoRings(x, p, s, ink, a, r, lo, hi) {
+  const n = clamp(Math.round(p.H / 4.2) + 1, 2, 4);
+  for (let j = 0; j < n; j++) {
+    const u0 = lo + (n < 2 ? .5 : j / (n - 1)) * (hi - lo), ph = r() * TAU, pts = [];
+    for (let t = 0; t <= 36; t++) { const phi = -PI / 2 + (t / 36) * PI;
+      pts.push([u0 + .014 * Math.sin(phi * 4 + ph) + .007 * Math.sin(phi * 9 + ph * 2), phi]); }
+    wrapStroke(x, pts, .2 + r() * .14, ink, a * (.72 + r() * .26), s);
+  }
+}
+function decoWaves(x, p, s, ink, a, r, lo, hi) {
+  const u0 = lo + .3 * (hi - lo), gap = Math.min(.2, (hi - lo) * .28);
+  for (let j = 0; j < 2; j++) {
+    const amp = .042 + r() * .016, per = 7 + (r() < .5 ? 1 : 0), ph = r() * TAU + j * PI, pts = [];
+    for (let t = 0; t <= 56; t++) { const phi = -PI / 2 + (t / 56) * PI;
+      pts.push([u0 + j * gap + amp * Math.sin(phi * per + ph), phi]); }
+    wrapStroke(x, pts, .2 + r() * .07, ink, a * (.75 + j * .12), s);
+  }
+}
+function decoFlowers(x, p, s, ink, a, r, lo, hi) {
+  const n = clamp(Math.round(p.H / 4.6) + 1, 2, 4);
+  for (let j = 0; j < n; j++) {
+    const u = lo + ((j + .5) / n) * (hi - lo) + (r() - .5) * .04;
+    const phi = (-PI / 2 + ((j + .55 + (r() - .5) * .3) / n) * PI) * .86; /* 别贴着轮廓，否则被压成一条 */
+    const c = surfPt(u, phi); if (c.k < .16) continue;
+    const pr = .33 + r() * .1, off = .45 + r() * .09, rot = r() * TAU, al = a * (.8 + r() * .2);
+    x.save(); x.translate(c.x, c.y); x.scale(Math.max(.12, c.k), 1);
+    x.fillStyle = rgb(ink, al);
+    for (let q = 0; q < 5; q++) { const ang = rot + q * TAU / 5;
+      x.beginPath(); x.ellipse(Math.cos(ang) * off * s, Math.sin(ang) * off * s, pr * s, pr * s * .8, ang, 0, TAU); x.fill(); }
+    x.fillStyle = rgb(mix(ink, [255, 250, 236], .58), al);
+    x.beginPath(); x.arc(0, 0, pr * .56 * s, 0, TAU); x.fill();
+    x.restore();
+  }
+}
+/* 小耳朵：贴塑，长在轮廓外面，所以不裁。釉也盖着它，所以用同一份材质上色 */
+function decoEars(x, rec, p, o, mat) {
+  const s = o.s; if (!(s > 0)) return;
+  let im = 1; for (let i = 1; i < N - 3; i++) if (GR[i] > GR[im]) im = i;
+  const i2 = clamp(im, Math.round((N - 1) * .3), Math.round((N - 1) * .62)), i1 = Math.round((N - 1) * .85);
+  if (i1 - i2 < 5) return;
+  const hw = Math.max(1.3, s * clamp(.6 + p.t * .22, .55, 1.05));
+  const bow = s * clamp(GR[i2] / s * .28, .75, 1.9), y1 = GY[i1], y2 = GY[i2];
+  const dh = Math.max(s * 1.2, y2 - y1);
+  x.lineCap = 'round';
+  for (const side of [-1, 1]) {
+    const x1 = GX[i1] + side * GR[i1] * .86, x2 = GX[i2] + side * GR[i2] * .9;
+    const path = (dx, dy) => {
+      x.beginPath(); x.moveTo(x1 + dx, y1 + dy);
+      x.bezierCurveTo(x1 + side * bow * .55 + dx, y1 + dh * .45 + dy, x2 + side * bow * .95 + dx, y2 - dh * .3 + dy, x2 + dx, y2 + dy);
+    };
+    x.strokeStyle = rgb(mat.sh); x.lineWidth = hw; path(0, 0); x.stroke();
+    x.strokeStyle = rgb(mat.ba); x.lineWidth = hw * .62; path(-side * hw * .1, -hw * .12); x.stroke();
+    x.strokeStyle = rgb(mat.li, .5); x.lineWidth = hw * .2; path(-side * hw * .16, -hw * .22); x.stroke();
+    x.fillStyle = rgb(mat.ba);
+    x.beginPath(); x.ellipse(x1, y1, hw * .54, hw * .44, 0, 0, TAU); x.fill();
+    x.beginPath(); x.ellipse(x2, y2, hw * .5, hw * .4, 0, 0, TAU); x.fill();
+  }
+  x.lineCap = 'butt';
+}
+function decoPaint(x, rec, p, o, fired) {
+  const d = rec.d, D = d && DECO[d]; if (!D || !D.paint) return;
+  const s = o.s, pal = decoInk(rec, fired), r = rng((rec.seed | 0) * 53 + D.k * 7919 + 3);
+  const lo = clamp(Math.max(.9 / Math.max(1, p.H), .05) + .085, .2, .5), hi = .88; /* 花纹留在釉线上头 */
+  if (d === 'dots') decoDots(x, p, s, pal.ink, pal.a, r, lo, hi);
+  else if (d === 'rings') decoRings(x, p, s, pal.ink, pal.a, r, lo, hi);
+  else if (d === 'waves') decoWaves(x, p, s, pal.ink, pal.a, r, lo, hi);
+  else decoFlowers(x, p, s, pal.ink, pal.a, r, lo, hi);
+}
+function decoFit(x, rec, p, o, fired) {
+  if (!rec.d || rec.d !== 'ears') return;
+  decoEars(x, rec, p, o, fired ? firedGlaze(rec) : (rec.g ? GL[rec.g][2] : LEATH));
+}
 function drawFinished(x, rec, o, fired) {
   const p = { r: rec.r, H: rec.H, t: rec.t, open: 1, uneven: 0, fold: null };
-  if (!rec.g) return drawPot(x, p, Object.assign({}, o, { mat: LEATH }));
+  if (!rec.g && !rec.d) return drawPot(x, p, Object.assign({}, o, { mat: LEATH }));
   drawPot(x, p, Object.assign({}, o, { mat: fired ? BISQ : LEATH, seed: rec.seed }));
-  const pts = glazeLine(x, rec, o);
-  const look = fired ? fireLook(rec) : null, glaze = fired ? firedGlaze(rec) : GL[rec.g][2];
-  x.save(); x.beginPath(); x.moveTo(-9999, -9999); x.lineTo(-9999, pts[0][1]);
-  for (const q of pts) x.lineTo(q[0], q[1]); x.lineTo(99999, pts[pts.length - 1][1]); x.lineTo(99999, -9999); x.closePath(); x.clip();
-  const g = drawPot(x, p, Object.assign({}, o, { mat: glaze, seed: rec.seed, raw: !fired }));
-  x.restore();
-  const m = glaze; x.strokeStyle = fired ? rgb(m.pool, .7) : rgb(mix(m.sh, OAT, .4), .5); x.lineWidth = Math.max(1, o.s * (fired ? .14 : .08));
-  x.beginPath(); for (let k = 2; k < pts.length - 2; k++) k === 2 ? x.moveTo(pts[k][0], pts[k][1]) : x.lineTo(pts[k][0], pts[k][1]); x.stroke();
-  if (look && look.crackle) drawCrackle(x, look, o.s, m.ba);
+  let g = null, look = null, glaze = null, pts = null;
+  if (rec.g) {
+    pts = glazeLine(x, rec, o);
+    look = fired ? fireLook(rec) : null; glaze = fired ? firedGlaze(rec) : GL[rec.g][2];
+    x.save(); x.beginPath(); x.moveTo(-9999, -9999); x.lineTo(-9999, pts[0][1]);
+    for (const q of pts) x.lineTo(q[0], q[1]); x.lineTo(99999, pts[pts.length - 1][1]); x.lineTo(99999, -9999); x.closePath(); x.clip();
+    g = drawPot(x, p, Object.assign({}, o, { mat: glaze, seed: rec.seed, raw: !fired }));
+    x.restore();
+  }
+  if (rec.d) {
+    x.save(); wallClip(x); decoPaint(x, rec, p, o, fired); x.restore();
+    decoFit(x, rec, p, o, fired);
+  }
+  if (glaze) {
+    const m = glaze; x.strokeStyle = fired ? rgb(m.pool, .7) : rgb(mix(m.sh, OAT, .4), .5); x.lineWidth = Math.max(1, o.s * (fired ? .14 : .08));
+    x.beginPath(); for (let k = 2; k < pts.length - 2; k++) k === 2 ? x.moveTo(pts[k][0], pts[k][1]) : x.lineTo(pts[k][0], pts[k][1]); x.stroke();
+    if (rec.d) potGloss(x, p, o, m); /* 高光压在花纹上面，不然像贴纸 */
+    if (look && look.crackle) drawCrackle(x, look, o.s, m.ba);
+  }
   return g;
 }
 
@@ -1009,7 +1177,7 @@ let st = 'throw', stT = 0, now = 0, ang = 0, spd = .42, pedal = .42, spinOn = tr
 let ct = null, hover = null, snap = null, needleT = -1;
 const ptr = { down: false, x: 0, y: 0, lx: 0, ly: 0, off: 0, mode: null, side: 1 };
 const drips = [{ xn: -.3, u: .8, v: .05 }, { xn: .45, u: .5, v: .035 }, { xn: -.7, u: .3, v: .04 }];
-const hintEl = $('#hint'), cardEl = $('#card'), gbar = $('#gbar'), fireBtn = $('#fire'), kread = $('#kread');
+const hintEl = $('#hint'), cardEl = $('#card'), gbar = $('#gbar'), dbar = $('#dbar'), fireBtn = $('#fire'), kread = $('#kread');
 const formTag = $('#formTag');
 let formTxt = '', formT = 0;
 
@@ -1028,27 +1196,38 @@ const slumpsEl = $('#slumps');
 function paintSlumps() { slumpsEl.textContent = '塌了 ' + slumps + ' 次'; }
 function addSlump() { slumps++; paintSlumps(); try { localStorage.setItem(SLUMP_KEY, String(slumps)); } catch (e) {} slumpsEl.classList.remove('bump'); void slumpsEl.offsetWidth; slumpsEl.classList.add('bump'); }
 
-/* ================= 拉坯 → 上釉 → 进窑 → 上架 ================= */
+/* ================= 拉坯 → 画花纹 → 上釉 → 进窑 → 上架 ================= */
 function newLump() {
   newP(false); wob = RM ? 0 : .32; rec = null;
-  document.querySelectorAll('.gl').forEach(b => b.setAttribute('aria-pressed', 'false'));
-  setTool('hands'); setPhase('throw'); gbar.hidden = true; kread.hidden = true; cardEl.hidden = true;
+  document.querySelectorAll('.gl[data-g]').forEach(b => b.setAttribute('aria-pressed', 'false'));
+  document.querySelectorAll('.gl[data-d]').forEach(b => b.setAttribute('aria-pressed', b.dataset.d === 'none' ? 'true' : 'false'));
+  setTool('hands'); setPhase('throw'); gbar.hidden = true; dbar.hidden = true; kread.hidden = true; cardEl.hidden = true;
   spinOn = true; spinUI(); formT = 0; paintForm();
   st = 'throw'; stT = 0; hint('');
-  $('#go').textContent = '就这样，上釉 →';
+  $('#go').textContent = '就这样，画花纹 →';
 }
 function pedSel() { document.querySelectorAll('.speed button').forEach(b => b.classList.toggle('on', Math.abs(+b.dataset.sp - pedal) < .01)); }
 function nextNo() { let n = 1; for (const r of shelf) n = Math.max(n, (r.no | 0) + 1); return n; }
-function toGlaze() {
+/* 第一站：花纹画在半干的泥胎上 */
+function toDecorate() {
   if (st !== 'throw') return;
   if (P.open < 1) { hint('先把泥团捏开：按住泥团顶上，或者按住不放'); return; }
   release(); spinOn = false; spinUI();
-  rec = { r: Array.from(P.r, v => Math.round(v * 100) / 100), H: Math.round(P.H * 10) / 10, t: +P.t.toFixed(3), g: null,
+  rec = { r: Array.from(P.r, v => Math.round(v * 100) / 100), H: Math.round(P.H * 10) / 10, t: +P.t.toFixed(3), g: null, d: null,
     seed: 1 + Math.floor(Math.random() * 9999), no: nextNo(), form: formName(P) };
+  setPhase('decor'); st = 'decor'; stT = 0;
+  gbar.hidden = true; dbar.hidden = false; kread.hidden = true; cardEl.hidden = true;
+  document.querySelectorAll('.gl[data-d]').forEach(b => b.setAttribute('aria-pressed', b.dataset.d === 'none' ? 'true' : 'false'));
+  fireBtn.disabled = true; hint('挑一种花纹，点一下试试');
+  $('#go').textContent = '花纹选好了，上釉 →';
+}
+/* 第二站：花纹被釉盖住 */
+function toGlaze() {
+  if (st !== 'decor' || !rec) return;
   setPhase('glaze'); st = 'glaze'; stT = 0;
-  gbar.hidden = false; kread.hidden = true; cardEl.hidden = true;
+  dbar.hidden = true; gbar.hidden = false; kread.hidden = true; cardEl.hidden = true;
   fireBtn.disabled = true; hint('挑一种釉，点一下刷上去');
-  document.querySelectorAll('.gl').forEach(b => b.setAttribute('aria-pressed', 'false'));
+  document.querySelectorAll('.gl[data-g]').forEach(b => b.setAttribute('aria-pressed', 'false'));
 }
 function fire() {
   if (st !== 'glaze' || !rec || !rec.g) return;
@@ -1068,7 +1247,7 @@ function toShelfNow() {
   const nm = rec.name ? rec.name.trim() : '';
   const phase = $('#phaseTxt'); phase.textContent = '';
   const no = document.createElement('b'); no.textContent = '第 ' + rec.no + ' 号';
-  phase.append(no, (nm ? ' 「' + nm + '」 ' : ' ') + '· ' + GL[rec.g][0] + rec.form + crack + ' 上架了 ✨' +
+  phase.append(no, (nm ? ' 「' + nm + '」 ' : ' ') + '· ' + potDesc(rec) + crack + ' 上架了 ✨' +
     (retired ? '（架子满 20 只，第 ' + retired.no + ' 号让了位）' : ''));
   renderShelf(rec.no);
   const it = row.querySelector('.pot[data-no="' + rec.no + '"]');
@@ -1190,14 +1369,21 @@ document.querySelectorAll('.speed button').forEach(b => b.addEventListener('clic
   pedal = +b.dataset.sp; pedSel();
 }));
 $('#pedal').addEventListener('click', () => { spinOn = !spinOn; spinUI(); });
-$('#go').addEventListener('click', toGlaze);
+$('#go').addEventListener('click', () => { if (st === 'throw') toDecorate(); else if (st === 'decor') toGlaze(); });
 $('#fire').addEventListener('click', fire);
 $('#reLump').addEventListener('click', () => { newLump(); });
 $('#againBtn').addEventListener('click', () => { if (st === 'emerge' || st === 'toshelf') newLump(); });
-document.querySelectorAll('.gl').forEach(b => b.addEventListener('click', () => {
+document.querySelectorAll('.gl[data-d]').forEach(b => b.addEventListener('click', () => {
+  if (st !== 'decor' || !rec) return;
+  const d = b.dataset.d;
+  rec.d = d === 'none' ? null : d;
+  document.querySelectorAll('.gl[data-d]').forEach(o => o.setAttribute('aria-pressed', o === b ? 'true' : 'false'));
+  if (rec.d === 'ears') ping(1800, .04); else if (rec.d) ping(2400, .03);
+}));
+document.querySelectorAll('.gl[data-g]').forEach(b => b.addEventListener('click', () => {
   if (st !== 'glaze' || !rec) return;
   rec.g = b.dataset.g;
-  document.querySelectorAll('.gl').forEach(o => o.setAttribute('aria-pressed', o === b ? 'true' : 'false'));
+  document.querySelectorAll('.gl[data-g]').forEach(o => o.setAttribute('aria-pressed', o === b ? 'true' : 'false'));
   fireBtn.disabled = false; hint('釉刷好了，点「进窑」');
 }));
 
@@ -1246,8 +1432,8 @@ function updateShelfHead() {
 function makePot(r, show) {
   const el = document.createElement('div'); el.className = 'pot'; el.dataset.no = String(r.no);
   const open = document.createElement('button'); open.type = 'button'; open.className = 'pot-open';
-  open.setAttribute('aria-label', '第 ' + r.no + ' 号' + (r.name ? '「' + r.name + '」' : '') + '，' + GL[r.g][0] + '的' + r.form + '，点开看大图');
-  open.title = '第 ' + r.no + ' 号' + (r.name ? ' · ' + r.name : '') + ' · ' + GL[r.g][0] + ' · ' + r.form;
+  open.setAttribute('aria-label', '第 ' + r.no + ' 号' + (r.name ? '「' + r.name + '」' : '') + '，' + potDesc(r) + '，点开看大图');
+  open.title = '第 ' + r.no + ' 号' + (r.name ? ' · ' + r.name : '') + ' · ' + potDesc(r);
   const m = maxRof(r.r), wcm = 2 * m + 1.2, hcm = r.H + r.r[N - 1] * TILT + r.r[0] * TILT + .9;
   const k = Math.min(1, POT_W / wcm, POT_H / hcm);
   const cvs = potCanvas(r, 16 * k);
@@ -1269,8 +1455,8 @@ function updatePotLabel(r) {
   const open = pot.querySelector('.pot-open'), lab = open && open.querySelector('span');
   if (lab) lab.textContent = potLabel(r);
   if (!open) return;
-  open.setAttribute('aria-label', '第 ' + r.no + ' 号' + (r.name ? '「' + r.name + '」' : '') + '，' + GL[r.g][0] + '的' + r.form + '，点开看大图');
-  open.title = '第 ' + r.no + ' 号' + (r.name ? ' · ' + r.name : '') + ' · ' + GL[r.g][0] + ' · ' + r.form;
+  open.setAttribute('aria-label', '第 ' + r.no + ' 号' + (r.name ? '「' + r.name + '」' : '') + '，' + potDesc(r) + '，点开看大图');
+  open.title = '第 ' + r.no + ' 号' + (r.name ? ' · ' + r.name : '') + ' · ' + potDesc(r);
 }
 function renderShelf(freshNo) {
   row.textContent = '';
@@ -1336,7 +1522,7 @@ function openViewer(r) {
   viewerStage.append(cvs);
   $('#viewerTitle').textContent = '第 ' + r.no + ' 号';
   viewerName.value = r.name || '';
-  const bits = [GL[r.g][0], r.form, '高 ' + r.H.toFixed(1) + ' 厘米'];
+  const bits = [GL[r.g][0], decoName(r), r.form, '高 ' + r.H.toFixed(1) + ' 厘米'].filter(Boolean);
   if (fireLook(r).crackle) bits.push('冰裂纹');
   if (r.at) bits.push(fmtDay(r.at));
   viewerMeta.textContent = '';
@@ -1388,7 +1574,7 @@ function saveWork(r) {
   const nm = (r.name || '').trim();
   x.fillText(nm || ('第 ' + r.no + ' 号'), W2 / 2, 112);
   x.fillStyle = '#9A7A56'; x.font = '600 25px ' + FONT;
-  x.fillText((nm ? '第 ' + r.no + ' 号 · ' : '') + GL[r.g][0] + ' · ' + r.form +
+  x.fillText((nm ? '第 ' + r.no + ' 号 · ' : '') + GL[r.g][0] + (decoName(r) ? ' · ' + decoName(r) : '') + ' · ' + r.form +
     (fireLook(r).crackle ? ' · 冰裂纹' : ''), W2 / 2, 156);
   const m = maxRof(r.r), wcm = 2 * m + 1.2, hcm = r.H + r.r[N - 1] * TILT + r.r[0] * TILT + .9;
   const pxcm = Math.min(560 / wcm, 600 / hcm, 120);
@@ -1490,7 +1676,7 @@ $('#snd').addEventListener('click', () => {
 /* ================= view ================= */
 function view() {
   const v = { wheel: true, wy: 0, pby: BY, ps: S, kiln: 0, board: 0 };
-  if (st === 'glaze') { v.wheel = false; v.board = 1; v.pby = BY - 1.2 * S; return v; }
+  if (st === 'glaze' || st === 'decor') { v.wheel = false; v.board = 1; v.pby = BY - 1.2 * S; return v; }
   if (st === 'kiln') { v.kiln = 1; v.wheel = false; return v; }
   if (st === 'emerge') { v.wheel = false; v.board = 1; v.pby = BY - 1.2 * S; v.kiln = 1 - eio(stT / 1.1); return v; }
   return v;
@@ -1513,7 +1699,7 @@ function draw() {
   if (v.wheel) c.drawImage(wheelLayer, 0, 0, W, Hh);
   else c.drawImage(bg, 0, 0, W, Hh);
   if (v.wheel) { const pr = (st === 'throw' || st === 'collapsing' || st === 'collapsed') ? P.r[0] : 0; wheelSpin(pr, P.H); }
-  if (st === 'glaze' || st === 'emerge') {
+  if (st === 'glaze' || st === 'decor' || st === 'emerge') {
     drawBoard(v.pby, v.ps);
     const o = { cx: CX, by: v.pby, s: v.ps, glint: st === 'emerge' ? -.3 * (1 - eo((stT - .5) / 1.4)) : 0 };
     drawFinished(c, rec, o, st === 'emerge' && stT > .2);
@@ -1585,6 +1771,8 @@ function update(dt) {
       P.r[i] = snap.r[i] + (tr - snap.r[i]) * p; P.fold[i] = p * (1.5 * Math.sin(u * 6.5 + .5) * u + .55 * Math.sin(u * 17) * u); }
     P.H = snap.H + (Ht - snap.H) * p; P.open = 1 - .45 * p; wob *= 1 - dt * 3;
     if (stT > (RM ? .12 : 1.05)) { spinOn = false; spinUI(); st = 'collapsed'; stT = 0; setPhase('collapsed'); $('#slumpN').textContent = slumps; $('#slumpWhy').textContent = slumpWhyTxt; cardEl.hidden = false; }
+  } else if (st === 'decor') {
+    hint(rec && rec.d ? '花纹画好了，按下面的「上釉」' : '挑一种花纹，点一下试试');
   } else if (st === 'glaze') {
     hint(rec && rec.g ? '釉刷好了，点「进窑」' : '挑一种釉，点一下刷上去');
   } else if (st === 'kiln') {
@@ -1612,7 +1800,7 @@ function drawKey() {
   if (st === 'throw') return base + 't' + ((ang * 20) | 0) + (ptr.down ? 'd' : '') + (wob > .1 ? now.toFixed(2) : '') +
     (needleT >= 0 ? now.toFixed(2) : '') + (hover ? (hover.u * 80 | 0) + ',' + hover.side + hover.mode : '');
   if (st === 'kiln' || st === 'collapsing' || st === 'emerge') return base + 'a' + now.toFixed(2);
-  return base + 's' + st + (rec ? (rec.g || '') + (rec.no | 0) : '') + (P.open < 1 ? 'o' : '');
+  return base + 's' + st + (rec ? (rec.g || '') + (rec.d || '') + (rec.no | 0) : '') + (P.open < 1 ? 'o' : '');
 }
 function frame(t) {
   raf = requestAnimationFrame(frame);

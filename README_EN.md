@@ -124,10 +124,11 @@ The atelier is where you take a lesson; the Cabinet is where you play. A growing
 - A single-file, offline pottery wheel: a lump of wet clay spins on the head; press the pedal to spin, then pull the clay up, push it in, open the mouth with a finger
 - Spin too fast or pull the wall too thin and the pot wobbles and slumps — that is not a failure, tap 「再团一团」 and it also keeps a cheerful 「塌了几次」 tally, and tells you whether you spun too fast, pulled too thin, or yanked too hard
 - While throwing, a small tag reads 「像 · 花瓶」 and changes as you shape; when it comes out of the kiln, a line announces 「第 7 号 · 青瓷花瓶上架了」
-- Choose a glaze (celadon / tenmoku / cobalt / oatmeal), fire it in the kiln; the finished pot lands on a **shelf that holds up to 20**, with a number, saved on this device
+- Before glazing, decorate the leather-hard body: **dots, bands, waves, flowers, or a pair of little ears**; then choose a glaze (celadon / tenmoku / cobalt / oatmeal) and fire it; the finished pot lands on a **shelf that holds up to 20**, with a number, saved on this device
+- **Why the pattern goes on before the glaze**: that is what potters do — paint on the greenware, dip it, and the glaze covers the pattern; after 1,240 °C the colour sits under the glass, so it shifts with the glaze (dark glazes get white-slip dots) and only really reads once fired. Overglaze enamel (gold) is the one that goes on afterwards, and that needs a second, cooler firing
 - **Look and keep**: tap a pot for a large view and give it a name; 「存成一张图」 saves the whole shelf (or a single pot) as a PNG; a pot can be taken down from its detail card, with a few seconds to undo; when the shelf is full at 20, a new pot asks the oldest one to step down
 - **No two firings alike**: the same glaze comes out a little deeper or paler, and sometimes opens ice-crackle; if the shelf is off-screen after firing, a 「看架子」 hint scrolls to it
-- Four steps: throw → glaze → fire → shelf; better on a big screen, still throwable in phone portrait
+- Five steps: throw → decorate → glaze → fire → shelf; better on a big screen, still throwable in phone portrait
 
 ### 5. 🌊 Suminagashi · The Marbling Tray
 **File:** `水拓画：水上的花纹.html`
