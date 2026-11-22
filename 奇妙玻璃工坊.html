@@ -639,7 +639,7 @@
 
   /* ---------------- gallery modal ---------------- */
   .modal{position:fixed;inset:0;z-index:110;display:flex;align-items:center;justify-content:center;padding:22px}
-  #confirmModal{z-index:115}
+  #confirmModal{z-index:118}
   .modal[hidden]{display:none}
   .modal-scrim{position:absolute;inset:0;background:rgba(3,8,7,.78);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);animation:fadeIn .35s}
   .gallery-shell{
@@ -676,12 +676,14 @@
   }
   .work-card:hover{transform:translateY(-3px);border-color:rgba(232,194,133,.28);box-shadow:0 22px 44px -26px #000}
   .work-thumb{
-    height:208px; position:relative; overflow:hidden;
+    display:block; width:100%; height:208px; position:relative; overflow:hidden;
+    padding:0; border:0; border-bottom:1px solid rgba(238,224,195,.07);
+    appearance:none; -webkit-appearance:none; font:inherit; color:inherit; text-align:inherit;
     background:
       radial-gradient(70% 60% at 50% 42%,rgba(255,190,120,.07),transparent 70%),
       linear-gradient(180deg,rgba(8,16,14,.4),rgba(5,11,10,.75));
-    border-bottom:1px solid rgba(238,224,195,.07);
   }
+  .work-thumb:focus-visible{outline:2px solid var(--teal); outline-offset:-2px}
   .work-thumb::before{
     content:""; position:absolute; left:50%; bottom:27px; width:68%; height:22px; transform:translateX(-50%);
     background:radial-gradient(ellipse,rgba(119,227,209,.12),transparent 70%); filter:blur(4px);
@@ -706,6 +708,78 @@
   .work-acts .del:hover{color:#f0a88d;border-color:rgba(240,168,141,.3);background:rgba(240,168,141,.06)}
   .work-acts .del svg{width:14px;height:14px}
   .work-acts .del.confirm{width:auto;padding:0 8px;font-size:8.5px;color:#f0a88d;border-color:rgba(240,168,141,.35);background:rgba(240,168,141,.08)}
+  .work-thumb{cursor:pointer}
+  .work-thumb::after{
+    content:"欣赏"; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(.92);
+    padding:5px 13px; border-radius:99px; font-size:9px; letter-spacing:.16em;
+    color:var(--gold-2); background:rgba(8,16,14,.66); border:1px solid rgba(232,194,133,.42);
+    opacity:0; transition:opacity .25s,transform .25s var(--settle); pointer-events:none;
+    backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+  }
+  .work-thumb:focus-visible::after{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  @media (hover:hover){
+    .work-card:hover .work-thumb::after{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  }
+
+  /* ---------------- artwork viewer ---------------- */
+  .viewer-modal{z-index:116}
+  .viewer-shell{
+    position:relative; z-index:2; width:min(980px,94vw); height:min(820px,90vh);
+    display:flex; flex-direction:column; border-radius:26px; overflow:hidden;
+    border:1px solid rgba(238,224,195,.16);
+    background:
+      radial-gradient(70% 46% at 50% 26%,rgba(255,196,132,.06),transparent 70%),
+      linear-gradient(170deg,rgba(17,33,29,.985),rgba(6,13,12,.995));
+    box-shadow:0 60px 140px -40px #000, inset 0 1px 0 rgba(255,255,255,.07);
+    animation:modalIn .42s var(--spring);
+  }
+  .viewer-stage{position:relative; flex:1; min-height:0; overflow:hidden; touch-action:none}
+  .viewer-stage canvas{position:absolute; inset:0; width:100%; height:100%; cursor:grab}
+  .viewer-stage canvas.dragging{cursor:grabbing}
+  .viewer-hint{
+    position:absolute; left:50%; bottom:15px; transform:translateX(-50%);
+    font-size:9px; letter-spacing:.14em; color:rgba(238,224,195,.36);
+    pointer-events:none; transition:opacity .6s; white-space:nowrap;
+  }
+  .viewer-hint.hide{opacity:0}
+  .viewer-nav{
+    position:absolute; top:50%; transform:translateY(-50%); width:42px; height:42px; border-radius:50%;
+    display:grid; place-items:center; color:var(--soft); z-index:3;
+    border:1px solid rgba(238,224,195,.16); background:rgba(8,16,14,.55);
+    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); transition:all .22s;
+  }
+  .viewer-nav:hover:not(:disabled){color:var(--gold-2); border-color:rgba(232,194,133,.45); background:rgba(232,194,133,.1)}
+  .viewer-nav:disabled{opacity:.22; cursor:default}
+  .viewer-nav.prev{left:14px}
+  .viewer-nav.next{right:14px}
+  .viewer-nav svg{width:17px; height:17px}
+  .viewer-bar{
+    flex:none; display:flex; align-items:center; gap:14px; padding:15px 20px 17px;
+    border-top:1px solid rgba(238,224,195,.1); background:rgba(4,10,9,.5);
+  }
+  .viewer-info{flex:1; min-width:0}
+  .viewer-info h3{
+    margin:0; font-family:var(--serif); font-size:20px; font-weight:600; letter-spacing:.06em; color:#f6eddb;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .viewer-info .sub{
+    display:flex; align-items:center; gap:7px; margin-top:5px;
+    font-size:9px; letter-spacing:.05em; color:var(--faint); white-space:nowrap; overflow:hidden;
+  }
+  .viewer-info .sub i{width:2px; height:2px; border-radius:50%; background:var(--faint); flex:none; font-style:normal}
+  .viewer-info .sub span{overflow:hidden; text-overflow:ellipsis}
+  .viewer-info .swatches{display:flex; gap:3px; flex:none}
+  .viewer-info .swatches span{width:7px; height:7px; border-radius:50%; box-shadow:0 0 0 1px rgba(255,255,255,.1)}
+  .viewer-acts{display:flex; align-items:center; gap:8px; flex:none}
+  .viewer-acts .ghost-btn{min-height:34px; padding:0 14px; font-size:10px; width:auto}
+  .viewer-acts .danger{color:#eda893; border-color:rgba(240,168,141,.24)}
+  .viewer-acts .danger:hover{color:#ffbca6; border-color:rgba(240,168,141,.5); background:rgba(240,168,141,.08)}
+  .viewer-close{
+    width:34px; height:34px; border-radius:50%; display:grid; place-items:center; flex:none;
+    border:1px solid rgba(238,224,195,.14); color:var(--muted); background:rgba(255,255,255,.03); transition:all .2s;
+  }
+  .viewer-close:hover{color:var(--gold-2); border-color:rgba(238,224,195,.3); transform:rotate(90deg)}
+  .viewer-close svg{width:15px; height:15px}
   .empty-gallery{min-height:380px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:9px}
   .empty-gallery .vase{width:90px;height:110px;opacity:.5;margin-bottom:7px}
   .empty-gallery h3{margin:0;font-family:var(--serif);font-size:21px;font-weight:500;color:#d7d6c7;letter-spacing:.08em}
@@ -847,6 +921,16 @@
     .gallery-body{padding:14px}
     .gallery-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
     .work-thumb{height:164px}
+    .viewer-shell{width:100%; height:94vh; border-radius:20px}
+    .viewer-bar{flex-direction:column; align-items:stretch; gap:10px; padding:12px 14px 14px}
+    .viewer-info h3{font-size:17px}
+    .viewer-info .sub{font-size:8.5px; gap:5px}
+    .viewer-acts{justify-content:space-between; gap:6px}
+    .viewer-acts .ghost-btn{flex:1; padding:0 6px; font-size:9.5px}
+    .viewer-nav{width:36px; height:36px}
+    .viewer-nav.prev{left:8px}
+    .viewer-nav.next{right:8px}
+    .viewer-hint{bottom:10px; font-size:8px; letter-spacing:.1em}
     .intro h1{letter-spacing:.02em}
     .intro-meta{gap:8px;flex-wrap:wrap;font-size:7.5px}
     .intro-actions{gap:8px}
@@ -1136,6 +1220,36 @@
         </button>
       </div>
       <div class="gallery-body" id="galleryBody"></div>
+    </div>
+  </div>
+
+  <div class="modal viewer-modal" id="viewerModal" hidden>
+    <div class="modal-scrim" data-close="viewer"></div>
+    <div class="viewer-shell" role="dialog" aria-modal="true" aria-label="欣赏作品">
+      <div class="viewer-stage">
+        <canvas id="viewerCanvas" aria-label="作品大图，可拖动旋转、滚轮放大"></canvas>
+        <button class="viewer-nav prev" id="viewerPrev" aria-label="上一件作品">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>
+        </button>
+        <button class="viewer-nav next" id="viewerNext" aria-label="下一件作品">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 5.5 16 12l-6.5 6.5"/></svg>
+        </button>
+        <div class="viewer-hint" id="viewerHint">拖动转一转 · 滚轮放大 · 双击回正</div>
+      </div>
+      <div class="viewer-bar">
+        <div class="viewer-info">
+          <h3 id="viewerName">未命名玻璃</h3>
+          <div class="sub" id="viewerSub"></div>
+        </div>
+        <div class="viewer-acts">
+          <button class="ghost-btn" id="viewerEdit">继续创作</button>
+          <button class="ghost-btn" id="viewerSave">存大图</button>
+          <button class="ghost-btn danger" id="viewerDelete">删除</button>
+          <button class="viewer-close" id="viewerClose" aria-label="关闭欣赏">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1987,12 +2101,13 @@
 
     if (d.pattern === "dots") {
       const rows = 2 + Math.round(density * .56);
-      const cols = 2 + Math.round(density * .48);
+      const cols = 4 + Math.round(density * .9);
       for (let r = 0; r < rows; r++) {
         const t = .14 + .72 * (rows === 1 ? .5 : r / (rows - 1));
         const p = pointAt(geom, t);
         for (let c = 0; c < cols; c++) {
-          const ang = -1.32 + 2.64 * (cols === 1 ? .5 : c / (cols - 1)) + rot * .8;
+          // 绕瓶身一整圈排点，转到大半圈时正面也还有
+          const ang = (c / cols + r * .5) * TAU + rot * 1.35;
           const z = Math.cos(ang);
           if (front ? z < .02 : z > -.02) continue;
           const x = p.cx + Math.sin(ang) * p.r;
@@ -2015,10 +2130,10 @@
 
     if (d.pattern === "confetti") {
       const rnd = mulberry32((d.seed || 11) + 1);
-      const count = 14 + density * 4;
+      const count = 24 + density * 7;
       for (let i = 0; i < count; i++) {
         const t = .07 + rnd() * .86;
-        const ang = (rnd() * 2 - 1) * 1.36 + rot * .55;
+        const ang = rnd() * TAU + rot * 1.35;
         const z = Math.cos(ang);
         if (front ? z < .03 : z > -.03) continue;
         const p = pointAt(geom, t);
@@ -2039,9 +2154,8 @@
     }
 
     if (d.pattern === "lattice") {
-      if (!front) { ctx2.globalAlpha = 1; return; }
-      const lines = 3 + Math.round(density * .6);
-      const slope = .26;
+      const lines = 10 + Math.round(density * 1.8);
+      const slope = .22;
       const band = Math.max(.65, size * (.013 + density * .0016));
       ctx2.lineCap = "round";
       ctx2.lineJoin = "round";
@@ -2050,24 +2164,39 @@
         for (let i = 0; i < lines; i++) {
           const base = (i + .62) / (lines + .34);
           const pts = [];
-          let zsum = 0;
-          for (let k = 0; k <= 40; k++) {
-            const u = -1 + 2 * (k / 40);
-            const ang = u * 1.34;
+          // 绕瓶身一整圈取点，这样不管转到哪个角度，正面都还有线
+          for (let k = 0; k <= 64; k++) {
+            const u = -1 + 2 * (k / 64);
+            const phi = u * Math.PI + rot * 1.35;
             const t = base + sgn * u * slope;
-            if (t < .05 || t > .95) continue; // 越界就断开，不要在瓶口折回
+            if (t < .05 || t > .95) continue;
             const p = pointAt(geom, t);
-            pts.push({ x: p.cx + Math.sin(ang) * p.r, y: p.y });
-            zsum += Math.abs(Math.cos(ang));
+            pts.push({ x: p.cx + Math.sin(phi) * p.r, y: p.y, z: Math.cos(phi) });
           }
           if (pts.length < 2) continue;
-          const zavg = zsum / pts.length;
-          ctx2.globalAlpha = clamp(.16 + .6 * zavg, .12, .76);
-          ctx2.strokeStyle = rgba((i + fam) % 3 === 1 ? col2 : col, .9);
-          ctx2.lineWidth = band;
-          ctx2.beginPath();
-          pts.forEach((p, k) => k ? ctx2.lineTo(p.x, p.y) : ctx2.moveTo(p.x, p.y));
-          ctx2.stroke();
+          // 正面一段、背面一段，分开描
+          let run = [];
+          let runFront = null;
+          const flush = () => {
+            if (run.length < 2) { run = []; return; }
+            const isFront = runFront;
+            if (front !== isFront) { run = []; return; }
+            const zavg = run.reduce((a, q) => a + Math.abs(q.z), 0) / run.length;
+            ctx2.globalAlpha = isFront ? clamp(.18 + .58 * zavg, .14, .74) : .11;
+            ctx2.strokeStyle = rgba((i + fam) % 3 === 1 ? col2 : col, isFront ? .9 : .7);
+            ctx2.lineWidth = band;
+            ctx2.beginPath();
+            run.forEach((q, k2) => k2 ? ctx2.lineTo(q.x, q.y) : ctx2.moveTo(q.x, q.y));
+            ctx2.stroke();
+            run = [];
+          };
+          for (const q of pts) {
+            const isFront = q.z > 0;
+            if (runFront !== null && isFront !== runFront) flush();
+            runFront = isFront;
+            run.push(q);
+          }
+          flush();
         }
       }
       ctx2.globalAlpha = 1;
@@ -2076,11 +2205,11 @@
 
     if (d.pattern === "snow") {
       const rnd = mulberry32((d.seed || 11) + 909);
-      const count = 3 + Math.round(density * 1.05);
+      const count = 6 + Math.round(density * 2);
       const baseR = size * (.062 + density * .008);
       for (let i = 0; i < count; i++) {
         const t = .12 + rnd() * .78;
-        const ang = (rnd() * 2 - 1) * 1.32;
+        const ang = rnd() * TAU + rot * 1.35;
         const z = Math.cos(ang);
         if (front ? z < .02 : z > -.02) continue;
         const p = pointAt(geom, t);
@@ -2088,7 +2217,7 @@
         const y = p.y + (rnd() - .5) * size * .028;
         const rr = baseR * (.6 + rnd() * .7) * (.4 + .6 * Math.abs(z));
         const use = i % 5 === 0 ? col2 : col;
-        drawFlake(ctx2, x, y, rr, Math.abs(z), use, front ? (.4 + .5 * Math.abs(z)) : .13, rnd() * TAU);
+        drawFlake(ctx2, x, y, rr, Math.abs(z), use, front ? (.4 + .5 * Math.abs(z)) : .17, rnd() * TAU);
       }
       ctx2.globalAlpha = 1;
     }
@@ -4141,7 +4270,7 @@
   let galleryReturnFocus = null;
   let confirmReturnFocus = null;
   function modalIsOpen() {
-    return !$("galleryModal").hidden || !$("confirmModal").hidden;
+    return !$("galleryModal").hidden || !$("confirmModal").hidden || !$("viewerModal").hidden;
   }
   function syncBodyLock() {
     document.body.classList.toggle("modal-open", modalIsOpen());
@@ -4349,7 +4478,7 @@
       const swatches = workColors.slice(0, 3)
         .map(c => `<span style="background:${esc(c)}"></span>`).join("");
       card.innerHTML = `
-        <div class="work-thumb"><canvas></canvas></div>
+        <button class="work-thumb" data-act="view" aria-label="欣赏「${esc(w.name)}」"><canvas aria-hidden="true"></canvas></button>
         <div class="work-meta">
           <h3>${esc(w.name)}</h3>
           <div class="sub"><span>${esc(w.shapeName || "自由造型")}</span><i></i><span>${esc(formatDate(w.updatedAt || w.createdAt))}</span><div class="swatches">${swatches}</div></div>
@@ -4497,7 +4626,38 @@
   /* ============================================================
      16. export
      ============================================================ */
-  function buildExportCanvas() {
+  // 交付给导出画布的字段：既能描述工作台上的这件，也能描述收藏馆里的某一件
+  function exportPiece(work) {
+    if (work) {
+      return {
+        lenRatio: clamp(+work.lenRatio || 1.48, .7, 2.6),
+        radii: (work.radii && work.radii.length === N) ? work.radii : PROFILE_CACHE.blob,
+        open: clamp(+work.open || 0, 0, 1),
+        color: work.color || "#dcefec",
+        decor: Object.assign(defaultDecor(), work.decor || {}),
+        opacity: clamp(+work.opacity || .58, .2, .95),
+        gloss: clamp(+work.gloss || .76, 0, 1),
+        cracks: clamp(+work.cracks || 0, 0, 5),
+        title: (work.name || "未命名玻璃").slice(0, 18),
+        subtitle: `${work.shapeName || "自由造型"} · ${formatDate(work.updatedAt || work.createdAt)}`
+      };
+    }
+    return {
+      lenRatio: state.lenRatio,
+      radii: state.radii,
+      open: state.open,
+      color: state.mixHex,
+      decor: state.decor,
+      opacity: state.opacity,
+      gloss: state.gloss,
+      cracks: state.cracks,
+      title: ($("workName").value || state.workName || "我的玻璃作品").slice(0, 18),
+      subtitle: `${state.moldName} · ${state.mixName} · ${formatDate(new Date().toISOString())}`
+    };
+  }
+
+  function buildExportCanvas(work) {
+    const p = exportPiece(work || null);
     const c = document.createElement("canvas");
     c.width = 1200; c.height = 1500;
     const x = c.getContext("2d");
@@ -4546,21 +4706,21 @@
     x.strokeStyle = "rgba(232,194,133,.3)";
     x.stroke();
 
-    const lenRatio = clamp(state.lenRatio, .7, 2.6);
+    const lenRatio = p.lenRatio;
     const size = Math.min(320, 1020 / (2 * lenRatio));
     const model = {
       size,
       lenRatio,
-      radii: state.radii,
-      open: state.open,
-      color: state.mixHex,
-      decor: state.decor,
+      radii: p.radii,
+      open: p.open,
+      color: p.color,
+      decor: p.decor,
       temp: .05,
       rotation: .8,
-      opacity: state.opacity,
-      gloss: state.gloss,
+      opacity: p.opacity,
+      gloss: p.gloss,
       thin: 0,
-      cracks: state.cracks,
+      cracks: p.cracks,
       asym: .04,
       sway: 0,
       lean: 0
@@ -4576,11 +4736,10 @@
     x.fillRect(538, 94, 124, 1);
     x.fillStyle = "#f4ecdc";
     x.font = '600 54px "Songti SC","Noto Serif SC","SimSun",serif';
-    const name = ($("workName").value || state.workName || "我的玻璃作品").slice(0, 18);
-    x.fillText(name, 600, 1352);
+    x.fillText(p.title, 600, 1352);
     x.fillStyle = "rgba(201,200,184,.55)";
     x.font = '400 16px "Microsoft YaHei","PingFang SC",sans-serif';
-    x.fillText(`${state.moldName} · ${state.mixName} · ${formatDate(new Date().toISOString())}`, 600, 1392);
+    x.fillText(p.subtitle, 600, 1392);
     x.fillStyle = "rgba(232,194,133,.3)";
     x.fillRect(470, 1422, 260, 1);
     x.fillStyle = "rgba(146,163,155,.5)";
@@ -4589,14 +4748,12 @@
     return c;
   }
 
-  function savePng() {
-    if (state.stage !== "done") return;
+  function downloadCanvas(canvas, rawName) {
     try {
-      const c = buildExportCanvas();
-      c.toBlob((blob) => {
+      canvas.toBlob((blob) => {
         if (!blob) { toast("图片生成失败了，再试一次吧。"); return; }
         const a = document.createElement("a");
-        const name = ($("workName").value || state.workName || "玻璃作品").replace(/[\\/:*?"<>|]/g, "");
+        const name = String(rawName || "玻璃作品").replace(/[\\/:*?"<>|]/g, "").slice(0, 40) || "玻璃作品";
         a.href = URL.createObjectURL(blob);
         a.download = `${name}.png`;
         document.body.appendChild(a);
@@ -4609,6 +4766,292 @@
     } catch (e) {
       toast("图片生成失败了，再试一次吧。");
     }
+  }
+
+  function savePng() {
+    if (state.stage !== "done") return;
+    downloadCanvas(buildExportCanvas(), $("workName").value || state.workName || "玻璃作品");
+  }
+
+  function saveWorkPng(work) {
+    if (!work) return;
+    downloadCanvas(buildExportCanvas(work), work.name || "玻璃作品");
+  }
+
+  /* ============================================================
+     16b. artwork viewer — 转一转，看清楚
+     ============================================================ */
+  let viewer = null;
+  let viewerRaf = 0;
+  let viewerReturnFocus = null;
+  const viewerPointers = new Map();
+  const VIEWER_ZOOM_MIN = .6, VIEWER_ZOOM_MAX = 2.2;
+
+  function currentViewerWork() {
+    return (viewer && works[viewer.index]) || null;
+  }
+
+  function authoredRotation(work) {
+    return clamp(+work.rotation || .6, -8, 8) + .15;
+  }
+
+  function openViewer(id, fromEl) {
+    const index = works.findIndex(w => w.id === id);
+    if (index < 0) return;
+    viewerReturnFocus = fromEl || document.activeElement;
+    viewer = { index, rot: 0, zoom: 1, targetZoom: 1, last: 0, lastInteract: performance.now(), drag: null, pinching: null, needDraw: true };
+    syncViewer(true);
+    $("viewerModal").hidden = false;
+    $("viewerCanvas").classList.remove("dragging");
+    $("viewerHint").classList.remove("hide");
+    clearTimeout(viewer.hintTimer);
+    viewer.hintTimer = setTimeout(() => $("viewerHint").classList.add("hide"), 6500);
+    syncBodyLock();
+    Sound.tap();
+    requestAnimationFrame(() => {
+      viewer.last = performance.now();
+      $("viewerClose").focus({ preventScroll: true });
+      cancelAnimationFrame(viewerRaf);
+      viewerRaf = requestAnimationFrame(viewerLoop);
+    });
+  }
+
+  function closeViewer() {
+    if (!viewer) return;
+    const back = viewerReturnFocus;
+    clearTimeout(viewer.hintTimer);
+    viewer = null;
+    viewerPointers.clear();
+    cancelAnimationFrame(viewerRaf);
+    $("viewerModal").hidden = true;
+    $("viewerCanvas").classList.remove("dragging");
+    syncBodyLock();
+    viewerReturnFocus = null;
+    if (!restoreFocus(back)) restoreFocus($("galleryClose"));
+  }
+
+  function stepViewer(delta) {
+    if (!viewer || works.length < 2) return;
+    viewer.index = (viewer.index + delta + works.length) % works.length;
+    syncViewer(true);
+    Sound.tap();
+  }
+
+  function resetViewerView() {
+    const work = currentViewerWork();
+    if (!viewer || !work) return;
+    viewer.targetZoom = 1;
+    viewer.rot = authoredRotation(work);
+    viewer.needDraw = true;
+    viewer.lastInteract = performance.now();
+    toast("回到它原来的角度。");
+  }
+
+  function syncViewer(fresh) {
+    const work = currentViewerWork();
+    if (!viewer || !work) return;
+    if (fresh) {
+      viewer.rot = authoredRotation(work);
+      viewer.zoom = 1;
+      viewer.targetZoom = 1;
+      viewer.lastInteract = performance.now();
+      viewer.needDraw = true;
+    }
+    const d = Object.assign(defaultDecor(), work.decor || {});
+    const bits = [
+      work.shapeName || "自由造型",
+      formatDate(work.updatedAt || work.createdAt),
+      `纹样 ${PATTERN_NAMES[d.pattern] || "无"}`,
+      `疏密 ${clamp(+d.density || 5, 1, 9)}`
+    ];
+    const cracks = clamp(+work.cracks || 0, 0, 5);
+    if (cracks > 0) bits.push(`${cracks} 道冰裂纹`);
+    const colors = (Array.isArray(work.colors) && work.colors.length) ? work.colors : [work.color || "#dcefec"];
+    $("viewerName").textContent = work.name || "未命名玻璃";
+    $("viewerSub").innerHTML = bits.map(b => `<span>${esc(b)}</span>`).join("<i></i>")
+      + `<i></i><div class="swatches">${colors.slice(0, 3).map(c => `<span style="background:${esc(c)}"></span>`).join("")}</div>`;
+    $("viewerPrev").disabled = works.length < 2;
+    $("viewerNext").disabled = works.length < 2;
+  }
+
+  function viewerLoop(now) {
+    if (!viewer) return;
+    const dt = Math.min(.05, Math.max(0, (now - (viewer.last || now)) / 1000));
+    viewer.last = now;
+    const spinning = !REDUCE_MOTION && !viewerPointers.size && now - viewer.lastInteract > 1600;
+    if (spinning) viewer.rot += dt * .5;
+    const easing = Math.abs(viewer.targetZoom - viewer.zoom) > .0008;
+    if (easing) viewer.zoom += (viewer.targetZoom - viewer.zoom) * Math.min(1, dt * 10);
+    if (spinning || easing || viewer.needDraw) {
+      viewer.needDraw = false;
+      drawViewer();
+    }
+    viewerRaf = requestAnimationFrame(viewerLoop);
+  }
+
+  function drawViewer() {
+    const work = currentViewerWork();
+    const cv = $("viewerCanvas");
+    if (!work || !cv) return;
+    const rect = cv.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const bw = Math.round(rect.width * dpr), bh = Math.round(rect.height * dpr);
+    if (cv.width !== bw || cv.height !== bh) { cv.width = bw; cv.height = bh; }
+    const c = cv.getContext("2d");
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const cw = rect.width, ch = rect.height;
+    c.clearRect(0, 0, cw, ch);
+
+    const lenRatio = clamp(+work.lenRatio || 1.48, .7, 2.6);
+    const base = Math.min(cw * .30, (ch * .66) / (2 * lenRatio));
+    const size = base * viewer.zoom;
+    const h = 2 * size * lenRatio;
+    const cx = cw / 2;
+    // 放大时以作品中心为轴：底座跟着下沉，作品两端向外长，顶部不会先被裁掉
+    const baseY = ch * .84 + (h - 2 * base * lenRatio) / 2;
+
+    const glow = c.createRadialGradient(cx, baseY - h * .46, 8, cx, baseY - h * .46, Math.max(cw, ch) * .55);
+    glow.addColorStop(0, "rgba(255,205,150,.085)");
+    glow.addColorStop(.5, "rgba(255,180,110,.028)");
+    glow.addColorStop(1, "rgba(255,180,110,0)");
+    c.fillStyle = glow;
+    c.fillRect(0, 0, cw, ch);
+
+    // 转台
+    c.save();
+    const rx = Math.max(26, size * .42), ry = Math.max(4, size * .062);
+    c.fillStyle = "rgba(3,8,7,.42)";
+    c.beginPath();
+    c.ellipse(cx, baseY + 8, rx, ry, 0, 0, TAU);
+    c.fill();
+    c.strokeStyle = "rgba(238,224,195,.14)";
+    c.lineWidth = 1;
+    c.beginPath();
+    c.ellipse(cx, baseY + 7, rx * 1.06, ry * 1.12, 0, 0, TAU);
+    c.stroke();
+    c.restore();
+
+    const model = {
+      size,
+      lenRatio,
+      radii: (work.radii && work.radii.length === N) ? work.radii : PROFILE_CACHE.blob,
+      open: clamp(+work.open || 0, 0, 1),
+      color: work.color || "#dcefec",
+      decor: Object.assign(defaultDecor(), work.decor || {}),
+      temp: .05,
+      rotation: viewer.rot,
+      opacity: clamp(+work.opacity || .58, .2, .95),
+      gloss: clamp(+work.gloss || .76, 0, 1),
+      thin: 0,
+      cracks: clamp(+work.cracks || 0, 0, 5),
+      asym: 0,
+      sway: 0,
+      lean: 0
+    };
+    paintGlass(c, model, { cx, baseY });
+  }
+
+  function bindViewerEvents() {
+    const vc = $("viewerCanvas");
+    vc.addEventListener("pointerdown", (e) => {
+      if (!viewer) return;
+      e.preventDefault();
+      vc.setPointerCapture?.(e.pointerId);
+      vc.classList.add("dragging");
+      viewerPointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      viewer.lastInteract = performance.now();
+      if (viewerPointers.size === 1) {
+        viewer.drag = { id: e.pointerId, x: e.clientX };
+      } else if (viewerPointers.size === 2) {
+        const pts = [...viewerPointers.values()];
+        viewer.pinching = {
+          dist: Math.max(1, Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y)),
+          zoom: viewer.targetZoom
+        };
+        viewer.drag = null;
+      }
+    });
+    vc.addEventListener("pointermove", (e) => {
+      if (!viewer || !viewerPointers.has(e.pointerId)) return;
+      viewerPointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      viewer.lastInteract = performance.now();
+      if (viewer.pinching && viewerPointers.size >= 2) {
+        const pts = [...viewerPointers.values()].slice(0, 2);
+        const dist = Math.max(1, Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y));
+        viewer.targetZoom = clamp(viewer.pinching.zoom * (dist / viewer.pinching.dist), VIEWER_ZOOM_MIN, VIEWER_ZOOM_MAX);
+        return;
+      }
+      if (viewer.drag) {
+        const dx = e.clientX - viewer.drag.x;
+        viewer.drag.x = e.clientX;
+        const w = Math.max(240, vc.getBoundingClientRect().width);
+        // 横穿整个画布 ≈ 转半圈；放大以后按比例放慢，细节才推得准
+        viewer.rot += dx * (Math.PI / w) / Math.max(1, viewer.zoom * .85);
+        viewer.needDraw = true;
+      }
+    });
+    const endPointer = (e) => {
+      if (!viewer) return;
+      viewerPointers.delete(e.pointerId);
+      if (viewerPointers.size < 2) viewer.pinching = null;
+      if (!viewerPointers.size) {
+        viewer.drag = null;
+        vc.classList.remove("dragging");
+      } else if (!viewer.drag) {
+        // 双指捏合抬起一根后，剩下那根接着当拖动用，不用松手重按
+        const next = viewerPointers.entries().next().value;
+        if (next) viewer.drag = { id: next[0], x: next[1].x };
+      }
+      viewer.lastInteract = performance.now();
+    };
+    vc.addEventListener("pointerup", endPointer);
+    vc.addEventListener("pointercancel", endPointer);
+    vc.addEventListener("wheel", (e) => {
+      if (!viewer) return;
+      e.preventDefault();
+      viewer.targetZoom = clamp(viewer.targetZoom * Math.exp(-e.deltaY * .0014), VIEWER_ZOOM_MIN, VIEWER_ZOOM_MAX);
+      viewer.lastInteract = performance.now();
+    }, { passive: false });
+    vc.addEventListener("dblclick", (e) => {
+      e.preventDefault();
+      resetViewerView();
+    });
+
+    $("viewerClose").addEventListener("click", closeViewer);
+    $("viewerModal").addEventListener("click", (e) => {
+      if (e.target.closest('[data-close="viewer"]')) closeViewer();
+    });
+    $("viewerPrev").addEventListener("click", () => stepViewer(-1));
+    $("viewerNext").addEventListener("click", () => stepViewer(1));
+    $("viewerSave").addEventListener("click", () => {
+      const work = currentViewerWork();
+      if (work) saveWorkPng(work);
+    });
+    $("viewerEdit").addEventListener("click", () => {
+      const work = currentViewerWork();
+      if (!work) return;
+      closeViewer();
+      const busy = state.stage !== "melt" && state.size > 0 && !state.workSaved;
+      if (busy) {
+        askConfirm("打开这件作品？", `当前工作台上的作品还没有收藏。打开「${work.name}」会把它替换掉。`, () => loadWorkForEdit(work));
+      } else {
+        loadWorkForEdit(work);
+      }
+    });
+    $("viewerDelete").addEventListener("click", () => {
+      const work = currentViewerWork();
+      if (!work || !viewer) return;
+      askConfirm("取下这件作品？", `「${work.name}」会从作品架上取下，再也找不回来。`, () => {
+        closeConfirm();
+        if (!viewer) return;
+        const wasIndex = viewer.index;
+        deleteWork(work.id);
+        if (!works.length) { closeViewer(); return; }
+        viewer.index = Math.min(wasIndex, works.length - 1);
+        syncViewer(true);
+      });
+    });
   }
 
   /* ============================================================
@@ -4737,6 +5180,7 @@
   function bindEvents() {
     renderMeltPalette();
     buildDecorUI();
+    bindViewerEvents();
     buildMoldUI();
     syncDecorControls();
     syncMoldSelection();
@@ -4966,13 +5410,30 @@
     window.addEventListener("keydown", (e) => {
       if (e.key === "Tab") {
         const root = !$("confirmModal").hidden ? $("confirmModal")
+          : !$("viewerModal").hidden ? $("viewerModal")
           : !$("galleryModal").hidden ? $("galleryModal")
           : state.introVisible ? intro : null;
         if (root) { trapTab(e, root); return; }
       }
       if (e.key === "Escape") {
         if (!$("confirmModal").hidden) { closeConfirm(); return; }
+        if (!$("viewerModal").hidden) { closeViewer(); return; }
         if (!$("galleryModal").hidden) { closeGallery(); return; }
+        return;
+      }
+      // 欣赏台：左右翻页、+/- 缩放、R 回正
+      if (viewer) {
+        if (!$("confirmModal").hidden) return;
+        if (e.key === "ArrowLeft") { e.preventDefault(); stepViewer(-1); return; }
+        if (e.key === "ArrowRight") { e.preventDefault(); stepViewer(1); return; }
+        if (e.key === "+" || e.key === "=" || e.key === "-" || e.key === "_") {
+          e.preventDefault();
+          const up = e.key === "+" || e.key === "=";
+          viewer.targetZoom = clamp(viewer.targetZoom * (up ? 1.18 : 1 / 1.18), VIEWER_ZOOM_MIN, VIEWER_ZOOM_MAX);
+          viewer.lastInteract = performance.now();
+          return;
+        }
+        if (e.key === "r" || e.key === "R") { e.preventDefault(); resetViewerView(); return; }
         return;
       }
       if (modalIsOpen()) return;
@@ -5136,6 +5597,12 @@
         closeGallery();
         hideIntro();
         resetAll("melt");
+        return;
+      }
+      const view = e.target.closest('[data-act="view"]');
+      if (view) {
+        const card = view.closest(".work-card");
+        if (card) openViewer(card.dataset.id, view);
         return;
       }
       const edit = e.target.closest('[data-act="edit"]');
