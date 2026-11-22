@@ -214,6 +214,36 @@
   }
   .toast.show{opacity:1; transform:translate(-50%,0)}
 
+  /* 三个旋钮：把鸟的本能交给孩子 */
+  .dials{margin:24px 0 0; padding-top:18px; border-top:1px solid rgba(255,236,214,.14)}
+  .dial-head{display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .peek-btn{
+    flex:none; display:inline-flex; align-items:center; min-height:30px; padding:4px 11px;
+    border-radius:999px; cursor:pointer; font-family:inherit; font-size:11.5px; letter-spacing:.04em;
+    background:rgba(var(--acc),.14); border:1px solid rgba(var(--acc),.46); color:rgba(255,244,232,.94);
+    transition:background .3s var(--settle), border-color .3s var(--settle);
+  }
+  .peek-btn:hover,.peek-btn:focus-visible{background:rgba(var(--acc),.26); border-color:rgba(var(--acc),.74)}
+  .dial-note{margin:8px 0 15px; font-size:12px; line-height:1.8; color:rgba(255,236,214,.54)}
+  .dial{display:grid; grid-template-columns:4.6em 1fr 2.6em; align-items:center; gap:10px; margin:0 0 9px}
+  .dial label{font-size:12.5px; letter-spacing:.04em; color:rgba(255,240,226,.88); white-space:nowrap}
+  .dial output{font-size:11.5px; font-variant-numeric:tabular-nums; color:rgba(255,236,214,.42); text-align:right}
+  .dial input[type=range]{
+    width:100%; height:26px; margin:0; cursor:pointer;
+    accent-color:rgb(var(--acc)); background:transparent;
+  }
+  .dial-foot{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:4px}
+  .dial-say{margin:0; flex:1; font-size:12px; line-height:1.7; color:rgb(var(--acc)); min-height:2.6em}
+  .dial-reset{
+    flex:none; padding:5px 12px; border-radius:999px; cursor:pointer; font-family:inherit; font-size:11.5px;
+    background:rgba(255,236,214,.06); border:1px solid rgba(255,236,214,.2); color:rgba(255,240,226,.78);
+    transition:background .3s var(--settle), color .3s var(--settle);
+  }
+  .dial-reset:hover,.dial-reset:focus-visible{background:rgba(255,236,214,.14); color:#fff}
+  .sheet{transition:transform .55s var(--settle), max-height .5s var(--settle)}
+  .sheet.peek{max-height:40vh; max-height:40dvh}
+  .scrim.peek{background:rgba(5,4,10,.16); backdrop-filter:none; -webkit-backdrop-filter:none; pointer-events:none}
+
   @media (max-width:820px){
     .topbar{top:calc(56px + env(safe-area-inset-top)); max-width:min(70vw,460px)}
     .topbar h1{letter-spacing:.34em}
@@ -246,7 +276,7 @@
 </head>
 <body>
 <main class="world">
-  <canvas id="sky" tabindex="0" role="img" aria-label="黄昏的芦苇荡和一大群椋鸟。动一动手指，老鹰会跟着手指飞，鸟群会绕开它；点一下，老鹰猛扑进鸟群。键盘可以用方向键移动老鹰，空格猛扑。"></canvas>
+  <canvas id="sky" tabindex="0" role="img" aria-label="黄昏的芦苇荡和一大群椋鸟。动一动手指，老鹰会跟着手指飞，鸟群会绕开它；点一下，老鹰猛扑进鸟群；按住不放，老鹰会悬在那里，鸟群让出一圈坑。键盘可以用方向键移动老鹰，空格猛扑。"></canvas>
   <p class="sr">黄昏，芦苇荡上，几千只椋鸟挤成一片会呼吸的布</p>
   <p class="sr" id="phaseLive" role="status" aria-live="polite"></p>
   <div class="veil" aria-hidden="true"></div>
@@ -271,7 +301,7 @@
         <span>让它们落下</span>
       </button>
       <button class="chip" id="keepShot" type="button" aria-label="把这一片暮色存成一张图">
-        <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.2v7.4m0 0 3-3m-3 3-3-3M2.6 12.4h10.8"/></svg>
+        <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="2.1" y="4.4" width="11.8" height="8.2" rx="1.6"/><circle cx="8" cy="8.5" r="2.1"/><path d="M5.6 4.4V3.1h4.8v1.3"/></svg>
         <span>留住</span>
       </button>
       <button class="chip palette-chip" id="palette" type="button" aria-label="换一套配色，现在是晚霞">
@@ -295,13 +325,28 @@
   <h2 id="sheetTitle">为什么它们能变成一片布？<small>murmuration</small></h2>
   <p>椋鸟是八哥的亲戚，比麻雀大一点。白天各飞各的，黄昏回芦苇睡觉之前，会先在天上聚成一大团——英文里叫 <b>murmuration</b>，像一大群人在小声说话。</p>
   <p>没有谁是队长。每只鸟只看身边最近的六七只，只做三件小事：<b>别撞上</b>、<b>跟着一起飞</b>、<b>靠得近一点</b>。几千个「跟着邻居」叠在一起，就变成一整片会翻、会卷、会裂开又合上的布。</p>
-  <p>老鹰一来，最靠外的那几只先躲，消息一波一波往里传——所以你看到一道深色的浪从鸟群里跑过去，而不是所有鸟同时转。<b>你的手指就是那只老鹰</b>：靠近，它们绕开你；点一下，老鹰一头扎进去，中间就穿出一个洞，洞又马上合上。</p>
+  <p>老鹰一来，最靠外的那几只先躲，消息一波一波往里传——所以你看到一道深色的浪从鸟群里跑过去，而不是所有鸟同时转。<b>你的手指就是那只老鹰</b>：靠近，它们绕开你；点一下，老鹰一头扎进去，中间就穿出一个洞，洞又马上合上；按住不放，就像把一只手按在布上，没有鸟敢待在你手底下，那一圈会越撑越大，边上的还在打旋。</p>
   <p>深浅也有讲究：离你近的鸟画得大、画得黑；鸟群叠在一起的地方，暗得像布褶。所以这片布有厚度，不是一张纸。</p>
   <div class="try">
-    <span class="try-head">试三下</span>
+    <span class="try-head">试四下</span>
     <span class="try-item"><i>1</i>慢慢画一个圈：看鸟群怎么跟着你拐弯。</span>
     <span class="try-item"><i>2</i>停一会儿：老鹰会自己出去巡一趟。</span>
-    <span class="try-item"><i>3</i>点一下：看它扎出一个洞，又马上合上。</span>
+    <span class="try-item"><i>3</i>点一下：老鹰收翅猛扑；真穿过鸟群时，会扬起一小团羽毛。</span>
+    <span class="try-item"><i>4</i>按住不放：老鹰悬在你手下，鸟群让出一圈会转的坑，松手才合上。</span>
+  </div>
+  <div class="dials" id="dials">
+    <div class="dial-head">
+      <span class="try-head">自己拧三个旋钮</span>
+      <button class="peek-btn" id="peekBtn" type="button" aria-pressed="false">收起说明 · 看鸟</button>
+    </div>
+    <p class="dial-note">椋鸟的全部本事就是这三件小事。拧到两头，看这片布怎么变。按右边「收起说明」，抽屉会收小，就能一边拧一边看鸟——它记不住，关掉页面就复原。</p>
+    <div class="dial"><label for="dSep">别撞上</label><input id="dSep" type="range" min="40" max="640" step="10" value="300" aria-label="分离强度"><output id="dSepOut">300</output></div>
+    <div class="dial"><label for="dAli">跟着飞</label><input id="dAli" type="range" min="0" max="260" step="5" value="90" aria-label="对齐强度"><output id="dAliOut">90</output></div>
+    <div class="dial"><label for="dCoh">靠紧点</label><input id="dCoh" type="range" min="0" max="130" step="5" value="30" aria-label="聚拢强度"><output id="dCohOut">30</output></div>
+    <div class="dial-foot">
+      <p class="dial-say" id="dialSay" aria-live="polite"></p>
+      <button class="dial-reset" id="dialReset" type="button">复原</button>
+    </div>
   </div>
   <p class="note">黄昏只有几分钟——不管它，鸟会自己落进芦苇；看不够，按「让它们落下」，再按「再飞一会儿」。</p>
   <p class="foot-home"><a href="奇趣阁：N件小玩具.html">← 回到 Peanut 的奇趣阁</a></p>
@@ -945,6 +990,13 @@ function stepSim(dt){
 
   let speedSum = 0, alive = 0;
 
+  /* 按住的那只手：每帧算一次坑有多大 */
+  const holdK = hold.k;
+  const holdR = (62 + 130 * holdK) * S;
+  const holdR2 = holdR * holdR;
+  const holdW = 720 * holdK * S;
+  const holdSpin = hold.spin;
+
   for (let i = 0; i < N; i++){
     if (LD[i]) continue;
     let x = X[i], y = Y[i], vx = VX[i], vy = VY[i];
@@ -965,6 +1017,22 @@ function stepSim(dt){
       ay += ny * F + nx * sgn * CFG.sideW * S * k;
       if (AL[i] < .3 + k * .7) AL[i] = .3 + k * .7;
       if (NL[i] < .55) NL[i] = .55;
+    }
+
+    /* 按住不放：一只手把布往下按，坑边还会打旋 */
+    if (holdK > .02){
+      const hx = x - hold.x, hy = y - hold.y;
+      const h2 = hx * hx + hy * hy;
+      if (h2 < holdR2 && h2 > .01){
+        const hd = Math.sqrt(h2);
+        const kk = 1 - hd / holdR;
+        const nx = hx / hd, ny = hy / hd;
+        const F = kk * kk * holdW;
+        ax += nx * F - ny * holdSpin * F * .52;
+        ay += ny * F + nx * holdSpin * F * .52;
+        if (AL[i] < .45) AL[i] = .45;
+        if (NL[i] < .4) NL[i] = .4;
+      }
     }
 
     /* 近处邻居：最多九个格子里各抽一只 */
@@ -1134,17 +1202,22 @@ function stepSim(dt){
 /* =====================================================================
    老鹰：跟着手指，靠近就绕圈，点一下就猛扑
    ===================================================================== */
-const f = { x: 0, y: 0, vx: -60, vy: 0, tx: 0, ty: 0, stoop: 0, cooldown: 0, idle: 99, autoT: 2, orbit: 1, has: false };
+const f = { x: 0, y: 0, vx: -60, vy: 0, tx: 0, ty: 0, stoop: 0, cooldown: 0, idle: 99, autoT: 2, orbit: 1, has: false, flickT: 0 };
 const pointer = { x: 0, y: 0, inside: false, down: false, downT: 0, downX: 0, downY: 0, moved: false };
 const rings = [];
 const trail = new Float32Array(28);
 let trailN = 0;
 
+/* 按住不放：手压在这块布上。坑慢慢开、慢慢合 */
+const HOLD_AFTER = 260;   /* 按住多久才算「压住」，之前算点击 */
+const hold = { ready: false, x: 0, y: 0, downAt: 0, k: 0, spin: 1, spinSet: false };
+const feathers = [];
+
 function resetFalcon(){
   f.x = W * .68; f.y = hz * .30;
   f.vx = -60 * S; f.vy = 0;
   f.tx = f.x; f.ty = f.y;
-  f.stoop = 0; f.cooldown = 0; f.idle = 99; f.autoT = 2.4; f.has = false;
+  f.stoop = 0; f.cooldown = 0; f.idle = 99; f.autoT = 2.4; f.has = false; f.flickT = 0;
   trailN = 0;
 }
 
@@ -1166,11 +1239,19 @@ function pickAutoTarget(){
   f.ty = clamp(ty, hz * .16, hz * .82);
   f.has = true;
   f.autoT = 3.6 + Math.random() * 3.4;
-  if (!reduced && phase === 'fly' && Math.random() < .28 && f.stoop <= 0 && f.cooldown <= 0) doStoop(f.tx, f.ty);
+  if (!reduced && phase === 'fly' && Math.random() < .28 && f.stoop <= 0 && f.cooldown <= 0) doStoop(f.tx, f.ty, false);
 }
 
-function doStoop(tx, ty){
-  if (f.cooldown > 0) return;
+function doStoop(tx, ty, fromUser){
+  if (f.cooldown > 0){
+    /* 冷却里也得有回应，不然孩子以为点坏了 */
+    if (f.flickT <= 0){
+      f.flickT = .34;
+      if (!reduced) rings.push({ x: f.x, y: f.y, r: 6, t: 0, faint: true });
+    }
+    return;
+  }
+  if (fromUser !== false) markLearned('stooped');
   f.stoop = .5;
   if (tx === undefined){
     f.tx = pointer.inside ? pointer.x : f.tx;
@@ -1183,8 +1264,10 @@ function doStoop(tx, ty){
 }
 
 function updateFalcon(dt){
-  f.idle += dt;
+  if (pointer.down) f.idle = 0;   /* 手还按着，老鹰不许自己跑掉 */
+  else f.idle += dt;
   f.cooldown = Math.max(0, f.cooldown - dt);
+  f.flickT = Math.max(0, f.flickT - dt);
 
   if (f.stoop > 0){
     f.stoop -= dt;
@@ -1196,7 +1279,7 @@ function updateFalcon(dt){
     f.vy += (dy / d * sp - f.vy) * k;
     if (d < 26 * S || f.stoop <= 0){
       f.stoop = 0;
-      if (!reduced) rings.push({ x: f.x, y: f.y, r: 12, t: 0 });
+      onStoopLanding(f.x, f.y);
     }
   } else {
     let tx, ty;
@@ -1213,7 +1296,12 @@ function updateFalcon(dt){
     const ux = dx / d, uy = dy / d;
     const speed = (usingPointer ? 320 : 210) * S;
     let desx, desy;
-    if (d < 95 * S){
+    if (hold.k > .06){
+      /* 按住：贴到手指底下停住，不再绕圈 */
+      const slow = speed * Math.min(1, d / (70 * S));
+      desx = ux * slow;
+      desy = uy * slow;
+    } else if (d < 95 * S){
       const sgn = f.orbit >= 0 ? 1 : -1;
       desx = -uy * speed * .92 * sgn + ux * 40 * S;
       desy = ux * speed * .92 * sgn + uy * 40 * S;
@@ -1221,7 +1309,7 @@ function updateFalcon(dt){
       desx = ux * speed;
       desy = uy * speed;
     }
-    const k = Math.min(1, dt * (usingPointer ? 3.4 : 2.2));
+    const k = Math.min(1, dt * (hold.k > .06 ? 5.5 : usingPointer ? 3.4 : 2.2));
     f.vx += (desx - f.vx) * k;
     f.vy += (desy - f.vy) * k;
   }
@@ -1242,6 +1330,99 @@ function updateFalcon(dt){
       }
       trail[26] = f.x; trail[27] = f.y;
     }
+  }
+}
+
+/* =====================================================================
+   按住：坑怎么开、怎么合
+   ===================================================================== */
+function updateHold(dt){
+  const now = performance.now();
+  const holding = pointer.down && hold.ready && (now - hold.downAt) > HOLD_AFTER;
+  if (holding){
+    if (!hold.spinSet){ hold.spin = Math.random() < .5 ? -1 : 1; hold.spinSet = true; }
+    hold.k = Math.min(1, hold.k + dt / .85);
+    markLearned('held');
+  } else {
+    hold.k = Math.max(0, hold.k - dt / .3);
+    if (hold.k === 0) hold.spinSet = false;
+  }
+}
+
+/* =====================================================================
+   扑到了什么：羽毛、冲击、一道往外跑的浪
+   ===================================================================== */
+function onStoopLanding(x, y){
+  const R = 50 * S, R2 = R * R;
+  let hit = 0;
+  for (let i = 0; i < N; i++){
+    if (LD[i]) continue;
+    const dx = X[i] - x, dy = Y[i] - y;
+    if (dx * dx + dy * dy < R2){
+      hit++;
+      /* 被穿过的鸟立刻炸开，邻居会接着传下去——这就是那道深色的浪 */
+      AL[i] = 1;
+      NL[i] = 1;
+    }
+  }
+  if (hit >= 8){
+    if (!reduced){
+      rings.push({ x, y, r: 14, t: 0, big: true });
+      spawnFeathers(x, y, Math.min(34, 10 + hit));
+    }
+  } else if (!reduced){
+    rings.push({ x, y, r: 10, t: 0, faint: true });
+  }
+}
+
+function spawnFeathers(x, y, n){
+  const ang0 = Math.atan2(f.vy, f.vx) || 0;
+  const room = 180 - feathers.length;
+  if (room <= 0) return;
+  if (n > room) n = room;
+  for (let i = 0; i < n; i++){
+    const a = ang0 + (Math.random() - .5) * 2.6;
+    const sp = (50 + Math.random() * 170) * S;
+    feathers.push({
+      x: x + (Math.random() - .5) * 14 * S,
+      y: y + (Math.random() - .5) * 14 * S,
+      vx: Math.cos(a) * sp,
+      vy: Math.sin(a) * sp,
+      rot: Math.random() * TAU,
+      vr: (Math.random() - .5) * 10,
+      sz: (1.5 + Math.random() * 2.3) * S,
+      life: 1.2 + Math.random() * .7,
+      age: 0
+    });
+  }
+}
+
+function updateFeathers(dt){
+  for (let i = feathers.length - 1; i >= 0; i--){
+    const p = feathers[i];
+    p.age += dt;
+    if (p.age > p.life){ feathers.splice(i, 1); continue; }
+    const drag = Math.pow(.06, dt);
+    p.vx *= drag;
+    p.vy = p.vy * drag + 50 * S * dt;
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.rot += p.vr * dt;
+  }
+}
+
+function drawFeathers(){
+  for (let i = 0; i < feathers.length; i++){
+    const p = feathers[i];
+    const a = (1 - p.age / p.life) * .78;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    ctx.fillStyle = 'rgba(255,236,210,' + a.toFixed(3) + ')';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, p.sz, p.sz * .34, 0, 0, TAU);
+    ctx.fill();
+    ctx.restore();
   }
 }
 
@@ -1359,9 +1540,11 @@ function drawFalcon(t){
   const sp = Math.sqrt(f.vx * f.vx + f.vy * f.vy) || 1;
   const ang = Math.atan2(f.vy, f.vx);
   const dive = f.stoop > 0;
-  const s = (dive ? 19 : 24) * S;
+  const hovering = hold.k > .2 && !dive;
+  const flick = f.flickT > 0 ? 1 + f.flickT * .2 : 1;
+  const s = (dive ? 19 : hovering ? 26 : 24) * S * flick;
   const flap = Math.sin(t * 8) * .5 + .5;
-  const wspan = dive ? .32 : (.86 + flap * .26);
+  const wspan = dive ? .32 : hovering ? (.86 + Math.sin(t * 2.2) * .06) : (.86 + flap * .26);
 
   ctx.save();
   ctx.translate(f.x, f.y);
@@ -1405,18 +1588,46 @@ function drawRings(){
   for (let i = rings.length - 1; i >= 0; i--){
     const r = rings[i];
     r.t += .016;
-    if (r.t > .8){ rings.splice(i, 1); continue; }
-    const k = r.t / .8;
+    const life = r.big ? 1.05 : .8;
+    if (r.t > life){ rings.splice(i, 1); continue; }
+    const k = r.t / life;
+    const grow = (r.big ? 210 : r.faint ? 58 : 90) * S;
+    const a0 = r.big ? .5 : r.faint ? .16 : .3;
     ctx.beginPath();
-    ctx.arc(r.x, r.y, r.r + k * 90 * S, 0, TAU);
-    ctx.strokeStyle = 'rgba(255,224,196,' + (.3 * (1 - k)).toFixed(3) + ')';
-    ctx.lineWidth = 1;
+    ctx.arc(r.x, r.y, r.r + k * grow, 0, TAU);
+    ctx.strokeStyle = 'rgba(255,224,196,' + (a0 * (1 - k)).toFixed(3) + ')';
+    ctx.lineWidth = r.big ? 1.6 : 1;
+    ctx.stroke();
+  }
+}
+
+/* 按住时那一圈：告诉孩子「这里有一只手在压着」 */
+function drawHold(){
+  const k = hold.k;
+  if (k <= .02) return;
+  const r = (62 + 130 * k) * S;
+  ctx.strokeStyle = 'rgba(255,232,206,' + (.1 + .16 * k).toFixed(3) + ')';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(hold.x, hold.y, r, 0, TAU);
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(255,232,206,' + (.05 + .09 * k).toFixed(3) + ')';
+  ctx.beginPath();
+  ctx.arc(hold.x, hold.y, r * .62, 0, TAU);
+  ctx.stroke();
+  /* 一小段转着的弧：暗示它在旋 */
+  if (!reduced){
+    const dir = hold.spin >= 0 ? 1 : -1;
+    const a0 = simT * 1.5 * dir;
+    ctx.strokeStyle = 'rgba(255,232,206,' + (.12 + .2 * k).toFixed(3) + ')';
+    ctx.beginPath();
+    ctx.arc(hold.x, hold.y, r * .84, a0, a0 + 1.1);
     ctx.stroke();
   }
 }
 
 function drawReticle(t){
-  if (!pointer.inside) return;
+  if (!pointer.inside || hold.k > .1) return;
   const r = 12 * S;
   const a = .22 + .08 * Math.sin(t * 3);
   ctx.strokeStyle = 'rgba(255,232,208,' + a.toFixed(3) + ')';
@@ -1460,7 +1671,9 @@ function draw(t){
   drawGlints(t);
   drawHaze();
   drawBirds();
+  drawHold();
   drawFalcon(t);
+  drawFeathers();
   drawReeds(t);
   drawRings();
   drawReticle(t);
@@ -1564,13 +1777,45 @@ function toast(msg){
   toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
 }
 
+/* =====================================================================
+   一路带着玩：学会一个动作，才教下一个
+   （以前那句「点一下」要等 22 秒、还只给没动过手的看，正好反过来）
+   ===================================================================== */
 const hintEl = $id('hint');
-let hintGone = false, hintTimer = 0;
+const learned = { moved: false, stooped: false, held: false };
+let hintTimer = 0, hintQueue = 0;
+
+function pendingHint(){
+  if (!learned.moved) return '动一动手指，<b>看它们怎么绕开你</b>';
+  if (!learned.stooped) return '点一下：老鹰收翅猛扑，<b>扎出一个洞</b>';
+  if (!learned.held) return '按住不放：老鹰悬着，<b>鸟群让出一圈</b>';
+  return '';
+}
+function showHintText(text, ms){
+  if (!hintEl || !text) return;
+  hintEl.innerHTML = '<span class="dot" aria-hidden="true"></span>' + text;
+  hintEl.classList.remove('gone');
+  clearTimeout(hintTimer);
+  if (ms) hintTimer = setTimeout(hideHint, ms);
+}
 function hideHint(){
-  if (!hintEl || hintGone) return;
-  hintGone = true;
+  if (!hintEl) return;
   hintEl.classList.add('gone');
   clearTimeout(hintTimer);
+}
+function queueHint(delay){
+  clearTimeout(hintQueue);
+  hintQueue = setTimeout(() => {
+    if (sheetOpen){ queueHint(3000); return; }
+    const t = pendingHint();
+    if (t) showHintText(t, 9000);
+  }, delay === undefined ? 1400 : delay);
+}
+function markLearned(key){
+  if (learned[key]) return;
+  learned[key] = true;
+  if (pendingHint()) queueHint(1300);
+  else hideHint();
 }
 
 function updateRoostBtn(){
@@ -1661,6 +1906,7 @@ function openSheet(){
   if (!sheet) return;
   lastFocus = document.activeElement;
   sheetOpen = true;
+  setPeek(false);
   sheet.classList.add('open');
   sheet.setAttribute('aria-hidden', 'false');
   if (scrim) scrim.classList.add('open');
@@ -1670,6 +1916,7 @@ function openSheet(){
 function closeSheet(){
   if (!sheet) return;
   sheetOpen = false;
+  setPeek(false);
   sheet.classList.remove('open');
   sheet.setAttribute('aria-hidden', 'true');
   if (scrim) scrim.classList.remove('open');
@@ -1685,6 +1932,70 @@ document.addEventListener('keydown', e => {
 });
 
 /* =====================================================================
+   三个旋钮：直接拧 CFG，孩子自己把「布」拧散、拧碎、拧紧
+   ===================================================================== */
+const DIALS = [
+  { id: 'dSep', out: 'dSepOut', key: 'sepW', def: 300 },
+  { id: 'dAli', out: 'dAliOut', key: 'aliW', def: 90 },
+  { id: 'dCoh', out: 'dCohOut', key: 'cohW', def: 30 }
+];
+const dialEls = [];
+const dialSayEl = $id('dialSay');
+for (let i = 0; i < DIALS.length; i++){
+  const d = DIALS[i];
+  const el = $id(d.id);
+  if (!el) continue;
+  dialEls.push({ key: d.key, def: d.def, el, out: $id(d.out) });
+}
+function dialValue(key){
+  for (let i = 0; i < dialEls.length; i++) if (dialEls[i].key === key) return +dialEls[i].el.value;
+  return 0;
+}
+function dialSay(){
+  if (!dialSayEl) return;
+  const s = dialValue('sepW'), a = dialValue('aliW'), c = dialValue('cohW');
+  let msg = '';
+  if (a <= 10) msg = '没有「跟着飞」：布碎了，几千只各飞各的。';
+  else if (c <= 5) msg = '不再「靠紧」：鸟群摊成一张薄薄的网。';
+  else if (s >= 560) msg = '「别撞上」拧到头：谁也不敢靠近谁，布散成雾。';
+  else if (s <= 70) msg = '谁都不躲：它们会挤成一小团。';
+  else if (a >= 220) msg = '「跟着飞」很硬：整片布像一块铁皮在飘。';
+  if (dialSayEl.textContent !== msg) dialSayEl.textContent = msg;
+}
+function syncDial(d){
+  CFG[d.key] = +d.el.value;
+  if (d.out) d.out.textContent = d.el.value;
+  dialSay();
+}
+dialEls.forEach(d => {
+  d.el.addEventListener('input', () => syncDial(d));
+  syncDial(d);
+});
+const dialReset = $id('dialReset');
+if (dialReset) dialReset.addEventListener('click', () => {
+  dialEls.forEach(d => { d.el.value = d.def; syncDial(d); });
+  toast('三个旋钮复原了');
+});
+
+/* 收起说明，一边拧一边看鸟。收起来的时候，天上照样能碰 */
+const peekBtn = $id('peekBtn');
+const dialsBox = $id('dials');
+function setPeek(on){
+  if (!sheet) return;
+  sheet.classList.toggle('peek', on);
+  if (scrim) scrim.classList.toggle('peek', on);
+  sheet.setAttribute('aria-modal', on ? 'false' : 'true');
+  if (peekBtn){
+    peekBtn.textContent = on ? '展开说明' : '收起说明 · 看鸟';
+    peekBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+  if (on && dialsBox){
+    setTimeout(() => { sheet.scrollTop = Math.max(0, dialsBox.offsetTop - 12); }, 90);
+  }
+}
+if (peekBtn) peekBtn.addEventListener('click', () => setPeek(!sheet.classList.contains('peek')));
+
+/* =====================================================================
    指针 / 键盘
    ===================================================================== */
 function localPoint(e){
@@ -1696,8 +2007,11 @@ main.addEventListener('pointermove', e => {
   pointer.x = p.x; pointer.y = p.y;
   pointer.inside = true;
   f.idle = 0;
+  markLearned('moved');
   if (pointer.down){
-    pointer.moved = pointer.moved || Math.abs(p.x - pointer.downX) + Math.abs(p.y - pointer.downY) > 10;
+    if (Math.abs(p.x - pointer.downX) + Math.abs(p.y - pointer.downY) > 10) pointer.moved = true;
+    /* 手一挪就不算「按住」了：在事件里当场取消，不等下一帧 */
+    if (hold.ready && Math.hypot(p.x - hold.x, p.y - hold.y) > 16) hold.ready = false;
   }
 });
 main.addEventListener('pointerdown', e => {
@@ -1707,18 +2021,20 @@ main.addEventListener('pointerdown', e => {
   pointer.downT = performance.now();
   pointer.downX = p.x; pointer.downY = p.y;
   f.idle = 0;
-  hideHint();
-  if (e.pointerType === 'mouse') doStoop();
+  hold.ready = true; hold.x = p.x; hold.y = p.y; hold.downAt = pointer.downT;
+  markLearned('moved');
   try { main.setPointerCapture(e.pointerId); } catch (err) {}
 });
 main.addEventListener('pointerup', e => {
   if (!pointer.down) return;
   pointer.down = false;
-  if (e.pointerType !== 'mouse' && !pointer.moved && performance.now() - pointer.downT < 320) doStoop();
+  const quick = performance.now() - pointer.downT < HOLD_AFTER && !pointer.moved;
+  hold.ready = false;
+  if (quick) doStoop();
 });
-main.addEventListener('pointercancel', () => { pointer.down = false; });
+main.addEventListener('pointercancel', () => { pointer.down = false; hold.ready = false; });
 main.addEventListener('pointerleave', e => {
-  if (e.pointerType === 'mouse'){ pointer.inside = false; pointer.down = false; }
+  if (e.pointerType === 'mouse'){ pointer.inside = false; pointer.down = false; hold.ready = false; }
 });
 main.addEventListener('keydown', e => {
   const step = 44 * S;
@@ -1729,11 +2045,14 @@ main.addEventListener('keydown', e => {
     if (e.key === 'ArrowUp') pointer.y -= step;
     if (e.key === 'ArrowDown') pointer.y += step;
     pointer.x = clamp(pointer.x, 0, W); pointer.y = clamp(pointer.y, 0, H);
-    f.idle = 0; hideHint();
+    f.idle = 0;
+    markLearned('moved');
     e.preventDefault();
   } else if (e.key === ' ' || e.key === 'Spacebar' || e.key === 'Enter'){
     if (!pointer.inside){ pointer.x = f.x; pointer.y = f.y; pointer.inside = true; }
-    doStoop(); hideHint();
+    doStoop();
+    markLearned('moved');
+    markLearned('held');   /* 键盘上做不了「按住」，别再提醒这件事 */
     e.preventDefault();
   }
 });
@@ -1763,7 +2082,9 @@ function frame(now){
     if (phaseT > 6) newEvening();
   }
 
+  updateHold(dt);
   updateFalcon(dt);
+  updateFeathers(dt);
 
   acc += dt;
   let steps = 0;
@@ -1829,15 +2150,6 @@ resetFalcon();
 updateRoostBtn();
 refreshCount();
 requestAnimationFrame(frame);
-setTimeout(() => {
-  if (!hintGone && !sheetOpen) showHintLater();
-}, 22000);
-function showHintLater(){
-  if (!hintEl || hintGone) return;
-  hintEl.innerHTML = '<span class="dot" aria-hidden="true"></span>点一下：老鹰会扎出一个洞';
-  hintEl.classList.remove('gone');
-  hintTimer = setTimeout(hideHint, 12000);
-}
 })();
 </script>
 </body>

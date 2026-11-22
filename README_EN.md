@@ -165,11 +165,15 @@ The atelier is where you take a lesson; the Cabinet is where you play. A growing
 - A single-file dusk murmuration: 2,200 starlings (1,400 on phones) gather over a reed marsh into one folding, breathing cloth
 - Each bird watches only its nearest few neighbours and does three small things — **don't collide**, **fly the same way**, **stay close**; thousands of "follow your neighbour" add up to one living sheet
 - **Your pointer is a falcon**: come close and the flock parts, wraps behind you and closes again; a click makes the falcon tuck its wings and stoop, punching a hole that heals almost at once
+- **Press and hold is the other hand**: the falcon hangs under your finger instead of circling, and the flock opens a crater that widens while you hold and spins along its rim; let go and it closes again
+- **The stoop has consequences**: when it truly cuts through the flock, a puff of feathers and a shockwave go up, the birds it passed through burst open, and a dark wave runs outward for two seconds; a miss only leaves a faint ring, and a click during the cooldown still gets an answer
+- **Three dials**: the sheet lets you turn **don't collide / fly alike / stay close** yourself — push either end and watch the sheet turn to mist, shatter into dots, or bunch into a ball; 「收起说明」 shrinks the sheet so you can turn a dial and watch the birds at the same time, and a reload restores the defaults
 - **Waves of alarm**: the birds at the edge dodge first and the alarm passes to their neighbours — a dark wave runs through the flock, and startled birds briefly draw thicker and longer
 - **The evening ends itself**: left alone, after two or three minutes the flock funnels down and pours into the reeds like liquid, rests, and a new evening begins; 「让它们落下」/「再飞一会儿」 lets you call them down or send them back up
 - **Depth and volume**: near birds draw larger and darker, overlaps darken like folds, so the sheet has thickness rather than reading as a sheet of paper
 - Four palettes (Dusk / Blue hour / Aurora / Rose dusk) change sky, sun, water, reeds and interface together, and are remembered
 - Sound is off by default; when on it is a soft rush of wings that follows the flock's speed and fear
+- Hints follow you: 「tap」 is only taught once you have moved, 「press and hold」 only once you have stooped, and once you know all three the hints stop
 - 「留住」 saves the scene as a PNG; works in phone portrait, has keyboard controls (arrows guide the falcon, space stoops) and a reduced-motion variant
 
 ### Where these toys come from
